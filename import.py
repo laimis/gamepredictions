@@ -23,9 +23,6 @@ def transform_input_to_output(input_f, output_f, weeks_to_roll):
 		teamRecord[winner].append(1)
 		teamRecord[losser].append(0)
 		
-		print(row)
-		print(isHomeWinner)
-
 		winnerRecord = teamRecord[winner][-weeks_to_roll:]
 		winnerPct = sum(winnerRecord) / weeks_to_roll
 
@@ -47,15 +44,17 @@ def transform_input_to_output(input_f, output_f, weeks_to_roll):
 		csv_writer.writerow(result)
 
 files = ["2014", "2015", "2016", "2017", "2018"]
+weeks_to_roll = 3
 
-output_filename = "processed.txt"
+output_filename = "output\\trainingdata.csv"
 
-os.remove(output_filename)
+if os.path.isfile(output_filename):
+	os.remove(output_filename)
 
 with open(output_filename, "a") as output_f:
 	output_f.write("home_pct,away_pct,home_win\n")
 
 for f in files:
-	with open(f"{f}.txt", "r") as input_f:
+	with open(f"input\\{f}.csv", "r") as input_f:
 		with open(output_filename, "a", newline='') as output_f:
-			transform_input_to_output(input_f, output_f, 3)
+			transform_input_to_output(input_f, output_f, weeks_to_roll)
