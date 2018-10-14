@@ -56,7 +56,7 @@ model = joblib.load("best_estimator.pkl")
 
 team_record = {}
 
-with open(f"2018copy.txt", "r") as input_f:
+with open(f"2018.txt", "r") as input_f:
 	team_record = load_games(input_f)
 
 with open("predict.txt", "r") as input_f:
