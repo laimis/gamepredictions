@@ -25,7 +25,7 @@ def load_games(input_f):
 
 	return team_record
 
-def predict_games(input_f, team_record, model, weeks_to_roll):
+def predict_games(input_f, team_record, models):
 
 	csv_reader = csv.reader(input_f)
 	
@@ -33,31 +33,52 @@ def predict_games(input_f, team_record, model, weeks_to_roll):
 		away = row[0]
 		home = row[1]
 
-		homeRecord = team_record[home][-weeks_to_roll:]
-		homePct = sum(homeRecord) / weeks_to_roll
+		away_confidence = 0
+		home_confidence = 0
 
-		awayRecord = team_record[away][-weeks_to_roll:]
-		awayPct = sum(awayRecord) / weeks_to_roll
+		votes = {away: 0, home: 0}
 
-		features = [[homePct, awayPct]]
+		for model_def in models:
+			model = model_def["model"]
+			weeks_to_roll = model_def["weeks"]
 
-		predict = model.predict(features)
+			homeRecord = team_record[home][-weeks_to_roll:]
+			homePct = sum(homeRecord) / weeks_to_roll
 
-		outcome = home
-		if predict[0] == 0:
-			outcome = away
+			awayRecord = team_record[away][-weeks_to_roll:]
+			awayPct = sum(awayRecord) / weeks_to_roll
+
+			features = [[homePct, awayPct]]
+
+			predict = model.predict(features)
+			confidence = max(model.predict_proba(features)[0])
+			
+			if predict[0] == 0:
+				votes[away]+=1
+				away_confidence = max(away_confidence, confidence)
+			else:
+				votes[home]+=1
+				home_confidence = max(home_confidence, confidence)
 		
-		print(f"{away} @ {home}: {outcome}")
+		print(f"{away},{home},{votes[away]},{votes[home]},{away_confidence},{home_confidence}")
 
 
 from sklearn.externals import joblib
 
-model = joblib.load("best_estimator.pkl")
+models = []
+
+for x in range(2,7):
+	
+	desc = {}
+	desc["model"] = joblib.load(f"models\\{x}_model.pkl")
+	desc["weeks"] = x
+
+	models.append(desc)
 
 team_record = {}
 
-with open(f"2018.txt", "r") as input_f:
+with open(f"input\\2018.csv", "r") as input_f:
 	team_record = load_games(input_f)
 
-with open("predict.txt", "r") as input_f:
-	predict_games(input_f, team_record, model, 3)
+with open("input\\predict_7.csv", "r") as input_f:
+	predict_games(input_f, team_record, models)

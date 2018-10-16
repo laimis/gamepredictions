@@ -1,0 +1,16 @@
+away,home,votes for away,votes for home,away max confidence,home max confidence
+Philadelphia Eagles,New York Giants,2,3,0.7021173673701162,0.5797085709471412
+Chicago Bears,Miami Dolphins,3,2,0.9997551748751519,0.6178485975142162
+Arizona Cardinals,Minnesota Vikings,0,5,0,0.945587589380115
+Indianapolis Colts,New York Jets,0,5,0,0.9912274902826355
+Pittsburgh Steelers,Cincinnati Bengals,0,5,0,0.9931609217345435
+Los Angeles Chargers,Cleveland Browns,4,1,0.978867580345381,0.6347492720687269
+Tampa Bay Buccaneers,Atlanta Falcons,4,1,0.8739607660153482,0.5617303672217513
+Seattle Seahawks,Oakland Raiders,4,1,0.8566588180771388,0.6057758296399035
+Carolina Panthers,Washington Redskins,5,0,0.978867580345381,0
+Buffalo Bills,Houston Texans,0,5,0,0.9931609217345435
+Los Angeles Rams,Denver Broncos,5,0,0.9997551748751519,0
+Jacksonville Jaguars,Dallas Cowboys,2,3,0.6879013836823163,0.6057758296399035
+Baltimore Ravens,Tennessee Titans,0,5,0,0.8829911657397675
+Kansas City Chiefs,New England Patriots,4,1,0.908517134739567,0.6710772671220406
+San Francisco 49ers,Green Bay Packers,0,5,0,0.9912274902826355

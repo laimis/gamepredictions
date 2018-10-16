@@ -44,17 +44,21 @@ def transform_input_to_output(input_f, output_f, weeks_to_roll):
 		csv_writer.writerow(result)
 
 files = ["2014", "2015", "2016", "2017", "2018"]
-weeks_to_roll = 3
 
-output_filename = "output\\trainingdata.csv"
+rolling_windows = [2, 3, 4, 5, 6]
 
-if os.path.isfile(output_filename):
-	os.remove(output_filename)
 
-with open(output_filename, "a") as output_f:
-	output_f.write("home_pct,away_pct,home_win\n")
+for weeks_to_roll in rolling_windows:
 
-for f in files:
-	with open(f"input\\{f}.csv", "r") as input_f:
-		with open(output_filename, "a", newline='') as output_f:
-			transform_input_to_output(input_f, output_f, weeks_to_roll)
+	output_filename = f"output\\{weeks_to_roll}trainingdata.csv"
+
+	if os.path.isfile(output_filename):
+		os.remove(output_filename)
+
+	with open(output_filename, "a") as output_f:
+		output_f.write("home_pct,away_pct,home_win\n")
+
+	for f in files:
+		with open(f"input\\{f}.csv", "r") as input_f:
+			with open(output_filename, "a", newline='') as output_f:
+				transform_input_to_output(input_f, output_f, weeks_to_roll)
