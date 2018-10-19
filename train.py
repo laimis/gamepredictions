@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import numpy as np
 
@@ -5,6 +7,8 @@ from sklearn.externals import joblib
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
 
 def get_model_and_grid():
 
@@ -13,9 +17,18 @@ def get_model_and_grid():
 	# 	"learning_rate": [0.01, 0.1, 0.5, 1, 10],
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
+
 	model = GaussianNB()
 	param_grid = {}
 
+	# model = SVC(probability=True)
+	# param_grid = {
+	# 	"C": [0.001, 0.01, 0.1, 1, 10]
+	# }
+
+	# model = MLPClassifier()
+	# param_grid = {}
+	
 	return model, param_grid
 
 def train_model(X, y, cv):
@@ -83,4 +96,7 @@ inputs = np.arange(2,7)
 filenames = [(f"output\\{x}trainingdata.csv", f"models\\{x}_model.pkl") for x in inputs]
 
 for f in filenames:
+	if os.path.isfile(f[1]):
+		os.remove(f[1])
+
 	train_save_and_evaluate(f[0], f[1])

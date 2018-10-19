@@ -4,6 +4,7 @@ import os
 def load_games(input_f):
 
 	team_record = {}
+	points = {}
 
 	csv_reader = csv.reader(input_f)
 	
@@ -11,21 +12,29 @@ def load_games(input_f):
 		winner = row[4]
 		losser = row[6]
 
+		winnerPts = int(row[8])
+		losserPts = int(row[9])
+
 		isHomeWinner = row[5] != "@"
 
 		if winner not in team_record:
 			team_record[winner] = []
+			points[winner] = []
 		
 		if losser not in team_record:
 			team_record[losser] = []
+			points[losser] = []
 
 		if row[7] != "preview":
 			team_record[winner].append(1)
 			team_record[losser].append(0)
+			
+			points[winner].append(winnerPts)
+			points[losser].append(losserPts)
 
-	return team_record
+	return team_record, points
 
-def predict_games(input_f, team_record, models):
+def predict_games(input_f, team_record, points, models):
 
 	csv_reader = csv.reader(input_f)
 	
@@ -44,11 +53,13 @@ def predict_games(input_f, team_record, models):
 
 			homeRecord = team_record[home][-weeks_to_roll:]
 			homePct = sum(homeRecord) / weeks_to_roll
+			homePts = sum(points[home][-weeks_to_roll:]) / weeks_to_roll
 
 			awayRecord = team_record[away][-weeks_to_roll:]
 			awayPct = sum(awayRecord) / weeks_to_roll
+			awayPts = sum(points[away][-weeks_to_roll:]) / weeks_to_roll
 
-			features = [[awayPct, homePct]]
+			features = [[awayPct, homePct, awayPts, homePts]]
 
 			predict = model.predict(features)
 			confidence = max(model.predict_proba(features)[0])
@@ -67,7 +78,7 @@ from sklearn.externals import joblib
 
 models = []
 
-for x in [4,5]:
+for x in [4,5,6]:
 	
 	desc = {}
 	desc["model"] = joblib.load(f"models\\{x}_model.pkl")
@@ -78,7 +89,7 @@ for x in [4,5]:
 team_record = {}
 
 with open(f"input\\2018.csv", "r") as input_f:
-	team_record = load_games(input_f)
+	team_record, points = load_games(input_f)
 
 with open("input\\predict_7.csv", "r") as input_f:
-	predict_games(input_f, team_record, models)
+	predict_games(input_f, team_record, points, models)
