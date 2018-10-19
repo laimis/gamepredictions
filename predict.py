@@ -48,7 +48,7 @@ def predict_games(input_f, team_record, models):
 			awayRecord = team_record[away][-weeks_to_roll:]
 			awayPct = sum(awayRecord) / weeks_to_roll
 
-			features = [[homePct, awayPct]]
+			features = [[awayPct, homePct]]
 
 			predict = model.predict(features)
 			confidence = max(model.predict_proba(features)[0])
@@ -67,7 +67,7 @@ from sklearn.externals import joblib
 
 models = []
 
-for x in range(2,7):
+for x in [4,5]:
 	
 	desc = {}
 	desc["model"] = joblib.load(f"models\\{x}_model.pkl")

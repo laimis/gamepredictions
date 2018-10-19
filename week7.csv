@@ -1,13 +1,15 @@
-Tennessee Titans,Los Angeles Chargers,0,5,0,0.999906361058626
-Minnesota Vikings,New York Jets,2,3,0.6879013836823163,0.6710772671220406
-New England Patriots,Chicago Bears,3,2,0.978867580345381,0.6563908112703031
-Detroit Lions,Miami Dolphins,1,4,0.8566588180771388,0.9081263752382921
-Cleveland Browns,Tampa Bay Buccaneers,3,2,0.9828682766133042,0.5834011208087801
-Carolina Panthers,Philadelphia Eagles,2,3,0.8566588180771388,0.6057758296399035
-Houston Texans,Jacksonville Jaguars,4,1,0.9997551748751519,0.5886946054703879
-Buffalo Bills,Indianapolis Colts,5,0,0.9828682766133042,0
-New Orleans Saints,Baltimore Ravens,4,1,0.978867580345381,0.628117696598665
-Dallas Cowboys,Washington Redskins,0,5,0,0.6347492720687269
-Los Angeles Rams,San Francisco 49ers,5,0,0.9997551748751519,0
-Cincinnati Bengals,Kansas City Chiefs,0,5,0,0.8829911657397675
-New York Giants,Atlanta Falcons,0,5,0,0.9912274902826355
+away,home,away votes,home votes,away conf,home conf
+Denver Broncos,Arizona Cardinals,0,2,0,0.6588246457402003
+Tennessee Titans,Los Angeles Chargers,0,2,0,0.6701456779561947
+Minnesota Vikings,New York Jets,1,1,0.5203441616972115,0.5498566955754386
+New England Patriots,Chicago Bears,0,2,0,0.6023998543502966
+Detroit Lions,Miami Dolphins,0,2,0,0.6377079831331937
+Cleveland Browns,Tampa Bay Buccaneers,1,1,0.5530552658421067,0.5499556835987204
+Carolina Panthers,Philadelphia Eagles,1,1,0.5203441616972115,0.5498566955754386
+Houston Texans,Jacksonville Jaguars,2,0,0.6164087633061753,0
+Buffalo Bills,Indianapolis Colts,2,0,0.6370445838718978,0
+New Orleans Saints,Baltimore Ravens,0,2,0,0.5671713323766532
+Dallas Cowboys,Washington Redskins,0,2,0,0.570408170511337
+Los Angeles Rams,San Francisco 49ers,2,0,0.7249250371334093,0
+Cincinnati Bengals,Kansas City Chiefs,0,2,0,0.6701456779561947
+New York Giants,Atlanta Falcons,0,2,0,0.6316827938125956

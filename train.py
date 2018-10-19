@@ -48,7 +48,10 @@ def confidence_stats(y, predicted, confidence, interval):
 
 def render_confidence(stats):
 
-	print(stats[2], stats[0], stats[1], stats[0]/stats[1])
+	if stats[1] == 0:
+		print("no correct pred with confidence ",stats[2])
+	else:
+		print(stats[2], stats[0], stats[1], stats[0]/stats[1])
 
 def train_save_and_evaluate(input_path, model_path):
 
@@ -58,7 +61,7 @@ def train_save_and_evaluate(input_path, model_path):
 	print("data shape", data.shape)
 
 	y = data.home_win
-	X = data.drop("home_win", axis=1, inplace=False)
+	X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)
 
 	grid = train_model(X, y, 5)
 
@@ -74,7 +77,6 @@ def train_save_and_evaluate(input_path, model_path):
 	for level in [0.85, 0.9, 0.95]:
 		stats = confidence_stats(y, predictions, confidence, level)
 		render_confidence(stats)
-	
 
 inputs = np.arange(2,7)
 

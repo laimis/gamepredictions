@@ -1,6 +1,8 @@
 import csv
 import os
 
+import numpy as np
+
 def transform_input_to_output(input_f, output_f, weeks_to_roll):
 
 	teamRecord = {}
@@ -19,9 +21,6 @@ def transform_input_to_output(input_f, output_f, weeks_to_roll):
 		
 		if losser not in teamRecord:
 			teamRecord[losser] = []
-
-		teamRecord[winner].append(1)
-		teamRecord[losser].append(0)
 		
 		winnerRecord = teamRecord[winner][-weeks_to_roll:]
 		winnerPct = sum(winnerRecord) / weeks_to_roll
@@ -31,19 +30,22 @@ def transform_input_to_output(input_f, output_f, weeks_to_roll):
 
 		week = int(row[0])
 		
-		if week < weeks_to_roll + 1:
-			continue
+		if week > weeks_to_roll:
+			result = []
 
-		result = []
+			if isHomeWinner:
+				result = [losser, winner, losserPct, winnerPct, 1]
+			else:
+				result = [winner, losser, winnerPct, losserPct, 0]
 
-		if isHomeWinner:
-			result = [winnerPct, losserPct, 1]
-		else:
-			result = [losserPct, winnerPct, 0]
+			csv_writer.writerow(result)
+		
+		teamRecord[winner].append(1)
+		teamRecord[losser].append(0)
 
-		csv_writer.writerow(result)
+files = np.arange(start=2014, stop=2019)
 
-files = ["2014", "2015", "2016", "2017", "2018"]
+files = [2018]
 
 rolling_windows = [2, 3, 4, 5, 6]
 
@@ -56,7 +58,7 @@ for weeks_to_roll in rolling_windows:
 		os.remove(output_filename)
 
 	with open(output_filename, "a") as output_f:
-		output_f.write("home_pct,away_pct,home_win\n")
+		output_f.write("away,home,away_pct,home_pct,home_win\n")
 
 	for f in files:
 		with open(f"input\\{f}.csv", "r") as input_f:
