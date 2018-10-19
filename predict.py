@@ -78,7 +78,7 @@ from sklearn.externals import joblib
 
 models = []
 
-for x in [4,5,6]:
+for x in [4,5]:
 	
 	desc = {}
 	desc["model"] = joblib.load(f"models\\{x}_model.pkl")
@@ -91,5 +91,5 @@ team_record = {}
 with open(f"input\\2018.csv", "r") as input_f:
 	team_record, points = load_games(input_f)
 
-with open("input\\predict_7.csv", "r") as input_f:
+with open("input\\predict_6.csv", "r") as input_f:
 	predict_games(input_f, team_record, points, models)
