@@ -2,6 +2,9 @@ import pandas as pd
 
 from sklearn.externals import joblib
 
+def weeks_to_try():
+	return [4,5,6]
+
 def read_data_from_file(filepath):
 
 	data = pd.read_csv(filepath)
@@ -25,7 +28,14 @@ def calc_features(stats, home, away, weeks_to_roll):
 	homePct, homePts, homeAllowed = calc_stats(stats, home, weeks_to_roll)
 	awayPct, awayPts, awayAllowed = calc_stats(stats, away, weeks_to_roll)
 
-	return [awayPct, homePct, awayPts, homePts, awayAllowed, homeAllowed]
+	# return [awayPct, homePct, awayPts, homePts, awayAllowed, homeAllowed]
+	# return [awayPct, homePct, awayPts]
+	return [awayPct, homePct, awayPts - awayAllowed, homePts - homeAllowed]
+
+def get_feature_headers():
+	# return "away,home,home_win,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff\n"
+	# return "away,home,home_win,away_pct,home_pct\n"
+	return "away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
 
 def calc_stats(stats, team, weeks_to_roll):
 

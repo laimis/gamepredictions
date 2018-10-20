@@ -17,8 +17,5 @@ def evaluate(weeks_to_roll):
 
 	print(f"{weeks_to_roll} accuracy: {accuracy}")
 
-evaluate(2)
-evaluate(3)
-evaluate(4)
-evaluate(5)
-evaluate(6)
+for w in common.weeks_to_try():
+	evaluate(w)

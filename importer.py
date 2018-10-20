@@ -56,7 +56,7 @@ def transform_csv(rolling_windows, train_or_test, years):
 			os.remove(output_filename)
 
 		with open(output_filename, "a") as output_f:
-			output_f.write("away,home,home_win,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff\n")
+			output_f.write(common.get_feature_headers())
 
 		for f in years:
 			with open(f"input\\{f}.csv", "r") as input_f:
@@ -66,9 +66,9 @@ def transform_csv(rolling_windows, train_or_test, years):
 					csv_writer.writerows(output)
 
 if __name__ == '__main__':
-	inputs = np.arange(2,7)
-
-	rolling_windows = [2, 3, 4, 5, 6]
+	
+	rolling_windows = common.weeks_to_try()
 	
 	transform_csv(rolling_windows, "train", [2013,2014,2015,2016])
+	
 	transform_csv(rolling_windows, "test", [2017,2018])

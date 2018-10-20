@@ -22,19 +22,19 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	model = GaussianNB()
-	param_grid = {}
+	# model = GaussianNB()
+	# param_grid = {}
 
 	# model = SVC(probability=True)
 	# param_grid = {
 	# 	"C": [0.001, 0.01, 0.1, 1, 10]
 	# }
 
-	# model = MLPClassifier(max_iter=500)
-	# param_grid = {
-	# 	"alpha": [0.0001, 0.001, 0.01],
-	# 	"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
-	# }
+	model = MLPClassifier(max_iter=500)
+	param_grid = {
+		"alpha": [0.0001, 0.001, 0.01],
+		"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
+	}
 	
 	return model, param_grid
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 	
 	models = []
 
-	for f in [2,3,4,5,6]:
+	for f in common.weeks_to_try():
 
 		file_training = f"output\\train\\{f}.csv"
 		file_model = f"models\\{f}_model.pkl"
