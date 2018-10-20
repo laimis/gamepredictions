@@ -40,8 +40,8 @@ def transform_input_to_output(input_f, weeks_to_roll):
 			features = common.calc_features(stats, home, away, weeks_to_roll)
 			output.append([losser,winner,homeWin] + features)
 		
-		common.add_to_stats(stats, winner, 1, winnerPts, diff, -losserPts)
-		common.add_to_stats(stats, losser, 0, losserPts, -diff, -winnerPts)
+		common.add_to_stats(stats, winner, 1, winnerPts, losserPts)
+		common.add_to_stats(stats, losser, 0, losserPts, winnerPts)
 	
 	return output
 
@@ -70,5 +70,5 @@ if __name__ == '__main__':
 
 	rolling_windows = [2, 3, 4, 5, 6]
 	
-	transform_csv(rolling_windows, "train", [2013,2014,2015,2016,2017])
-	transform_csv(rolling_windows, "test", [2018])
+	transform_csv(rolling_windows, "train", [2013,2014,2015,2016])
+	transform_csv(rolling_windows, "test", [2017,2018])

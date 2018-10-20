@@ -18,10 +18,8 @@ def load_games(input_f):
 		winnerPts = int(row[8])
 		losserPts = int(row[9])
 
-		diff = int(winnerPts) - int(losserPts)
-
-		common.add_to_stats(stats, winner, 1, winnerPts, diff, -losserPts)
-		common.add_to_stats(stats, losser, 0, losserPts, -diff, -winnerPts)
+		common.add_to_stats(stats, winner, 1, winnerPts, losserPts)
+		common.add_to_stats(stats, losser, 0, losserPts, winnerPts)
 
 	return stats
 
