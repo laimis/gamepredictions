@@ -19,19 +19,21 @@ def load_games(input_f):
 		isHomeWinner = row[5] != "@"
 
 		if winner not in stats:
-			stats[winner] = {"wins":[], "points":[], "diff":[]}
+			stats[winner] = {"wins":[], "points":[], "diff":[], "allowed":[]}
 		
 		if losser not in stats:
-			stats[losser] = {"wins":[], "points":[], "diff":[]}
+			stats[losser] = {"wins":[], "points":[], "diff":[], "allowed":[]}
 
 		if row[7] != "preview":
 			stats[winner]["wins"].append(1)
 			stats[winner]["points"].append(winnerPts)
 			stats[winner]["diff"].append(diff)
+			stats[winner]["allowed"].append(-losserPts)
 
 			stats[losser]["wins"].append(0)
 			stats[losser]["points"].append(losserPts)
 			stats[losser]["diff"].append(-diff)
+			stats[losser]["allowed"].append(-winnerPts)
 
 	return stats
 
@@ -39,6 +41,8 @@ def predict_games(input_f, stats, models):
 
 	csv_reader = csv.reader(input_f)
 	
+	print("away,home,awayPct,homePct,awayPts,homePts,awayAllowed,homeAllowed,votes[away],votes[home],away_confidence,home_confidence}")
+
 	for row in csv_reader:
 		away = row[0]
 		home = row[1]
@@ -55,12 +59,14 @@ def predict_games(input_f, stats, models):
 			homePct = sum(stats[home]["wins"][-weeks_to_roll:]) / weeks_to_roll
 			homePts = sum(stats[home]["points"][-weeks_to_roll:]) / weeks_to_roll
 			homeDiff = sum(stats[home]["diff"][-weeks_to_roll:])
+			homeAllowed = sum(stats[home]["allowed"][-weeks_to_roll:]) / weeks_to_roll
 
 			awayPct = sum(stats[away]["wins"][-weeks_to_roll:]) / weeks_to_roll
 			awayPts = sum(stats[away]["points"][-weeks_to_roll:]) / weeks_to_roll
 			awayDiff = sum(stats[away]["diff"][-weeks_to_roll:])
+			awayAllowed = sum(stats[away]["allowed"][-weeks_to_roll:]) / weeks_to_roll
 
-			features = [[awayPct, homePct, awayPts, homePts, awayDiff, homeDiff]]
+			features = [[awayPct, homePct, awayPts, homePts, awayAllowed, homeAllowed]]
 
 			predict = model.predict(features)
 			confidence = max(model.predict_proba(features)[0])
@@ -79,7 +85,7 @@ from sklearn.externals import joblib
 
 models = []
 
-for x in [5,6]:
+for x in [6]:
 	
 	desc = {}
 	desc["model"] = joblib.load(f"models\\{x}_model.pkl")

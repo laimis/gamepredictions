@@ -18,19 +18,19 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	# model = GaussianNB()
-	# param_grid = {}
+	model = GaussianNB()
+	param_grid = {}
 
 	# model = SVC(probability=True)
 	# param_grid = {
 	# 	"C": [0.001, 0.01, 0.1, 1, 10]
 	# }
 
-	model = MLPClassifier(max_iter=500)
-	param_grid = {
-		"alpha": [0.0001, 0.001, 0.01],
-		"hidden_layer_sizes": [(10), (100), (200), (100, 100)]
-	}
+	# model = MLPClassifier(max_iter=500)
+	# param_grid = {
+	# 	"alpha": [0.0001, 0.001, 0.01],
+	# 	"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
+	# }
 	
 	return model, param_grid
 
@@ -91,16 +91,17 @@ def train_save_and_evaluate(input_path, model_path):
 	predictions = model.predict(X)
 	confidence = model.predict_proba(X)
 
-	for level in [0.6, 0.7, 0.9]:
+	for level in [0.7, 0.8, 0.9]:
 		stats = confidence_stats(y, predictions, confidence, level)
 		render_confidence(stats)
 
-inputs = np.arange(2,7)
+if __name__ == '__main__':
+	inputs = np.arange(2,7)
 
-filenames = [(f"output\\{x}trainingdata.csv", f"models\\{x}_model.pkl") for x in inputs]
+	filenames = [(f"output\\{x}trainingdata.csv", f"models\\{x}_model.pkl") for x in inputs]
 
-for f in filenames:
-	if os.path.isfile(f[1]):
-		os.remove(f[1])
+	for f in filenames:
+		if os.path.isfile(f[1]):
+			os.remove(f[1])
 
-	train_save_and_evaluate(f[0], f[1])
+		train_save_and_evaluate(f[0], f[1])

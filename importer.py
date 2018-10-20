@@ -25,10 +25,10 @@ def transform_input_to_output(input_f, weeks_to_roll):
 		isHomeWinner = row[5] != "@"
 
 		if winner not in stats:
-			stats[winner] = {"wins":[], "points":[], "diff":[]}
+			stats[winner] = {"wins":[], "points":[], "diff":[], "allowed":[]}
 		
 		if losser not in stats:
-			stats[losser] = {"wins":[], "points":[], "diff":[]}
+			stats[losser] = {"wins":[], "points":[], "diff":[], "allowed":[]}
 		
 		winnerPct = sum(stats[winner]["wins"][-weeks_to_roll:]) / weeks_to_roll
 		winnerAvgPts = sum(stats[winner]["points"][-weeks_to_roll:]) / weeks_to_roll
@@ -47,11 +47,15 @@ def transform_input_to_output(input_f, weeks_to_roll):
 
 			if isHomeWinner:
 				output.append(
-					[losser, winner, losserPct, winnerPct, losserAvgPts, winnerAvgPts, losserDiff, winnerDiff, losserAllowed, winnerAllowed, 1]
+					# [losser, winner, losserPct, winnerPct, losserAvgPts, winnerAvgPts, losserDiff, winnerDiff, losserAllowed, winnerAllowed, 1]
+					# [losser, winner, losserPct, winnerPct, losserAvgPts, winnerAvgPts, losserDiff, winnerDiff, 1]
+					[losser, winner, losserPct, winnerPct, losserAvgPts, winnerAvgPts, losserAllowed, winnerAllowed, 1]
 				)
 			else:
 				output.append(
-					[winner, losser, winnerPct, losserPct, winnerAvgPts, losserAvgPts, winnerDiff, losserDiff, winnerAllowed, losserAllowed 0]
+					# [winner, losser, winnerPct, losserPct, winnerAvgPts, losserAvgPts, winnerDiff, losserDiff, winnerAllowed, losserAllowed, 0]
+					# [winner, losser, winnerPct, losserPct, winnerAvgPts, losserAvgPts, winnerDiff, losserDiff, 0]
+					[winner, losser, winnerPct, losserPct, winnerAvgPts, losserAvgPts, winnerAllowed, losserAllowed, 0]
 				)
 		
 		stats[winner]["wins"].append(1)
@@ -66,26 +70,31 @@ def transform_input_to_output(input_f, weeks_to_roll):
 	
 	return output
 
-files = np.arange(start=2014, stop=2019)
 
-# files = [2018]
+	def generate_training_data(rolling_windows, years):
 
-rolling_windows = [2, 3, 4, 5, 6]
+		for weeks_to_roll in rolling_windows:
 
+		output_filename = f"output\\{weeks_to_roll}trainingdata.csv"
 
-for weeks_to_roll in rolling_windows:
+		if os.path.isfile(output_filename):
+			os.remove(output_filename)
 
-	output_filename = f"output\\{weeks_to_roll}trainingdata.csv"
+		with open(output_filename, "a") as output_f:
+			output_f.write("away,home,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff,home_win\n")
 
-	if os.path.isfile(output_filename):
-		os.remove(output_filename)
+		for f in files:
+			with open(f"input\\{f}.csv", "r") as input_f:
+				with open(output_filename, "a", newline='') as output_f:
+					output = transform_input_to_output(input_f, weeks_to_roll)
+					csv_writer = csv.writer(output_f)
+					csv_writer.writerows(output)
 
-	with open(output_filename, "a") as output_f:
-		output_f.write("away,home,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff,home_win\n")
+if __name__ == '__main__':
+	inputs = np.arange(2,7)
 
-	for f in files:
-		with open(f"input\\{f}.csv", "r") as input_f:
-			with open(output_filename, "a", newline='') as output_f:
-				output = transform_input_to_output(input_f, weeks_to_roll)
-				csv_writer = csv.writer(output_f)
-				csv_writer.writerows(output)
+	files = np.arange(start=2014, stop=2019)
+	# files = [2018]
+	rolling_windows = [2, 3, 4, 5, 6]
+
+	generate_training_data(rolling_windows, files)

@@ -18,14 +18,14 @@ class TestImport(unittest.TestCase):
 	def test_first_row_correct(self):
 
 		self.assertEqual(
-			['Minnesota Vikings', 'Green Bay Packers', 0.5, 0.5, 22.75, 23.0, 1],
+			['Minnesota Vikings', 'Green Bay Packers', 0.5, 0.5, 22.75, 23.0, 7, -4, -21.0, -24.0, 1],
 			self.output[0]
 		)
 
 	def test_last_row_correct(self):
 
 		self.assertEqual(
-			['Cincinnati Bengals', 'Pittsburgh Steelers', 0.75, 0.75, 25.5, 30.25, 1],
+			['Cincinnati Bengals', 'Pittsburgh Steelers', 0.75, 0.75, 25.5, 30.25, 19, 33, -20.75, -22.0, 1],
 			self.output[len(self.output)-1]
 		)
 
