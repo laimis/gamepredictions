@@ -5,7 +5,7 @@ from sklearn.metrics import f1_score
 import pandas as pd
 
 def evaluate(weeks_to_roll):
-    data = pd.read_csv(f"output\\{weeks_to_roll}trainingdata.csv")
+    data = pd.read_csv(f"output\\test\\{weeks_to_roll}.csv")
     
     y = data.home_win
     X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)

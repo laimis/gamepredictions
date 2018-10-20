@@ -1,6 +1,8 @@
 import csv
 import os
 
+import json
+
 def load_games(input_f):
 
 	stats = {}
@@ -41,8 +43,7 @@ def predict_games(input_f, stats, models):
 
 	csv_reader = csv.reader(input_f)
 	
-	print("away,home,awayPct,homePct,awayPts,homePts,awayAllowed,homeAllowed,votes[away],votes[home],away_confidence,home_confidence}")
-
+	predictions = []
 	for row in csv_reader:
 		away = row[0]
 		home = row[1]
@@ -78,7 +79,17 @@ def predict_games(input_f, stats, models):
 				votes[home]+=1
 				home_confidence = max(home_confidence, confidence)
 		
-		print(f"{away},{home},{awayPct},{homePct},{awayPts},{homePts},{awayDiff},{homeDiff},{votes[away]},{votes[home]},{away_confidence},{home_confidence}")
+		predictions.append(
+			# [
+			# 	away,home,f"{awayPct:.2f}",f"{homePct:.2f}",f"{awayPts:.2f}",f"{homePts:.2f}",awayDiff,homeDiff,votes[away],votes[home],f"{away_confidence:.2f}",f"{home_confidence:.2f}"
+			# ]
+
+			[
+				away,home,f"{awayPct:.2f}",f"{homePct:.2f}",f"{awayPts:.2f}",f"{homePts:.2f}",awayDiff,homeDiff,f"{away_confidence:.2f}",f"{home_confidence:.2f}"
+			]
+		)
+	
+	return predictions
 
 
 from sklearn.externals import joblib
@@ -99,4 +110,9 @@ with open(f"input\\2018.csv", "r") as input_f:
 	stats = load_games(input_f)
 
 with open("input\\predict_7.csv", "r") as input_f:
-	predict_games(input_f, stats, models)
+	predictions = predict_games(input_f, stats, models)
+
+	dict = {"data": predictions}
+
+	with open("output\\html\\predictions.json", 'w') as summary_file:
+		json.dump(dict, summary_file)

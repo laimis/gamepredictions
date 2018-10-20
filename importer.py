@@ -71,11 +71,11 @@ def transform_input_to_output(input_f, weeks_to_roll):
 	return output
 
 
-	def generate_training_data(rolling_windows, years):
+def transform_csv(rolling_windows, train_or_test, years):
 
-		for weeks_to_roll in rolling_windows:
+	for weeks_to_roll in rolling_windows:
 
-		output_filename = f"output\\{weeks_to_roll}trainingdata.csv"
+		output_filename = f"output\\{train_or_test}\\{weeks_to_roll}.csv"
 
 		if os.path.isfile(output_filename):
 			os.remove(output_filename)
@@ -83,7 +83,7 @@ def transform_input_to_output(input_f, weeks_to_roll):
 		with open(output_filename, "a") as output_f:
 			output_f.write("away,home,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff,home_win\n")
 
-		for f in files:
+		for f in years:
 			with open(f"input\\{f}.csv", "r") as input_f:
 				with open(output_filename, "a", newline='') as output_f:
 					output = transform_input_to_output(input_f, weeks_to_roll)
@@ -93,8 +93,7 @@ def transform_input_to_output(input_f, weeks_to_roll):
 if __name__ == '__main__':
 	inputs = np.arange(2,7)
 
-	files = np.arange(start=2014, stop=2019)
-	# files = [2018]
 	rolling_windows = [2, 3, 4, 5, 6]
-
-	generate_training_data(rolling_windows, files)
+	
+	transform_csv(rolling_windows, "train", [2013,2014,2015,2016,2017])
+	transform_csv(rolling_windows, "test", [2018])

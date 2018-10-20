@@ -10,6 +10,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 
+import json
+
 def get_model_and_grid():
 
 	# model = AdaBoostClassifier()
@@ -18,19 +20,19 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	model = GaussianNB()
-	param_grid = {}
+	# model = GaussianNB()
+	# param_grid = {}
 
 	# model = SVC(probability=True)
 	# param_grid = {
 	# 	"C": [0.001, 0.01, 0.1, 1, 10]
 	# }
 
-	# model = MLPClassifier(max_iter=500)
-	# param_grid = {
-	# 	"alpha": [0.0001, 0.001, 0.01],
-	# 	"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
-	# }
+	model = MLPClassifier(max_iter=500)
+	param_grid = {
+		"alpha": [0.0001, 0.001, 0.01],
+		"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
+	}
 	
 	return model, param_grid
 
@@ -62,50 +64,59 @@ def confidence_stats(y, predicted, confidence, interval):
 
 	return correct_count, total_count, interval
 
-def render_confidence(stats):
-
-	if stats[1] == 0:
-		print("no correct pred with confidence ",stats[2])
-	else:
-		print(stats[2], stats[0], stats[1], stats[0]/stats[1])
-
-def train(X, y, cv):
-
-	grid = train_model(X, y, cv)
-
-	print("Best score:", grid.best_score_)
-	print("Best params:", grid.best_params_)
-
-	return grid.best_estimator_
 
 def evaluate(model, X, y):
 
 	predictions = model.predict(X)
 	confidence = model.predict_proba(X)
 
+	stats = []
 	for level in [0.7, 0.8, 0.9]:
-		stats = confidence_stats(y, predictions, confidence, level)
-		render_confidence(stats)
+		stat = confidence_stats(y, predictions, confidence, level)
+
+		if stat[1] == 0:
+			stats.append(f"no correct pred with confidence {stat[2]}")
+		else:
+			stats.append(f"{stat[2]}: {stat[0]}, {stat[0]/stat[1]:2f}")
+
+	return stats
 
 if __name__ == '__main__':
-	inputs = np.arange(2,7)
+	
+	models = []
 
-	filenames = [(f"output\\{x}trainingdata.csv", f"models\\{x}_model.pkl") for x in inputs]
+	for f in [2,3,4,5,6]:
 
-	for f in filenames:
-		if os.path.isfile(f[1]):
-			os.remove(f[1])
+		file_training = f"output\\train\\{f}.csv"
+		file_model = f"models\\{f}_model.pkl"
 
-		data = pd.read_csv(f[0])
+		if os.path.isfile(file_model):
+			os.remove(file_model)
 
-		print("processing", f[0])
+		data = pd.read_csv(file_training)
+
+		print("processing", file_training)
 		print("data shape", data.shape)
 
 		y = data.home_win
 		X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)
 		
-		model = train(X, y, 10)
+		grid = train_model(X, y, 10)
 
-		evaluate(model, X, y)
+		model = grid.best_estimator_
+
+		stats = evaluate(model, X, y)
 			
-		save_model(model, f[1])
+		save_model(model, file_model)
+
+		output = [f, grid.best_score_, str(grid.best_params_)]
+		
+		for s in stats:
+			output.append(s)
+		
+		models.append(output)
+
+	dict = {"data": models}
+
+	with open("output\\html\\trainingdata.json", 'w') as summary_file:
+		json.dump(dict, summary_file)
