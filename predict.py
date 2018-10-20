@@ -53,13 +53,15 @@ def predict_games(input_f, stats, models):
 				votes[home]+=1
 				home_confidence = max(home_confidence, confidence)
 		
-		f = features[0]
+		output = [away, home]
 
-		predictions.append(
-			[
-				away,home,f"{f[0]:.2f}",f"{f[1]:.2f}",f"{f[2]:.2f}",f"{f[3]:.2f}",f"{f[4]:.2f}",f"{f[5]:.2f}",f"{away_confidence:.2f}",f"{home_confidence:.2f}"
-			]
-		)
+		for f in features[0]:
+			output.append(f"{f:.2f}")
+		
+		output.append(f"{away_confidence:.2f}")
+		output.append(f"{home_confidence:.2f}")
+		
+		predictions.append(output)
 	
 	return predictions
 
