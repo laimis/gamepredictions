@@ -1,5 +1,7 @@
 from sklearn.externals import joblib
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
+
 import pandas as pd
 
 def evaluate(weeks_to_roll):

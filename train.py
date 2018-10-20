@@ -18,16 +18,19 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	model = GaussianNB()
-	param_grid = {}
+	# model = GaussianNB()
+	# param_grid = {}
 
 	# model = SVC(probability=True)
 	# param_grid = {
 	# 	"C": [0.001, 0.01, 0.1, 1, 10]
 	# }
 
-	# model = MLPClassifier()
-	# param_grid = {}
+	model = MLPClassifier(max_iter=500)
+	param_grid = {
+		"alpha": [0.0001, 0.001, 0.01],
+		"hidden_layer_sizes": [(10), (100), (200), (100, 100)]
+	}
 	
 	return model, param_grid
 
@@ -35,7 +38,7 @@ def train_model(X, y, cv):
 
 	model, param_grid = get_model_and_grid()
 
-	grid = GridSearchCV(model, param_grid, cv=cv, return_train_score=True)
+	grid = GridSearchCV(model, param_grid, cv=cv, return_train_score=True, verbose=0)
 
 	grid.fit(X, y)
 
@@ -76,9 +79,10 @@ def train_save_and_evaluate(input_path, model_path):
 	y = data.home_win
 	X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)
 
-	grid = train_model(X, y, 5)
+	grid = train_model(X, y, 10)
 
 	print("Best score:", grid.best_score_)
+	print("Best params:", grid.best_params_)
 
 	model = grid.best_estimator_
 
@@ -87,7 +91,7 @@ def train_save_and_evaluate(input_path, model_path):
 	predictions = model.predict(X)
 	confidence = model.predict_proba(X)
 
-	for level in [0.85, 0.9, 0.95]:
+	for level in [0.6, 0.7, 0.9]:
 		stats = confidence_stats(y, predictions, confidence, level)
 		render_confidence(stats)
 
