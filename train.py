@@ -69,24 +69,16 @@ def render_confidence(stats):
 	else:
 		print(stats[2], stats[0], stats[1], stats[0]/stats[1])
 
-def train_save_and_evaluate(input_path, model_path):
+def train(X, y, cv):
 
-	data = pd.read_csv(input_path)
-
-	print("processing", input_path)
-	print("data shape", data.shape)
-
-	y = data.home_win
-	X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)
-
-	grid = train_model(X, y, 10)
+	grid = train_model(X, y, cv)
 
 	print("Best score:", grid.best_score_)
 	print("Best params:", grid.best_params_)
 
-	model = grid.best_estimator_
+	return grid.best_estimator_
 
-	save_model(model, model_path)
+def evaluate(model, X, y):
 
 	predictions = model.predict(X)
 	confidence = model.predict_proba(X)
@@ -104,4 +96,16 @@ if __name__ == '__main__':
 		if os.path.isfile(f[1]):
 			os.remove(f[1])
 
-		train_save_and_evaluate(f[0], f[1])
+		data = pd.read_csv(f[0])
+
+		print("processing", f[0])
+		print("data shape", data.shape)
+
+		y = data.home_win
+		X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)
+		
+		model = train(X, y, 10)
+
+		evaluate(model, X, y)
+			
+		save_model(model, f[1])
