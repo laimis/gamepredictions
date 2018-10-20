@@ -2,6 +2,7 @@ import csv
 import os
 
 import numpy as np
+import common
 
 def transform_input_to_output(input_f, weeks_to_roll):
 
@@ -24,49 +25,23 @@ def transform_input_to_output(input_f, weeks_to_roll):
 
 		isHomeWinner = row[5] != "@"
 
-		if winner not in stats:
-			stats[winner] = {"wins":[], "points":[], "diff":[], "allowed":[]}
-		
-		if losser not in stats:
-			stats[losser] = {"wins":[], "points":[], "diff":[], "allowed":[]}
-		
-		winnerPct = sum(stats[winner]["wins"][-weeks_to_roll:]) / weeks_to_roll
-		winnerAvgPts = sum(stats[winner]["points"][-weeks_to_roll:]) / weeks_to_roll
-		winnerDiff = sum(stats[winner]["diff"][-weeks_to_roll:])
-		winnerAllowed = sum(stats[winner]["allowed"][-weeks_to_roll:]) / weeks_to_roll
+		away = winner
+		home = losser
+		homeWin = 0
 
-		losserPct = sum(stats[losser]["wins"][-weeks_to_roll:]) / weeks_to_roll
-		losserAvgPts = sum(stats[losser]["points"][-weeks_to_roll:]) / weeks_to_roll
-		losserDiff = sum(stats[losser]["diff"][-weeks_to_roll:])
-		losserAllowed = sum(stats[losser]["allowed"][-weeks_to_roll:]) / weeks_to_roll
+		if isHomeWinner:
+			away = losser
+			home = winner
+			homeWin = 1
 
 		week = int(row[0])
 		
 		if week > weeks_to_roll:
-			result = []
-
-			if isHomeWinner:
-				output.append(
-					# [losser, winner, losserPct, winnerPct, losserAvgPts, winnerAvgPts, losserDiff, winnerDiff, losserAllowed, winnerAllowed, 1]
-					# [losser, winner, losserPct, winnerPct, losserAvgPts, winnerAvgPts, losserDiff, winnerDiff, 1]
-					[losser, winner, losserPct, winnerPct, losserAvgPts, winnerAvgPts, losserAllowed, winnerAllowed, 1]
-				)
-			else:
-				output.append(
-					# [winner, losser, winnerPct, losserPct, winnerAvgPts, losserAvgPts, winnerDiff, losserDiff, winnerAllowed, losserAllowed, 0]
-					# [winner, losser, winnerPct, losserPct, winnerAvgPts, losserAvgPts, winnerDiff, losserDiff, 0]
-					[winner, losser, winnerPct, losserPct, winnerAvgPts, losserAvgPts, winnerAllowed, losserAllowed, 0]
-				)
+			features = common.calc_features(stats, home, away, weeks_to_roll)
+			output.append([losser,winner,homeWin] + features)
 		
-		stats[winner]["wins"].append(1)
-		stats[winner]["points"].append(winnerPts)
-		stats[winner]["diff"].append(diff)
-		stats[winner]["allowed"].append(-losserPts)
-
-		stats[losser]["wins"].append(0)
-		stats[losser]["points"].append(losserPts)
-		stats[losser]["diff"].append(-diff)
-		stats[losser]["allowed"].append(-winnerPts)
+		common.add_to_stats(stats, winner, 1, winnerPts, diff, -losserPts)
+		common.add_to_stats(stats, losser, 0, losserPts, -diff, -winnerPts)
 	
 	return output
 
@@ -81,7 +56,7 @@ def transform_csv(rolling_windows, train_or_test, years):
 			os.remove(output_filename)
 
 		with open(output_filename, "a") as output_f:
-			output_f.write("away,home,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff,home_win\n")
+			output_f.write("away,home,home_win,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff\n")
 
 		for f in years:
 			with open(f"input\\{f}.csv", "r") as input_f:

@@ -1,5 +1,7 @@
 import os
 
+import common
+
 import pandas as pd
 import numpy as np
 
@@ -20,19 +22,19 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	# model = GaussianNB()
-	# param_grid = {}
+	model = GaussianNB()
+	param_grid = {}
 
 	# model = SVC(probability=True)
 	# param_grid = {
 	# 	"C": [0.001, 0.01, 0.1, 1, 10]
 	# }
 
-	model = MLPClassifier(max_iter=500)
-	param_grid = {
-		"alpha": [0.0001, 0.001, 0.01],
-		"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
-	}
+	# model = MLPClassifier(max_iter=500)
+	# param_grid = {
+	# 	"alpha": [0.0001, 0.001, 0.01],
+	# 	"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
+	# }
 	
 	return model, param_grid
 
@@ -93,13 +95,7 @@ if __name__ == '__main__':
 		if os.path.isfile(file_model):
 			os.remove(file_model)
 
-		data = pd.read_csv(file_training)
-
-		print("processing", file_training)
-		print("data shape", data.shape)
-
-		y = data.home_win
-		X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)
+		X, y = common.read_data_from_file(file_training)
 		
 		grid = train_model(X, y, 10)
 
