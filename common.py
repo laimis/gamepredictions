@@ -39,9 +39,9 @@ def get_feature_headers():
 
 def calc_stats(stats, team, weeks_to_roll):
 
-		pct = sum(stats[team]["wins"][-weeks_to_roll:]) / weeks_to_roll
-		avgPts = sum(stats[team]["points"][-weeks_to_roll:]) / weeks_to_roll
-		allowed = sum(stats[team]["allowed"][-weeks_to_roll:]) / weeks_to_roll
+		pct = sum(stats[team]["wins"][-weeks_to_roll:]) / len(stats[team]["wins"][-weeks_to_roll:])
+		avgPts = sum(stats[team]["points"][-weeks_to_roll:]) / len(stats[team]["points"][-weeks_to_roll:])
+		allowed = sum(stats[team]["allowed"][-weeks_to_roll:]) / len(stats[team]["allowed"][-weeks_to_roll:])
 
 		return pct, avgPts, allowed
 
