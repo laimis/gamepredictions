@@ -58,6 +58,8 @@ def predict_games(input_f, stats, models):
 		for f in features[0]:
 			output.append(f"{f:.2f}")
 		
+		output.append(votes[away])
+		output.append(votes[home])
 		output.append(f"{away_confidence:.2f}")
 		output.append(f"{home_confidence:.2f}")
 		
