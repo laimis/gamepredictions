@@ -10,9 +10,22 @@ def read_data_from_file(filepath):
 	data = pd.read_csv(filepath)
 
 	y = data.home_win
-	X = data.drop(["home_win", "home", "away"], axis=1, inplace=False)
+	X = data.drop(["year", "week", "home_win", "home", "away"], axis=1, inplace=False)
 
 	return X, y
+
+def read_data_groupedby_week(filepath):
+
+	data = pd.read_csv(filepath)
+
+	grouped = {}
+	for name, group in data.groupby(['year', 'week']):
+		y = group.home_win
+		X = group.drop(["year", "week", "home_win", "home", "away"], axis=1, inplace=False)
+
+		grouped[name] = (X, y)
+
+	return grouped
 
 def add_to_stats(stats, team, win_or_loss, pts, allowed):
 
@@ -35,7 +48,7 @@ def calc_features(stats, home, away, weeks_to_roll):
 def get_feature_headers():
 	# return "away,home,home_win,away_pct,home_pct,away_pts,home_pts,away_diff,home_diff\n"
 	# return "away,home,home_win,away_pct,home_pct\n"
-	return "away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
+	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
 
 def calc_stats(stats, team, weeks_to_roll):
 

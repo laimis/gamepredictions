@@ -4,7 +4,7 @@ import os
 import numpy as np
 import common
 
-def transform_input_to_output(input_f, weeks_to_roll):
+def transform_input_to_output(year, input_f, weeks_to_roll):
 
 	stats = {}
 	output = []
@@ -36,9 +36,9 @@ def transform_input_to_output(input_f, weeks_to_roll):
 
 		week = int(row[0])
 		
-		if week > weeks_to_roll:
+		if week > weeks_to_roll and week < 17:
 			features = common.calc_features(stats, home, away, weeks_to_roll)
-			output.append([losser,winner,homeWin] + features)
+			output.append([year,week,losser,winner,homeWin] + features)
 		
 		common.add_to_stats(stats, winner, 1, winnerPts, losserPts)
 		common.add_to_stats(stats, losser, 0, losserPts, winnerPts)
@@ -61,7 +61,7 @@ def transform_csv(rolling_windows, train_or_test, years):
 		for f in years:
 			with open(f"input\\{f}.csv", "r") as input_f:
 				with open(output_filename, "a", newline='') as output_f:
-					output = transform_input_to_output(input_f, weeks_to_roll)
+					output = transform_input_to_output(f, input_f, weeks_to_roll)
 					csv_writer = csv.writer(output_f)
 					csv_writer.writerows(output)
 
