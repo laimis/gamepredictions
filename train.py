@@ -11,6 +11,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 import json
 
@@ -24,6 +25,11 @@ def get_model_and_grid():
 
 	model = GaussianNB()
 	param_grid = {}
+
+	# model = RandomForestClassifier()
+	# param_grid = {
+	# 	"n_estimators": [1, 10, 50, 100]
+	# }
 
 	# model = SVC(probability=True)
 	# param_grid = {
