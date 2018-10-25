@@ -5,21 +5,24 @@ import json
 
 import common
 
-def load_games(input_f):
+def load_games(input_f, up_to_week):
 
 	stats = {}
 	
 	csv_reader = csv.reader(input_f)
 	
 	for row in csv_reader:
+		week = int(row[0])
+
 		winner = row[4]
 		losser = row[6]
 
 		winnerPts = int(row[8])
 		losserPts = int(row[9])
 
-		common.add_to_stats(stats, winner, 1, winnerPts, losserPts)
-		common.add_to_stats(stats, losser, 0, losserPts, winnerPts)
+		if week < up_to_week:
+			common.add_to_stats(stats, winner, 1, winnerPts, losserPts)
+			common.add_to_stats(stats, losser, 0, losserPts, winnerPts)
 
 	return stats
 
@@ -80,7 +83,7 @@ for x in [6]:
 team_record = {}
 
 with open(f"input\\2018.csv", "r") as input_f:
-	stats = load_games(input_f)
+	stats = load_games(input_f, 7)
 
 with open("input\\predict_7.csv", "r") as input_f:
 	predictions = predict_games(input_f, stats, models)
