@@ -18,8 +18,9 @@ def transform_input_to_output(year, input_f, weeks_to_roll):
 		winnerPts = int(row[8])
 		losserPts = int(row[9])
 
-		if winnerPts == losserPts:
-			continue
+		# WHAT TO DO WITH TIESw
+		# if winnerPts == losserPts:
+		# 	continue
 		
 		diff = int(winnerPts) - int(losserPts)
 

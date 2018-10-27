@@ -32,8 +32,8 @@ def predict_games(input_f, stats, models):
 	
 	predictions = []
 	for row in csv_reader:
-		away = row[0]
-		home = row[1]
+		away = row[4]
+		home = row[6]
 
 		away_confidence = 0
 		home_confidence = 0
@@ -85,7 +85,7 @@ team_record = {}
 with open(f"input\\2018.csv", "r") as input_f:
 	stats = load_games(input_f, 7)
 
-with open("input\\predict_7.csv", "r") as input_f:
+with open("input\\predict_8.csv", "r") as input_f:
 	predictions = predict_games(input_f, stats, models)
 
 	dict = {"data": predictions}

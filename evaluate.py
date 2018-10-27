@@ -58,4 +58,4 @@ for key in groups:
 	if total_guesses > 0:
 		pct = correct_guesses / total_guesses
 
-	print(key,accuracy,correct_guesses,pct)
+	print(f"{key} {accuracy:.2f} {correct_guesses}/{total_guesses}")
