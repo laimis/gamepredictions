@@ -35,8 +35,6 @@ for key in groups:
 	
 	X, y = groups[key]
 
-	# print(key, X.shape, y.shape)
-	
 	y_predicted = model.predict(X)
 
 	probabilities = model.predict_proba(X)
