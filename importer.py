@@ -12,39 +12,19 @@ def transform_input_to_output(year, input_f, weeks_to_roll):
 	csv_reader = csv.reader(input_f)
 
 	for row in csv_reader:
-		winner = row[4]
-		losser = row[6]
-
-		winnerPts = int(row[8])
-		losserPts = int(row[9])
+		parsed = common.RowDef(row)
 
 		# WHAT TO DO WITH TIESw
 		# if winnerPts == losserPts:
 		# 	continue
 		
-		diff = int(winnerPts) - int(losserPts)
-
-		isHomeWinner = row[5] != "@"
-
-		away = winner
-		home = losser
-		homeWin = 0
-
-		if isHomeWinner:
-			away = losser
-			home = winner
-			homeWin = 1
-
-		week = int(row[0])
+		if parsed.week > weeks_to_roll and parsed.week < 17:
+			features = common.calc_features(stats, parsed, weeks_to_roll)
+			output.append([year,parsed.week,parsed.away,parsed.home,parsed.homeWin] + features)
 		
-		if week > weeks_to_roll and week < 17:
-			features = common.calc_features(stats, home, away, weeks_to_roll)
-			output.append([year,week,losser,winner,homeWin] + features)
-		
-		common.add_to_stats(stats, winner, 1, winnerPts, losserPts)
-		common.add_to_stats(stats, losser, 0, losserPts, winnerPts)
+		common.add_to_stats(stats, parsed)
 	
-	return output
+	return output, stats
 
 
 def transform_csv(rolling_windows, train_or_test, years):
@@ -62,7 +42,7 @@ def transform_csv(rolling_windows, train_or_test, years):
 		for f in years:
 			with open(f"input\\{f}.csv", "r") as input_f:
 				with open(output_filename, "a", newline='') as output_f:
-					output = transform_input_to_output(f, input_f, weeks_to_roll)
+					output, _ = transform_input_to_output(f, input_f, weeks_to_roll)
 					csv_writer = csv.writer(output_f)
 					csv_writer.writerows(output)
 
