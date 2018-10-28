@@ -50,6 +50,6 @@ if __name__ == '__main__':
 	
 	rolling_windows = common.weeks_to_try()
 	
-	transform_csv(rolling_windows, "train", [2014,2015,2016])
+	transform_csv(rolling_windows, "train", [2013,2014,2015,2016])
 	
 	transform_csv(rolling_windows, "test", [2017,2018])
