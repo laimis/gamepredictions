@@ -82,13 +82,13 @@ def get_feature_headers():
 	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards,home_yards\n"
 
 def calc_stats(stats, team, weeks_to_roll):
+ 
+	pct = sum(stats[team]["wins"][-weeks_to_roll:]) / len(stats[team]["wins"][-weeks_to_roll:])
+	avgPts = sum(stats[team]["points"][-weeks_to_roll:]) / len(stats[team]["points"][-weeks_to_roll:])
+	allowed = sum(stats[team]["allowed"][-weeks_to_roll:]) / len(stats[team]["allowed"][-weeks_to_roll:])
+	yards = sum(stats[team]["yards"][-weeks_to_roll:]) / len(stats[team]["yards"][-weeks_to_roll:]) / 100
 
-		pct = sum(stats[team]["wins"][-weeks_to_roll:]) / len(stats[team]["wins"][-weeks_to_roll:])
-		avgPts = sum(stats[team]["points"][-weeks_to_roll:]) / len(stats[team]["points"][-weeks_to_roll:])
-		allowed = sum(stats[team]["allowed"][-weeks_to_roll:]) / len(stats[team]["allowed"][-weeks_to_roll:])
-		yards = sum(stats[team]["yards"][-weeks_to_roll:]) / len(stats[team]["yards"][-weeks_to_roll:]) / 100
-
-		return pct, avgPts, allowed, yards
+	return pct, avgPts, allowed, yards
 
 
 def load_model(filepath):
