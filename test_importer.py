@@ -1,6 +1,7 @@
 import unittest
 
 import importer
+import common
 
 class TestImport(unittest.TestCase):
 
@@ -34,18 +35,18 @@ class TestImport(unittest.TestCase):
 			32, len(self.stats), "stats count should match"
 		)
 
-	keys_per_team = ["points", "wins", "allowed", "yards"]
-
 	def test_validate_stats(self):
+
+		tracked_stats = common.get_tracked_stats()
 
 		for team in self.stats:
 			team_stats = self.stats[team]
 		
-			for idx,k in enumerate(self.keys_per_team):
+			for idx,k in enumerate(tracked_stats):
 				self.assertTrue(k in team_stats, f"{k} present for {team}")
 
 				self.assertEqual(
-					len(team_stats[self.keys_per_team[idx]]), len(team_stats[self.keys_per_team[idx-1]]),
+					len(team_stats[tracked_stats[idx]]), len(team_stats[tracked_stats[idx-1]]),
 					f"unequal lenght stats for {team}"
 				)
 
@@ -54,12 +55,12 @@ class TestImport(unittest.TestCase):
 		team = "Seattle Seahawks"
 
 		verify = {
-			"wins": 12, "points": 394, "allowed": 254, "yards": 6012
+			"wins": 12, "points": 394, "allowed": 254, "yards": 6012, "yards_allowed": 4274
 		}
 
 		team_stats = self.stats[team]
 
-		for s in verify:
+		for s in team_stats:
 			self.assertEqual(verify[s], sum(team_stats[s]), f"{s} should match for {team}")
 
 if __name__ == '__main__':

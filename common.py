@@ -57,38 +57,40 @@ def read_data_groupedby_week(filepath):
 
 	return grouped
 
-def add_to_stats(stats, row_def):
+def get_tracked_stats():
+	return ["wins", "points", "allowed", "yards", "yards_allowed"]
 
-	def add_to_stats_internal(stats, team, win_or_loss, pts, allowed, yards):
+def add_to_stats(stats, rd):
+
+	def add_to_stats_internal(stats, team, to_add):
+
 		if team not in stats:
-			stats[team] = {"wins":[], "points":[], "allowed":[], "yards":[]}
+			stats[team] = dict([(x,[]) for x in get_tracked_stats()])
 			
-		stats[team]["wins"].append(win_or_loss)
-		stats[team]["points"].append(pts)
-		stats[team]["allowed"].append(allowed)
-		stats[team]["yards"].append(yards)
+		for idx,s in enumerate(get_tracked_stats()):
+			stats[team][s].append(to_add[idx])
 
-	add_to_stats_internal(stats, row_def.home, row_def.homeWin, row_def.homePts, row_def.awayPts, row_def.homeYards)
-	add_to_stats_internal(stats, row_def.away, 1 - row_def.homeWin, row_def.awayPts, row_def.homePts, row_def.awayYards)
+	add_to_stats_internal(stats, rd.home, [rd.homeWin, rd.homePts, rd.awayPts, rd.homeYards, rd.awayYards])
+	add_to_stats_internal(stats, rd.away, [1 - rd.homeWin, rd.awayPts, rd.homePts, rd.awayYards, rd.homeYards])
 
 def calc_features(stats, row_def, weeks_to_roll):
 
-	homePct, homePts, homeAllowed, homeYards = calc_stats(stats, row_def.home, weeks_to_roll)
-	awayPct, awayPts, awayAllowed, awayYards = calc_stats(stats, row_def.away, weeks_to_roll)
+	home_pct, home_pts, home_allowed, home_yards, home_yards_allowed = calc_stats(stats, row_def.home, weeks_to_roll)
+	away_pct, away_pts, away_allowed, away_yards, away_yards_allowed = calc_stats(stats, row_def.away, weeks_to_roll)
 
-	return [awayPct, homePct, awayPts - awayAllowed, homePts - homeAllowed, awayYards, homeYards]
+	return [away_pct, home_pct, away_pts - away_allowed, home_pts - home_allowed, away_yards / 100, home_yards / 100]
 
 def get_feature_headers():
 	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards,home_yards\n"
 
 def calc_stats(stats, team, weeks_to_roll):
  
-	pct = sum(stats[team]["wins"][-weeks_to_roll:]) / len(stats[team]["wins"][-weeks_to_roll:])
-	avgPts = sum(stats[team]["points"][-weeks_to_roll:]) / len(stats[team]["points"][-weeks_to_roll:])
-	allowed = sum(stats[team]["allowed"][-weeks_to_roll:]) / len(stats[team]["allowed"][-weeks_to_roll:])
-	yards = sum(stats[team]["yards"][-weeks_to_roll:]) / len(stats[team]["yards"][-weeks_to_roll:]) / 100
+	def do_calculation(team_stats, stat, length):
+		return sum(team_stats[stat][-weeks_to_roll:]) / len(team_stats[stat][-weeks_to_roll:])
 
-	return pct, avgPts, allowed, yards
+	team_stats = stats[team]
+
+	return tuple([do_calculation(team_stats, x, weeks_to_roll) for x in get_tracked_stats()])
 
 
 def load_model(filepath):
