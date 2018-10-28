@@ -33,7 +33,7 @@ class RowDef:
 			self.homeWin = 1
 
 def weeks_to_try():
-	return [5,6]
+	return [6]
 
 def read_data_from_file(filepath):
 
@@ -83,8 +83,8 @@ def calc_features(stats, row_def, weeks_to_roll):
 		home_pct,
 		away_pts - away_allowed,
 		home_pts - home_allowed,
-		(away_yards - away_yards_allowed) / 100,
-		(home_yards - home_yards_allowed) / 100
+		(away_yards) / 100,
+		(home_yards) / 100
 	]
 
 def get_feature_headers():
@@ -122,12 +122,12 @@ def confidence_stats(model, X, y):
 	probabilities = model.predict_proba(X)
 
 	stats = []
-	for level in [0.7, 0.75, 0.9]:
+	for level in [0.65, 0.7, 0.75, 0.8, 0.9]:
 		stat = calc_confidence_stats(y, predictions, probabilities, level)
 
 		if stat[1] == 0:
 			stats.append(f"no pred with confidence {stat[2]}")
 		else:
-			stats.append(f"{stat[2]}: {stat[0]}/{stat[1]}, {(stat[0]/stat[1]):2f}")
+			stats.append(f"{stat[2]}: {stat[0]}/{stat[1]}, {(stat[0]/stat[1]):.2f}")
 
 	return stats
