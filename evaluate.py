@@ -5,6 +5,8 @@ from sklearn.metrics import confusion_matrix
 import pandas as pd
 import numpy as np
 
+import json
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -72,9 +74,6 @@ def weekly_breakdown(weeks_to_roll):
 		if total_guesses > 0:
 			pct = correct_guesses / total_guesses
 
-		print(f"{key} {accuracy:.2f} {manual_accuracy:.2f}, above {threshold}: {correct_guesses}/{total_guesses}")
-
-		# show_confusion(y, y_predicted)
 
 def evaluate(weeks_to_roll):
 
@@ -84,14 +83,21 @@ def evaluate(weeks_to_roll):
 
 	accuracy, manual_accuracy = calculate_accuracy(model, X, y)
 
-	print(f"{weeks_to_roll} accuracy: {accuracy}, manual {manual_accuracy:.2f}")
-
 	stats = common.confidence_stats(model, X, y)
 
+	output = [weeks_to_roll, accuracy, "{}"]
+
 	for s in stats:
-		print(s)
+		output.append(s)
 
+	return output
+
+data = []
 for w in common.weeks_to_try():
-	evaluate(w)
+	data.append(evaluate(w))
 
+dict = {"data": data}
+
+with open("output\\html\\testdata.json", 'w') as summary_file:
+	json.dump(dict, summary_file)
 # weekly_breakdown(6)

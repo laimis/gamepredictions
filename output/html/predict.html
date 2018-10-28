@@ -42,8 +42,11 @@
 	<script>
 		$(document).ready(function() {
 			$('#predictions').DataTable( {
-				"pageLength": 20,
-				"ajax": 'predictions.json'
+				pageLength: 20,
+				ajax: 'predictions.json',
+				searching: false,
+				paging: false,
+				info: false
 			} );
 		} );
 	</script>

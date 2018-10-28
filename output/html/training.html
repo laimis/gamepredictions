@@ -16,7 +16,22 @@
   <body>
 	
 	<div class="container">
-		<table id="models">
+		<table id="training">
+			<thead>
+				<tr>
+					<th>Model</th>
+					<th>Best Score</th>
+					<th>Best Params</th>
+					<th>Confidence 70</th>
+					<th>Confidence 80</th>
+					<th>Confidence 90</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	<div>&nbsp;</div>
+	<div class="container">
+		<table id="test">
 			<thead>
 				<tr>
 					<th>Model</th>
@@ -38,8 +53,18 @@
 	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 	<script>
 		$(document).ready(function() {
-			$('#models').DataTable( {
-				"ajax": 'trainingdata.json'
+			$('#training').DataTable( {
+				ajax: 'trainingdata.json',
+				searching: false,
+				paging: false,
+				info: false
+			} );
+
+			$('#test').DataTable( {
+				"ajax": 'testdata.json',
+				searching: false,
+				paging: false,
+				info: false
 			} );
 		} );
 	</script>
