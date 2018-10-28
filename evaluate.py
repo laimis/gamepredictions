@@ -59,20 +59,9 @@ def weekly_breakdown(weeks_to_roll):
 
 		accuracy, manual_accuracy = calculate_accuracy(model, X, y)
 
-		correct_guesses = 0
-		total_guesses = 0
-		threshold = 0.8
+		stats = common.confidence_stats(model, X, y.values)
 
-		for index,_ in enumerate(y_predicted):
-			prob = max(y_probabilities[index])
-			if prob >= threshold:
-				total_guesses += 1
-				if y_predicted[index] == y.values[index]:
-					correct_guesses += 1
-
-		pct = 0
-		if total_guesses > 0:
-			pct = correct_guesses / total_guesses
+		print(f"{key}:{accuracy:.2f} {' '.join(stats)}")
 
 
 def evaluate(weeks_to_roll):
@@ -100,4 +89,5 @@ dict = {"data": data}
 
 with open("output\\html\\testdata.json", 'w') as summary_file:
 	json.dump(dict, summary_file)
-# weekly_breakdown(6)
+
+weekly_breakdown(6)

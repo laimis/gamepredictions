@@ -78,7 +78,14 @@ def calc_features(stats, row_def, weeks_to_roll):
 	home_pct, home_pts, home_allowed, home_yards, home_yards_allowed = calc_stats(stats, row_def.home, weeks_to_roll)
 	away_pct, away_pts, away_allowed, away_yards, away_yards_allowed = calc_stats(stats, row_def.away, weeks_to_roll)
 
-	return [away_pct, home_pct, away_pts - away_allowed, home_pts - home_allowed, away_yards / 100, home_yards / 100]
+	return [
+		away_pct,
+		home_pct,
+		away_pts - away_allowed,
+		home_pts - home_allowed,
+		(away_yards - away_yards_allowed) / 100,
+		(home_yards - home_yards_allowed) / 100
+	]
 
 def get_feature_headers():
 	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards,home_yards\n"
@@ -115,12 +122,12 @@ def confidence_stats(model, X, y):
 	probabilities = model.predict_proba(X)
 
 	stats = []
-	for level in [0.7, 0.8, 0.9]:
+	for level in [0.7, 0.75, 0.9]:
 		stat = calc_confidence_stats(y, predictions, probabilities, level)
 
 		if stat[1] == 0:
-			stats.append(f"no correct pred with confidence {stat[2]}")
+			stats.append(f"no pred with confidence {stat[2]}")
 		else:
-			stats.append(f"{stat[2]}: {stat[0]}/{stat[1]}, {stat[0]/stat[1]:2f}")
+			stats.append(f"{stat[2]}: {stat[0]}/{stat[1]}, {(stat[0]/stat[1]):2f}")
 
 	return stats
