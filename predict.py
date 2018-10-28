@@ -67,7 +67,7 @@ for x in [6]:
 
 team_record = {}
 
-with open("input\\predict_8.csv", "r") as input_f:
+with open("input\\predict_7.csv", "r") as input_f:
 	predictions = predict_games(input_f, models)
 
 	dict = {"data": predictions}
