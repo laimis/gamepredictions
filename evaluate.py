@@ -21,8 +21,11 @@ def show_confusion(y, y_predicted):
 	sns.heatmap(mat.T, annot=True, fmt='d')
 	plt.show()
 
-def calculate_accuracy(y, y_predicted, y_probs):
+def calculate_accuracy(model, X, y):
 	
+	y_predicted = model.predict(X)
+	y_probs = model.predict_proba(X)
+
 	total = 0
 	correct = 0
 
@@ -52,10 +55,7 @@ def weekly_breakdown(weeks_to_roll):
 		
 		X, y = groups[key]
 
-		y_predicted = model.predict(X)
-		y_probabilities = model.predict_proba(X)
-
-		accuracy, manual_accuracy = calculate_accuracy(y, y_predicted, y_probabilities)
+		accuracy, manual_accuracy = calculate_accuracy(model, X, y)
 
 		correct_guesses = 0
 		total_guesses = 0
@@ -82,15 +82,16 @@ def evaluate(weeks_to_roll):
 
 	model = common.load_model(model_file(weeks_to_roll))
 
-	y_predicted = model.predict(X)
-
-	y_probs = model.predict_proba(X)
-
-	accuracy, manual_accuracy = calculate_accuracy(y, y_predicted, y_probs)
+	accuracy, manual_accuracy = calculate_accuracy(model, X, y)
 
 	print(f"{weeks_to_roll} accuracy: {accuracy}, manual {manual_accuracy:.2f}")
+
+	stats = common.confidence_stats(model, X, y)
+
+	for s in stats:
+		print(s)
 
 for w in common.weeks_to_try():
 	evaluate(w)
 
-weekly_breakdown(6)
+# weekly_breakdown(6)

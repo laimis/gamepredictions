@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from sklearn.externals import joblib
 
@@ -93,3 +94,31 @@ def calc_stats(stats, team, weeks_to_roll):
 def load_model(filepath):
 
 	return joblib.load(filepath)
+
+def confidence_stats(model, X, y):
+
+	def calc_confidence_stats(y, predicted, probabilities, level):
+		correct_count = 0
+		total_count = 0
+
+		for i,_ in enumerate(predicted):
+			if np.max(probabilities[i]) >= level:
+				total_count += 1
+				if y[i] == predicted[i]:
+					correct_count += 1
+
+		return correct_count, total_count, level
+
+	predictions = model.predict(X)
+	probabilities = model.predict_proba(X)
+
+	stats = []
+	for level in [0.7, 0.8, 0.9]:
+		stat = calc_confidence_stats(y, predictions, probabilities, level)
+
+		if stat[1] == 0:
+			stats.append(f"no correct pred with confidence {stat[2]}")
+		else:
+			stats.append(f"{stat[2]}: {stat[0]}/{stat[1]}, {stat[0]/stat[1]:2f}")
+
+	return stats

@@ -58,37 +58,6 @@ def save_model(model, output_path):
 
 	joblib.dump(model, output_path)
 
-def confidence_stats(y, predicted, confidence, interval):
-
-	correct_count = 0
-	total_count = 0
-
-	for i,_ in enumerate(predicted):
-		conf = confidence[i]
-		if np.max(conf) >= interval:
-			total_count += 1
-			if y[i] == predicted[i]:
-				correct_count += 1
-
-	return correct_count, total_count, interval
-
-
-def evaluate(model, X, y):
-
-	predictions = model.predict(X)
-	confidence = model.predict_proba(X)
-
-	stats = []
-	for level in [0.7, 0.8, 0.9]:
-		stat = confidence_stats(y, predictions, confidence, level)
-
-		if stat[1] == 0:
-			stats.append(f"no correct pred with confidence {stat[2]}")
-		else:
-			stats.append(f"{stat[2]}: {stat[0]}, {stat[0]/stat[1]:2f}")
-
-	return stats
-
 if __name__ == '__main__':
 	
 	models = []
@@ -107,7 +76,7 @@ if __name__ == '__main__':
 
 		model = grid.best_estimator_
 
-		stats = evaluate(model, X, y)
+		stats = common.confidence_stats(model, X, y)
 			
 		save_model(model, file_model)
 
