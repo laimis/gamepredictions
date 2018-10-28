@@ -39,7 +39,7 @@ def get_model_and_grid():
 	# model = MLPClassifier(max_iter=500)
 	# param_grid = {
 	# 	"alpha": [0.0001, 0.001, 0.01],
-	# 	"hidden_layer_sizes": [(10), (100), (200), (100, 100)],
+	# 	"hidden_layer_sizes": [(10), (50), (50, 100), (50, 10)],
 	# }
 	
 	return model, param_grid

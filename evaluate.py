@@ -74,7 +74,7 @@ def weekly_breakdown(weeks_to_roll):
 
 		print(f"{key} {accuracy:.2f} {manual_accuracy:.2f}, above {threshold}: {correct_guesses}/{total_guesses}")
 
-		show_confusion(y, y_predicted)
+		# show_confusion(y, y_predicted)
 
 def evaluate(weeks_to_roll):
 

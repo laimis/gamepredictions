@@ -17,6 +17,7 @@ def predict_games(input_f, models):
 
 		away_confidence = 0
 		home_confidence = 0
+		winner = row_def.home
 
 		votes = {row_def.away: 0, row_def.home: 0}
 
@@ -33,19 +34,20 @@ def predict_games(input_f, models):
 			if predict[0] == 0:
 				votes[row_def.away]+=1
 				away_confidence = max(away_confidence, confidence)
+				winner = row_def.away
 			else:
 				votes[row_def.home]+=1
 				home_confidence = max(home_confidence, confidence)
+				winner = row_def.home
 		
-		output = [row_def.away, row_def.home]
+		output = [f"{row_def.away} @ {row_def.home}", winner]
 
+		confidence = max(away_confidence, home_confidence)
+
+		output.append(f"{confidence:.2f}")
+		
 		for f in features[0]:
 			output.append(f"{f:.2f}")
-		
-		output.append(votes[row_def.away])
-		output.append(votes[row_def.home])
-		output.append(f"{away_confidence:.2f}")
-		output.append(f"{home_confidence:.2f}")
 		
 		predictions.append(output)
 	
@@ -55,19 +57,20 @@ models = []
 
 for x in [6]:
 	
+	model = common.load_model(f"models\\{x}_model.pkl")
+	_, stats = importer.generate_output_and_stats(2018, f"input\\2018.csv", x)
+
 	desc = {}
-	desc["model"] = common.load_model(f"models\\{x}_model.pkl")
-	desc["weeks"] = x
 	
-	with open(f"input\\2018.csv", "r") as input_f:
-		_, stats = importer.transform_input_to_output(2018, input_f, x)
-		desc["stats"] = stats
+	desc["model"] = model
+	desc["weeks"] = x
+	desc["stats"] = stats
 
 	models.append(desc)
 
 team_record = {}
 
-with open("input\\predict_7.csv", "r") as input_f:
+with open("input\\predict_8.csv", "r") as input_f:
 	predictions = predict_games(input_f, models)
 
 	dict = {"data": predictions}
