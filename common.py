@@ -83,8 +83,8 @@ def calc_features(stats, row_def, weeks_to_roll):
 		home_pct,
 		away_pts - away_allowed,
 		home_pts - home_allowed,
-		away_yards - away_yards_allowed,
-		home_yards - home_yards_allowed,
+		away_yards,
+		home_yards,
 	]
 
 def get_feature_headers():
