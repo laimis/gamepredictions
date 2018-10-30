@@ -54,6 +54,7 @@ def predict_games(input_f, models):
 	return predictions
 
 models = []
+week = 9
 
 for x in [6]:
 	
@@ -70,7 +71,7 @@ for x in [6]:
 
 team_record = {}
 
-with open("input\\predict_8.csv", "r") as input_f:
+with open(f"input\\predict_{week}.csv", "r") as input_f:
 	predictions = predict_games(input_f, models)
 
 	dict = {"data": predictions}
