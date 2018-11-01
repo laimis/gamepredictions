@@ -40,7 +40,7 @@ def read_data_from_file(filepath):
 	data = pd.read_csv(filepath)
 
 	y = data.home_win
-	X = data.drop(["year", "week", "home_win", "home", "away"], axis=1, inplace=False)
+	X = data.drop(get_column_names_for_removal(), axis=1, inplace=False)
 
 	return X, y
 
@@ -51,7 +51,7 @@ def read_data_groupedby_week(filepath):
 	grouped = {}
 	for name, group in data.groupby(['year', 'week']):
 		y = group.home_win
-		X = group.drop(["year", "week", "home_win", "home", "away"], axis=1, inplace=False)
+		X = group.drop(get_column_names_for_removal(), axis=1, inplace=False)
 
 		grouped[name] = (X, y)
 
@@ -59,6 +59,9 @@ def read_data_groupedby_week(filepath):
 
 def get_tracked_stats():
 	return ["wins", "points", "allowed", "yards", "yards_allowed"]
+
+def get_column_names_for_removal():
+	return ["year", "week", "home_win", "home", "away"]
 
 def add_to_stats(stats, rd):
 
