@@ -29,7 +29,7 @@ def calculate_accuracy(model, X, y):
 		total+=1
 		winner = np.argsort(y_probs[index])[-1]
 
-		if max(y_probs[index]) < 0.55 and winner == 0:
+		if max(y_probs[index]) < 0.60 and winner == 0:
 			winner = 1
 
 		if y.values[index] == winner:
