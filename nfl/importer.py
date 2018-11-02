@@ -4,6 +4,7 @@ import os
 import numpy as np
 import common
 import nfl.parser as parser
+import nfl.features as features
 
 def get_tracked_stats():
 	return ["wins", "points", "allowed", "yards", "yards_allowed"]
@@ -24,10 +25,10 @@ def generate_output_and_stats(year, file_path, weeks_to_roll):
 			# 	continue
 			
 			if game_info.week > weeks_to_roll and game_info.week < 17:
-				features = common.calc_features(stats, game_info, weeks_to_roll, get_tracked_stats())
-				output.append([year,game_info.week,game_info.away,game_info.home,game_info.homeWin] + features)
+				calculated_features = features.calc_features(stats, game_info, weeks_to_roll, get_tracked_stats())
+				output.append([year,game_info.week,game_info.away,game_info.home,game_info.homeWin] + calculated_features)
 			
-			common.add_to_stats(stats, game_info, get_tracked_stats())
+			features.add_to_stats(stats, game_info, get_tracked_stats())
 	
 	return output, stats
 
