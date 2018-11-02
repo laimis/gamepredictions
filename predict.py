@@ -4,17 +4,18 @@ import os
 import json
 
 import common
-import importer
-import nfl
+import nfl.importer as importer
+import nfl.parser as parser
+import nfl.features as features
 
-def predict_games(input_f, models):
+def predict_games(input_f, models, tracked_stats):
 
 	csv_reader = csv.reader(input_f)
 	
 	predictions = []
 	for row in csv_reader:
 		
-		game_info = nfl.NFLGame(row)
+		game_info = parser.NFLGame(row)
 
 		away_confidence = 0
 		home_confidence = 0
@@ -27,10 +28,10 @@ def predict_games(input_f, models):
 			weeks_to_roll = model_def["weeks"]
 			stats = model_def["stats"]
 
-			features = [common.calc_features(stats, game_info, weeks_to_roll)]
+			calculated_features = [features.calc_features(stats, game_info, weeks_to_roll, tracked_stats)]
 
-			predict = model.predict(features)
-			confidence = max(model.predict_proba(features)[0])
+			predict = model.predict(calculated_features)
+			confidence = max(model.predict_proba(calculated_features)[0])
 			
 			if predict[0] == 0:
 				votes[game_info.away]+=1
@@ -47,7 +48,7 @@ def predict_games(input_f, models):
 
 		output.append(f"{confidence:.2f}")
 		
-		for f in features[0]:
+		for f in calculated_features[0]:
 			output.append(f"{f:.2f}")
 		
 		predictions.append(output)
@@ -73,7 +74,7 @@ for x in [6]:
 team_record = {}
 
 with open(f"input\\nfl\\predict_{week}.csv", "r") as input_f:
-	predictions = predict_games(input_f, models)
+	predictions = predict_games(input_f, models, importer.get_tracked_stats())
 
 	dict = {"data": predictions}
 

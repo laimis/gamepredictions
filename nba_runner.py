@@ -76,7 +76,7 @@ def run_import():
 				importer.transform_csv(input_file, output_f, year)
 
 	years_train = [2015, 2016]
-	years_test = [2017]
+	years_test = [2017, 2018]
 
 	generate_features(years_train, "train")
 	generate_features(years_test, "test")
