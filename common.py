@@ -47,7 +47,7 @@ def confidence_stats(model, X, y):
 	probabilities = model.predict_proba(X)
 
 	stats = []
-	for level in [0.65, 0.7, 0.75, 0.8, 0.9]:
+	for level in [0.7, 0.75, 0.8, 0.85, 0.9]:
 		stat = calc_confidence_stats(y, predictions, probabilities, level)
 
 		if stat[1] == 0:
