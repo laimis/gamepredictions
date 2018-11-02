@@ -12,11 +12,6 @@ import matplotlib.pyplot as plt
 
 import common
 
-def test_file(weeks_to_roll):
-	return f"output\\test\\{weeks_to_roll}.csv"
-
-def model_file(weeks_to_roll):
-	return f"models\\{weeks_to_roll}_model.pkl"
 
 def show_confusion(y, y_predicted):
 	mat = confusion_matrix(y_true=y, y_pred=y_predicted)
@@ -47,11 +42,8 @@ def calculate_accuracy(model, X, y):
 
 	return accuracy, manual_accuracy
 
-def weekly_breakdown(weeks_to_roll):
+def weekly_breakdown(groups, model):
 	print("by week")
-
-	groups = common.read_data_groupedby_week(test_file(weeks_to_roll))
-	model = common.load_model(model_file(weeks_to_roll))
 
 	for key in groups:
 		
@@ -64,11 +56,7 @@ def weekly_breakdown(weeks_to_roll):
 		print(f"{key}:{accuracy:.2f} {' '.join(stats)}")
 
 
-def evaluate(weeks_to_roll):
-
-	X, y = common.read_data_from_file(test_file(weeks_to_roll))
-
-	model = common.load_model(model_file(weeks_to_roll))
+def evaluate(result_name, model, X, y):
 
 	accuracy, manual_accuracy = calculate_accuracy(model, X, y)
 
@@ -82,12 +70,21 @@ def evaluate(weeks_to_roll):
 	return output
 
 data = []
-for w in common.weeks_to_try():
-	data.append(evaluate(w))
+
+test_file = f"output\\test\\nfl\\6.csv"
+model_file = f"models\\nfl\\6_model.pkl"
+output_file = "output\\html\\testdata.json"
+
+model = common.load_model(model_file)
+X, y = common.read_data_from_file(test_file)
+
+data.append(evaluate(w, model, X, y))
 
 dict = {"data": data}
 
-with open("output\\html\\testdata.json", 'w') as summary_file:
+with open(output_file, 'w') as summary_file:
 	json.dump(dict, summary_file)
 
-weekly_breakdown(6)
+groups = common.read_data_groupedby_week(test_file)
+
+weekly_breakdown(groups, model)

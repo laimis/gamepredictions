@@ -28,28 +28,33 @@ def generate_output_and_stats(year, file_path, weeks_to_roll):
 	return output, stats
 
 
-def transform_csv(rolling_windows, train_or_test, years):
+def transform_csv(weeks_to_roll, input_file, output_file, year):
 
-	for weeks_to_roll in rolling_windows:
+	if os.path.isfile(output_file):
+		os.remove(output_file)
 
-		output_filename = f"output\\{train_or_test}\\{weeks_to_roll}.csv"
+	with open(output_file, "a") as output_f:
+		output_f.write(common.get_feature_headers())
 
-		if os.path.isfile(output_filename):
-			os.remove(output_filename)
-
-		with open(output_filename, "a") as output_f:
-			output_f.write(common.get_feature_headers())
-
-		for f in years:
-			with open(output_filename, "a", newline='') as output_f:
-				output, _ = generate_output_and_stats(f, f"input\\nfl\\{f}.csv", weeks_to_roll)
-				csv_writer = csv.writer(output_f)
-				csv_writer.writerows(output)
+	with open(output_file, "a", newline='') as output_f:
+		output, _ = generate_output_and_stats(year, input_file, weeks_to_roll)
+		csv_writer = csv.writer(output_f)
+		csv_writer.writerows(output)
 
 if __name__ == '__main__':
 	
 	rolling_windows = common.weeks_to_try()
 	
-	transform_csv(rolling_windows, "train", [2013,2014,2015,2016])
-	
-	transform_csv(rolling_windows, "test", [2017,2018])
+	years_train = [2013,2014,2015,2016]
+	years_test = [2017,2018]
+
+	def call_transform(train_or_test, years, rolling_window):
+		
+		for year in years:
+			input_file = f"input\\nfl\\{year}.csv"
+			output_file = f"output\\{train_or_test}\\{rolling_window}.csv"
+			transform_csv(rolling_window, input_file, output_file, year)
+
+	for rolling_window in rolling_windows:
+		call_transform("train", years_train, rolling_window)
+		call_transform("test", years_test, rolling_window)
