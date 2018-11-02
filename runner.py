@@ -1,7 +1,7 @@
 import os
 
 import common
-import importer
+import nfl.importer as importer
 import train
 import evaluate
 

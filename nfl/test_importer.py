@@ -1,6 +1,6 @@
 import unittest
 
-import importer
+import nfl.importer as importer
 import common
 
 class TestImport(unittest.TestCase):

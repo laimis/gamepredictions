@@ -1,7 +1,7 @@
 import unittest
 
 import common
-import nfl
+import nfl.parser as nfl
 
 import csv
 
