@@ -7,10 +7,10 @@ import train
 import evaluate
 
 def get_feature_headers():
-	return "year,counter,away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
+	return "year,date,counter,away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
 
 def get_column_names_for_removal():
-	return ["year", "counter", "home_win", "home", "away"]
+	return ["year", "date", "counter", "home_win", "home", "away"]
 
 def run_evaluations():
 	data = []
@@ -28,6 +28,10 @@ def run_evaluations():
 
 	with open(output_file, 'w') as summary_file:
 		json.dump(dict, summary_file)
+
+	groups = common.read_data_groupedby_week(test_file, "home_win", get_column_names_for_removal(), ['year', 'date'])
+
+	evaluate.weekly_breakdown(groups, model)
 
 def run_training():
 	models = []
