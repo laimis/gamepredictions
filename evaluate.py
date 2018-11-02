@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 
 import common
 
-
 def show_confusion(y, y_predicted):
 	mat = confusion_matrix(y_true=y, y_pred=y_predicted)
 	sns.heatmap(mat.T, annot=True, fmt='d')

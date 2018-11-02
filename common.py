@@ -3,26 +3,23 @@ import numpy as np
 
 from sklearn.externals import joblib
 
-def weeks_to_try():
-	return [6]
-
-def read_data_from_file(filepath):
+def read_data_from_file(filepath, y_col, x_cols_to_drop):
 
 	data = pd.read_csv(filepath)
 
-	y = data.home_win
-	X = data.drop(get_column_names_for_removal(), axis=1, inplace=False)
+	y = data[y_col]
+	X = data.drop(x_cols_to_drop, axis=1, inplace=False)
 
 	return X, y
 
-def read_data_groupedby_week(filepath):
+def read_data_groupedby_week(filepath, y_col, x_cols_to_drop, group_by):
 
 	data = pd.read_csv(filepath)
 
 	grouped = {}
-	for name, group in data.groupby(['year', 'week']):
-		y = group.home_win
-		X = group.drop(get_column_names_for_removal(), axis=1, inplace=False)
+	for name, group in data.groupby(group_by):
+		y = group[y_col]
+		X = group.drop(x_cols_to_drop, axis=1, inplace=False)
 
 		grouped[name] = (X, y)
 
@@ -30,12 +27,6 @@ def read_data_groupedby_week(filepath):
 
 def get_tracked_stats():
 	return ["wins", "points", "allowed", "yards", "yards_allowed"]
-
-def get_column_names_for_removal():
-	return ["year", "week", "home_win", "home", "away"]
-
-def get_feature_headers():
-	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards_diff,home_yards_diff\n"
 
 def add_to_stats(stats, rd):
 

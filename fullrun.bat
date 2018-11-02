@@ -1,3 +1,3 @@
 cls
 
-tests.bat && python runner.py
+tests.bat && python nfl_runner.py

@@ -7,8 +7,17 @@ import evaluate
 
 import json
 
+def get_feature_headers():
+	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards_diff,home_yards_diff\n"
+
+def get_column_names_for_removal():
+	return ["year", "week", "home_win", "home", "away"]
+
+def weeks_to_try():
+	return [6]
+
 def run_import():
-	rolling_windows = common.weeks_to_try()
+	rolling_windows = weeks_to_try()
 	
 	years_train = [2013,2014,2015,2016]
 	years_test = [2017,2018]
@@ -21,7 +30,7 @@ def run_import():
 			os.remove(output_file)
 
 		with open(output_file, "a", newline='') as output_f:
-			output_f.write(common.get_feature_headers())
+			output_f.write(get_feature_headers())
 			for year in years:
 				input_file = f"input\\nfl\\{year}.csv"
 				importer.transform_csv(rolling_window, input_file, output_f, year)
@@ -33,7 +42,7 @@ def run_import():
 def run_training():
 	models = []
 
-	for f in common.weeks_to_try():
+	for f in weeks_to_try():
 
 		file_training = f"output\\nfl\\train\\{f}.csv"
 		file_model = f"models\\nfl\\{f}_model.pkl"
@@ -41,7 +50,7 @@ def run_training():
 		if os.path.isfile(file_model):
 			os.remove(file_model)
 
-		X, y = common.read_data_from_file(file_training)
+		X, y = common.read_data_from_file(file_training, "home_win", get_column_names_for_removal())
 		
 		grid = train.train_model(X, y, 10)
 
@@ -72,7 +81,7 @@ def run_evaluations():
 	output_file = "output\\nfl\\html\\testdata.json"
 
 	model = common.load_model(model_file)
-	X, y = common.read_data_from_file(test_file)
+	X, y = common.read_data_from_file(test_file, "home_win", get_column_names_for_removal())
 
 	data.append(evaluate.evaluate("6", model, X, y))
 
@@ -81,9 +90,10 @@ def run_evaluations():
 	with open(output_file, 'w') as summary_file:
 		json.dump(dict, summary_file)
 
-	groups = common.read_data_groupedby_week(test_file)
+	groups = common.read_data_groupedby_week(test_file, "home_win", get_column_names_for_removal(), ['year', 'week'])
 
 	evaluate.weekly_breakdown(groups, model)
+
 
 if __name__ == '__main__':
 
