@@ -77,5 +77,5 @@ with open(f"input\\nfl\\predict_{week}.csv", "r") as input_f:
 
 	dict = {"data": predictions}
 
-	with open("output\\html\\predictions.json", 'w') as summary_file:
+	with open("output\\nfl\\html\\predictions.json", 'w') as summary_file:
 		json.dump(dict, summary_file)

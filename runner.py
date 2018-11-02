@@ -60,7 +60,7 @@ def run_training():
 
 	dict = {"data": models}
 
-	with open("output\\html\\trainingdata.json", 'w') as summary_file:
+	with open("output\\nfl\\html\\trainingdata.json", 'w') as summary_file:
 		json.dump(dict, summary_file)
 
 
@@ -69,7 +69,7 @@ def run_evaluations():
 
 	test_file = f"output\\nfl\\test\\6.csv"
 	model_file = f"models\\nfl\\6_model.pkl"
-	output_file = "output\\html\\testdata.json"
+	output_file = "output\\nfl\\html\\testdata.json"
 
 	model = common.load_model(model_file)
 	X, y = common.read_data_from_file(test_file)
