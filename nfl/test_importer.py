@@ -37,7 +37,7 @@ class TestImport(unittest.TestCase):
 
 	def test_validate_stats(self):
 
-		tracked_stats = common.get_tracked_stats()
+		tracked_stats = importer.get_tracked_stats()
 
 		for team in self.stats:
 			team_stats = self.stats[team]
