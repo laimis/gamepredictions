@@ -10,7 +10,7 @@ class TestCommon(unittest.TestCase):
 	def setUpClass(cls):
 		super(TestCommon, cls).setUpClass()
 
-		with open("input\\2014.csv", 'r') as input_f:
+		with open("input\\nfl\\2014.csv", 'r') as input_f:
 			rows = csv.reader(input_f)
 			lst = list(rows)
 

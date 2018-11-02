@@ -9,7 +9,7 @@ class TestImport(unittest.TestCase):
 	def setUpClass(cls):
 		super(TestImport, cls).setUpClass()
 
-		cls.output, cls.stats = importer.generate_output_and_stats(2014, "input\\2014.csv", 4)
+		cls.output, cls.stats = importer.generate_output_and_stats(2014, "input\\nfl\\2014.csv", 4)
 
 	def test_total_rows(self):
 

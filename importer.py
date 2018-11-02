@@ -42,7 +42,7 @@ def transform_csv(rolling_windows, train_or_test, years):
 
 		for f in years:
 			with open(output_filename, "a", newline='') as output_f:
-				output, _ = generate_output_and_stats(f, f"input\\{f}.csv", weeks_to_roll)
+				output, _ = generate_output_and_stats(f, f"input\\nfl\\{f}.csv", weeks_to_roll)
 				csv_writer = csv.writer(output_f)
 				csv_writer.writerows(output)
 

@@ -63,6 +63,9 @@ def get_tracked_stats():
 def get_column_names_for_removal():
 	return ["year", "week", "home_win", "home", "away"]
 
+def get_feature_headers():
+	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards_diff,home_yards_diff\n"
+
 def add_to_stats(stats, rd):
 
 	def add_to_stats_internal(stats, team, to_add):
@@ -89,9 +92,6 @@ def calc_features(stats, row_def, weeks_to_roll):
 		away_yards,
 		home_yards,
 	]
-
-def get_feature_headers():
-	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards_diff,home_yards_diff\n"
 
 def calc_stats(stats, team, weeks_to_roll):
  

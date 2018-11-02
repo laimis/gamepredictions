@@ -59,7 +59,7 @@ week = 9
 for x in [6]:
 	
 	model = common.load_model(f"models\\{x}_model.pkl")
-	_, stats = importer.generate_output_and_stats(2018, f"input\\2018.csv", x)
+	_, stats = importer.generate_output_and_stats(2018, f"input\\nfl\\2018.csv", x)
 
 	desc = {}
 	
@@ -71,7 +71,7 @@ for x in [6]:
 
 team_record = {}
 
-with open(f"input\\predict_{week}.csv", "r") as input_f:
+with open(f"input\\nfl\\predict_{week}.csv", "r") as input_f:
 	predictions = predict_games(input_f, models)
 
 	dict = {"data": predictions}
