@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import common
+import nfl
 
 def generate_output_and_stats(year, file_path, weeks_to_roll):
 
@@ -13,7 +14,7 @@ def generate_output_and_stats(year, file_path, weeks_to_roll):
 		csv_reader = csv.reader(input_f)
 
 		for row in csv_reader:
-			parsed = common.RowDef(row)
+			parsed = nfl.NFLGame(row)
 
 			# WHAT TO DO WITH TIESw
 			# if winnerPts == losserPts:

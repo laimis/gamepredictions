@@ -1,6 +1,7 @@
 import unittest
 
 import common
+import nfl
 
 import csv
 
@@ -14,8 +15,8 @@ class TestCommon(unittest.TestCase):
 			rows = csv.reader(input_f)
 			lst = list(rows)
 
-			cls.first = common.RowDef(lst[0])
-			cls.second = common.RowDef(lst[1])
+			cls.first = nfl.NFLGame(lst[0])
+			cls.second = nfl.NFLGame(lst[1])
 
 	def test_parsed_firstrow_matches(self):
 

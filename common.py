@@ -3,35 +3,6 @@ import numpy as np
 
 from sklearn.externals import joblib
 
-class RowDef:
-	def __init__(self, row):
-		self.week = int(row[0])
-		winner = row[4]
-		losser = row[6]
-		winnerPts = int(row[8])
-		losserPts = int(row[9])
-		winnerYards = int(row[10])
-		losserYards = int(row[12])
-
-		isHomeWinner = row[5] != "@"
-
-		self.away = winner
-		self.awayPts = winnerPts
-		self.awayYards = winnerYards
-		self.home = losser
-		self.homePts = losserPts
-		self.homeYards = losserYards
-		self.homeWin = 0
-
-		if isHomeWinner:
-			self.away = losser
-			self.awayPts = losserPts
-			self.awayYards = losserYards
-			self.home = winner
-			self.homePts = winnerPts
-			self.homeYards = winnerYards
-			self.homeWin = 1
-
 def weeks_to_try():
 	return [6]
 
@@ -79,10 +50,10 @@ def add_to_stats(stats, rd):
 	add_to_stats_internal(stats, rd.home, [rd.homeWin, rd.homePts, rd.awayPts, rd.homeYards, rd.awayYards])
 	add_to_stats_internal(stats, rd.away, [1 - rd.homeWin, rd.awayPts, rd.homePts, rd.awayYards, rd.homeYards])
 
-def calc_features(stats, row_def, weeks_to_roll):
+def calc_features(stats, game_info, weeks_to_roll):
 
-	home_pct, home_pts, home_allowed, home_yards, home_yards_allowed = calc_stats(stats, row_def.home, weeks_to_roll)
-	away_pct, away_pts, away_allowed, away_yards, away_yards_allowed = calc_stats(stats, row_def.away, weeks_to_roll)
+	home_pct, home_pts, home_allowed, home_yards, home_yards_allowed = calc_stats(stats, game_info.home, weeks_to_roll)
+	away_pct, away_pts, away_allowed, away_yards, away_yards_allowed = calc_stats(stats, game_info.away, weeks_to_roll)
 
 	return [
 		away_pct,

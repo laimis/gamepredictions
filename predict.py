@@ -5,6 +5,7 @@ import json
 
 import common
 import importer
+import nfl
 
 def predict_games(input_f, models):
 
@@ -13,34 +14,34 @@ def predict_games(input_f, models):
 	predictions = []
 	for row in csv_reader:
 		
-		row_def = common.RowDef(row)
+		game_info = nfl.NFLGame(row)
 
 		away_confidence = 0
 		home_confidence = 0
-		winner = row_def.home
+		winner = game_info.home
 
-		votes = {row_def.away: 0, row_def.home: 0}
+		votes = {game_info.away: 0, game_info.home: 0}
 
 		for model_def in models:
 			model = model_def["model"]
 			weeks_to_roll = model_def["weeks"]
 			stats = model_def["stats"]
 
-			features = [common.calc_features(stats, row_def, weeks_to_roll)]
+			features = [common.calc_features(stats, game_info, weeks_to_roll)]
 
 			predict = model.predict(features)
 			confidence = max(model.predict_proba(features)[0])
 			
 			if predict[0] == 0:
-				votes[row_def.away]+=1
+				votes[game_info.away]+=1
 				away_confidence = max(away_confidence, confidence)
-				winner = row_def.away
+				winner = game_info.away
 			else:
-				votes[row_def.home]+=1
+				votes[game_info.home]+=1
 				home_confidence = max(home_confidence, confidence)
-				winner = row_def.home
+				winner = game_info.home
 		
-		output = [f"{row_def.away} @ {row_def.home}", winner]
+		output = [f"{game_info.away} @ {game_info.home}", winner]
 
 		confidence = max(away_confidence, home_confidence)
 
