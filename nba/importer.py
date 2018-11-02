@@ -4,9 +4,6 @@ import os
 import nba.parser as parser
 import nba.features as features
 
-def get_feature_headers():
-	return "year,counter,away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
-
 def generate_output_and_stats(year, file_path):
 
 	stats = {}
