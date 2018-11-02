@@ -57,37 +57,3 @@ def train_model(X, y, cv):
 def save_model(model, output_path):
 
 	joblib.dump(model, output_path)
-
-if __name__ == '__main__':
-	
-	models = []
-
-	for f in common.weeks_to_try():
-
-		file_training = f"output\\nfl\\train\\{f}.csv"
-		file_model = f"models\\nfl\\{f}_model.pkl"
-
-		if os.path.isfile(file_model):
-			os.remove(file_model)
-
-		X, y = common.read_data_from_file(file_training)
-		
-		grid = train_model(X, y, 10)
-
-		model = grid.best_estimator_
-
-		stats = common.confidence_stats(model, X, y)
-			
-		save_model(model, file_model)
-
-		output = [f, grid.best_score_, str(grid.best_params_)]
-		
-		for s in stats:
-			output.append(s)
-		
-		models.append(output)
-
-	dict = {"data": models}
-
-	with open("output\\html\\trainingdata.json", 'w') as summary_file:
-		json.dump(dict, summary_file)

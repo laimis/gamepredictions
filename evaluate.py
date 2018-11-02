@@ -68,23 +68,3 @@ def evaluate(result_name, model, X, y):
 		output.append(s)
 
 	return output
-
-data = []
-
-test_file = f"output\\nfl\\test\\6.csv"
-model_file = f"models\\nfl\\6_model.pkl"
-output_file = "output\\html\\testdata.json"
-
-model = common.load_model(model_file)
-X, y = common.read_data_from_file(test_file)
-
-data.append(evaluate("6", model, X, y))
-
-dict = {"data": data}
-
-with open(output_file, 'w') as summary_file:
-	json.dump(dict, summary_file)
-
-groups = common.read_data_groupedby_week(test_file)
-
-weekly_breakdown(groups, model)
