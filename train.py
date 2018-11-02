@@ -64,8 +64,8 @@ if __name__ == '__main__':
 
 	for f in common.weeks_to_try():
 
-		file_training = f"output\\train\\{f}.csv"
-		file_model = f"models\\{f}_model.pkl"
+		file_training = f"output\\nfl\\train\\{f}.csv"
+		file_model = f"models\\nfl\\{f}_model.pkl"
 
 		if os.path.isfile(file_model):
 			os.remove(file_model)

@@ -62,7 +62,7 @@ def evaluate(result_name, model, X, y):
 
 	stats = common.confidence_stats(model, X, y)
 
-	output = [weeks_to_roll, accuracy, "{}"]
+	output = [result_name, accuracy, "{}"]
 
 	for s in stats:
 		output.append(s)
@@ -71,14 +71,14 @@ def evaluate(result_name, model, X, y):
 
 data = []
 
-test_file = f"output\\test\\nfl\\6.csv"
+test_file = f"output\\nfl\\test\\6.csv"
 model_file = f"models\\nfl\\6_model.pkl"
 output_file = "output\\html\\testdata.json"
 
 model = common.load_model(model_file)
 X, y = common.read_data_from_file(test_file)
 
-data.append(evaluate(w, model, X, y))
+data.append(evaluate("6", model, X, y))
 
 dict = {"data": data}
 
