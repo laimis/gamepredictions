@@ -61,7 +61,7 @@ def evaluate(result_name, model, X, y):
 
 	stats = common.confidence_stats(model, X, y)
 
-	output = [result_name, accuracy, "{}"]
+	output = [result_name, f"{accuracy:.4f}", "{}"]
 
 	for s in stats:
 		output.append(s)

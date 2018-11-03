@@ -52,7 +52,7 @@ def run_training():
 		
 	train.save_model(model, file_model)
 
-	output = ["model", grid.best_score_, str(grid.best_params_)]
+	output = ["model", f"{grid.best_score_:.4f}", str(grid.best_params_)]
 	
 	for s in stats:
 		output.append(s)
