@@ -1,3 +1,5 @@
 cls
 
-tests.bat && python nba_runner.py
+REM tests.bat && 
+
+python nba_runner.py

@@ -7,7 +7,7 @@ class NBAGame:
 		
 		dt = parse(row[0])
 
-		self.date = dt.strftime("%Y-%m-%d")
+		self.date = dt # dt.strftime("%Y-%m-%d")
 		self.away = row[2]
 		self.away_pts = int(row[3])
 		self.home = row[4]

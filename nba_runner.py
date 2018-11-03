@@ -5,9 +5,7 @@ import nba.importer as importer
 import common
 import train
 import evaluate
-
-def get_feature_headers():
-	return "year,date,counter,away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
+import nba.features as features
 
 def get_column_names_for_removal():
 	return ["year", "date", "counter", "home_win", "home", "away"]
@@ -73,7 +71,7 @@ def run_import():
 			os.remove(output_file)
 		
 		with open(output_file, "a", newline='') as output_f:
-			output_f.write(get_feature_headers())
+			output_f.write(features.get_feature_headers())
 
 			for year in years:
 				input_file = f"input\\nba\\{year}.csv"

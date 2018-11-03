@@ -21,7 +21,7 @@ def generate_output_and_stats(year, file_path):
 
 			if counter > 100:
 				calculated_features = features.calc_features(stats, game_info)
-				output.append([year,game_info.date,game_info.counter,game_info.away,game_info.home,game_info.home_win] + calculated_features)
+				output.append([year,game_info.date.strftime("%Y-%m-%d"),game_info.counter,game_info.away,game_info.home,game_info.home_win] + calculated_features)
 
 			features.add_to_stats(stats, game_info)
 
