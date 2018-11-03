@@ -51,7 +51,7 @@ def confidence_stats(model, X, y):
 		stat = calc_confidence_stats(y, predictions, probabilities, level)
 
 		if stat[1] == 0:
-			stats.append(f"no pred with confidence {stat[2]}")
+			stats.append(f"{stat[2]}: N/A")
 		else:
 			stats.append(f"{stat[2]}: {stat[0]}/{stat[1]}, {(stat[0]/stat[1]):.2f}")
 
