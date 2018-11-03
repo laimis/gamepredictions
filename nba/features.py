@@ -1,4 +1,5 @@
 tracked_stats = ["wins", "scored", "allowed"]
+games_to_roll = 10
 
 def add_to_stats(stats, rd):
 
@@ -28,7 +29,6 @@ def calc_features(stats, game_info):
 def calc_stats(stats, team):
  
 	def do_calculation(team_stats, stat):
-		games_to_roll = 10
 		return sum(team_stats[stat][-games_to_roll:]) / len(team_stats[stat][-games_to_roll:])
 
 	team_stats = stats[team]
