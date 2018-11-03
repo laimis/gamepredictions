@@ -12,6 +12,9 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+
+from xgboost import XGBClassifier
 
 import json
 
@@ -23,8 +26,20 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	model = GaussianNB()
-	param_grid = {}
+	# model = GaussianNB()
+	# param_grid = {}
+
+	# model = GradientBoostingClassifier()
+	# param_grid = {
+	# 	"learning_rate": [0.01, 0.1, 0.5, 1, 10],
+	# 	"max_depth": [2, 3]
+	# }
+
+	model = XGBClassifier()
+	param_grid = {
+		"learning_rate": [0.01, 0.1, 0.5, 1, 10],
+		"max_depth": [2, 3]
+	}
 
 	# model = RandomForestClassifier()
 	# param_grid = {
