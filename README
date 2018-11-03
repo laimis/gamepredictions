@@ -1,4 +1,3 @@
-- convert date strings to dates
 - use date calcs in deciding the strength (theory is that this should increase the accuracy of confidences)
 - analyze wrong predictions, anything that stands out? injury? rest? back to back
 
