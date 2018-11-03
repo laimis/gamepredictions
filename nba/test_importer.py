@@ -14,19 +14,19 @@ class TestImport(unittest.TestCase):
 
 	def test_total_rows(self):
 
-		self.assertEqual(1074, len(self.output))
+		self.assertEqual(1174, len(self.output))
 	
 	def test_first_row_correct(self):
 
 		self.assertEqual(
-			[2015, 200, 'Phoenix Suns', 'New Orleans Pelicans', 1, 0.5384615384615384, 0.21428571428571427, 3.92307692307692, -6.857142857142861],
+			[2015, '2015-11-09', 100, 'Portland Trail Blazers', 'Denver Nuggets', 1, 0.5714285714285714, 0.3333333333333333, 1.7142857142857082, -6.166666666666671],
 			self.output[0]
 		)
 
 	def test_last_row_correct(self):
 
 		self.assertEqual(
-			[2015, 1273, 'Oklahoma City Thunder', 'San Antonio Spurs', 1, 0.65, 0.75, 8.650000000000006, 8.149999999999991],
+			[2015, '2016-04-30', 1273, 'Oklahoma City Thunder', 'San Antonio Spurs', 1, 0.6, 0.7, 13.5, 7.799999999999997],
 			self.output[len(self.output)-1]
 		)
 

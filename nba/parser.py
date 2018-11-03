@@ -1,8 +1,13 @@
+from dateutil.parser import parse
+
 # this represents csv row from basketball reference
 class NBAGame:
 	def __init__(self, row, counter):
 		self.counter = counter
-		self.date = row[0]
+		
+		dt = parse(row[0])
+
+		self.date = dt.strftime("%Y-%m-%d")
 		self.away = row[2]
 		self.away_pts = int(row[3])
 		self.home = row[4]

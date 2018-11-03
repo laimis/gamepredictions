@@ -1,6 +1,5 @@
-- simulate amount to bet
-- simulate bet winning/lossing amounts
-- make it easier to add/remove stats
+- convert date strings to dates
+- use date calcs in deciding the strength (theory is that this should increase the accuracy of confidences)
+- analyze wrong predictions, anything that stands out? injury? rest? back to back
+
 - head to head team comparison for each
-- analyze wrong predictions, anything that stands out? injury?
-- identify what really matters in the winning team
