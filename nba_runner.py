@@ -27,7 +27,7 @@ def run_evaluations():
 	with open(output_file, 'w') as summary_file:
 		json.dump(dict, summary_file)
 
-	groups = common.read_data_groupedby_week(test_file, "home_win", get_column_names_for_removal(), ['year', 'date'])
+	groups = common.read_data_groupedby_week(test_file, "home_win", get_column_names_for_removal(), ['year'])
 
 	evaluate.weekly_breakdown(groups, model)
 
