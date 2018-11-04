@@ -52,7 +52,7 @@ def weekly_breakdown(groups, model):
 
 		stats = common.confidence_stats(model, X, y.values)
 
-		print(f"{key}:{accuracy:.2f} {' '.join(stats)}")
+		print(f"{key}:{accuracy:.2f} {' '.join([str(x) for x in stats])}")
 
 
 def evaluate(result_name, model, X, y):
@@ -64,6 +64,6 @@ def evaluate(result_name, model, X, y):
 	output = [result_name, f"{accuracy:.4f}", "{}"]
 
 	for s in stats:
-		output.append(s)
+		output.append(s.label)
 
 	return output

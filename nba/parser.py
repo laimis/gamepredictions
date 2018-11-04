@@ -2,6 +2,7 @@ from dateutil.parser import parse
 
 # this represents csv row from basketball reference
 class NBAGame:
+
 	def __init__(self, row, counter):
 		self.counter = counter
 		
@@ -9,11 +10,16 @@ class NBAGame:
 
 		self.date = dt # dt.strftime("%Y-%m-%d")
 		self.away = row[2]
-		self.away_pts = int(row[3])
+		self.away_pts = self.__safe_int__(row[3])
 		self.home = row[4]
-		self.home_pts = int(row[5])
+		self.home_pts = self.__safe_int__(row[5])
 		
 		if self.home_pts > self.away_pts:
 			self.home_win = 1
 		else:
 			self.home_win = 0
+
+	def __safe_int__(self, val):
+		if not val: return 0
+
+		return int(val)
