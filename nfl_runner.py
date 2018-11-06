@@ -63,7 +63,7 @@ def run_training():
 		output = [f, grid.best_score_, str(grid.best_params_)]
 		
 		for s in stats:
-			output.append(s)
+			output.append(s.label)
 		
 		models.append(output)
 

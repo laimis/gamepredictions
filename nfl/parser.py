@@ -4,10 +4,10 @@ class NFLGame:
 		self.week = int(row[0])
 		winner = row[4]
 		losser = row[6]
-		winnerPts = int(row[8])
-		losserPts = int(row[9])
-		winnerYards = int(row[10])
-		losserYards = int(row[12])
+		winnerPts = self.__safe_int__(row[8])
+		losserPts = self.__safe_int__(row[9])
+		winnerYards = self.__safe_int__(row[10])
+		losserYards = self.__safe_int__(row[12])
 
 		isHomeWinner = row[5] != "@"
 
@@ -27,4 +27,9 @@ class NFLGame:
 			self.homePts = winnerPts
 			self.homeYards = winnerYards
 			self.homeWin = 1
+
+	def __safe_int__(self, val):
+		if not val: return 0
+
+		return int(val)
 
