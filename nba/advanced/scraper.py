@@ -1,12 +1,48 @@
 from bs4 import BeautifulSoup
 import urllib.request
 
+class BoxScoreTeam:
+
+	def __init__(self, team_name, away):
+		self.entries = []
+		self.team_name = team_name
+		self.away = away
+
+	def add_box_score_entry(self, entry):
+		self.entries.append(entry)
+
+class BoxScore:
+	def __init__(self, year, month, day, entries):
+
+		self.year = year
+		self.month = month
+		self.day = day
+
+		self.away = None
+		self.home = None
+
+		current = None
+		
+		for e in entries:
+			if self.away == None:
+				self.away = BoxScoreTeam(e.team, True)
+				current = self.away
+			
+			if self.away.team_name != e.team and self.home == None:
+				self.home = BoxScoreTeam(e.team, False)
+				current = self.home
+
+			current.add_box_score_entry(e)
+
 class BoxScoreEntry:
 	def __init__(self, team, name, columns):
 
 		self.team = team
 		self.name = name
 
+		if len(columns) == 0:
+			return
+			
 		self.minutes = columns[0].contents[0]
 
 		self.field_goals_made = columns[1].contents[0]
@@ -53,7 +89,7 @@ def get_boxscore_links(year, month, day):
 
 	return links
 
-def get_boxscore_details(box_score_url):
+def get_boxscore_details(year:int, month:int, day:int, box_score_url:str) -> BoxScore:
 
 	def skip_box_score_row(r):
 		row_text = r.get_text()
@@ -96,7 +132,7 @@ def get_boxscore_details(box_score_url):
 			
 			entries.append(entry)
 
-	return entries
+	return BoxScore(year, month, day, entries)
 
 if __name__ == "__main__":
 	pass
