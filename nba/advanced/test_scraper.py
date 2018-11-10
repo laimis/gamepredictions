@@ -2,11 +2,11 @@ import unittest
 
 import scraper
 
-class TestImport(unittest.TestCase):
+class TestScraper(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(cls):
-		super(TestImport, cls).setUpClass()
+		super(TestScraper, cls).setUpClass()
 
 		cls.links = scraper.get_boxscore_links(2018, 11, 8)
 		cls.box_score = scraper.get_boxscore_details(2018, 11, 8, cls.links[0])

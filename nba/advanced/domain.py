@@ -3,9 +3,9 @@ class Game:
 		self.id = id
 		self.date = date
 		self.away = away
-		self.away_stats = None
+		self.away_stats:GameStats = None
 		self.home = home
-		self.home_stats = None
+		self.home_stats:GameStats = None
 
 class GameStats:
 	def __init__(self):

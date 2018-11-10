@@ -118,5 +118,3 @@ class TestDatabase(unittest.TestCase):
 		self.assertEqual(16, self.home_stats.turnovers)
 		self.assertEqual(21, self.home_stats.fouls)
 		self.assertEqual(109, self.home_stats.points)
-
-	
