@@ -3,3 +3,4 @@ output
 .ipynb_checkpoints
 .vscode
 models
+.mypy_cache

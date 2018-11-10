@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import urllib.request
 
+from typing import List
+
 class BoxScoreTeam:
 
 	def __init__(self, team_name, away):
@@ -10,6 +12,9 @@ class BoxScoreTeam:
 
 	def add_box_score_entry(self, entry):
 		self.entries.append(entry)
+
+	def __str__(self):
+		return self.team_name
 
 class BoxScore:
 	def __init__(self, year, month, day, entries):
@@ -34,6 +39,9 @@ class BoxScore:
 
 			current.add_box_score_entry(e)
 
+	def __str__(self):
+		return f"{self.year}-{self.month}-{self.day}, {self.away} @ {self.home}"
+
 class BoxScoreEntry:
 	def __init__(self, team, name, columns):
 
@@ -42,43 +50,66 @@ class BoxScoreEntry:
 
 		if len(columns) == 0:
 			return
-			
-		self.minutes = columns[0].contents[0]
+		
+		# player did not play
+		if len(columns) == 1:
+			self.minutes = ""
+			self.field_goals_made = 0
+			self.field_goals_attemped = 0
+			self.threes_made = 0
+			self.threes_attempted = 0
+			self.free_throws_made = 0
+			self.free_throws_attempted = 0
+			self.offensive_rebounds = 0
+			self.defensive_rebounds = 0
+			self.assists = 0
+			self.steals = 0
+			self.blocks = 0
+			self.turnovers = 0
+			self.personal_fouls = 0
+			self.points = 0
+		else:
+			self.minutes = columns[0].contents[0]
 
-		self.field_goals_made = columns[1].contents[0]
-		self.field_goals_attemped = columns[2].contents[0]
+			self.field_goals_made = columns[1].contents[0]
+			self.field_goals_attemped = columns[2].contents[0]
 
-		self.threes_made = columns[4].contents[0]
-		self.threes_attempted = columns[5].contents[0]
+			self.threes_made = columns[4].contents[0]
+			self.threes_attempted = columns[5].contents[0]
 
-		self.free_throws_made = columns[7].contents[0]
-		self.free_throws_attempted = columns[8].contents[0]
+			self.free_throws_made = columns[7].contents[0]
+			self.free_throws_attempted = columns[8].contents[0]
 
-		self.offensive_rebounds = columns[10].contents[0]
-		self.defensive_rebounds = columns[11].contents[0]
+			self.offensive_rebounds = columns[10].contents[0]
+			self.defensive_rebounds = columns[11].contents[0]
 
-		self.assists = columns[13].contents[0]
-		self.steals = columns[14].contents[0]
-		self.blocks = columns[15].contents[0]
-		self.turnovers = columns[16].contents[0]
-		self.personal_fouls = columns[17].contents[0]
-		self.points = columns[18].contents[0]
+			self.assists = columns[13].contents[0]
+			self.steals = columns[14].contents[0]
+			self.blocks = columns[15].contents[0]
+			self.turnovers = columns[16].contents[0]
+			self.personal_fouls = columns[17].contents[0]
+			self.points = columns[18].contents[0]
 
 ref_url = "https://www.basketball-reference.com"
+headers = headers={
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
+}
 
 def __get_boxscore_soup__(box_score_url):
-	with urllib.request.urlopen(f"{ref_url}/{box_score_url}") as response:
+	req = urllib.request.Request(f"{ref_url}/{box_score_url}", headers=headers)
+	with urllib.request.urlopen(req) as response:
 		html = response.read()
 		return BeautifulSoup(html, 'html.parser')
 
 def __get_boxscore_links_soup__(year, month, day):
-	with urllib.request.urlopen(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}") as response:
+	req = urllib.request.Request(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}", headers=headers)
+	with urllib.request.urlopen(req) as response:
 		html = response.read()
 		return BeautifulSoup(html, 'html.parser')
 
-def get_boxscore_links(year, month, day):
+def get_boxscore_links(year, month, day) -> List[str]:
 
-	links = []
+	links:List[str] = []
 
 	soup = __get_boxscore_links_soup__(year, month, day)
 		
