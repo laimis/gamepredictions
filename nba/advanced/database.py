@@ -9,27 +9,31 @@ from typing import List
 
 __connection_string__ = "host='localhost' dbname='bets' user='bet' password='bet'"
 
-def get_game_stats(gameid:str, team:str) -> domain.GameStats:
-
-	game = domain.GameStats()
+def get_game_stats(gameid:str) -> domain.Game:
 
 	with psycopg2.connect(__connection_string__) as conn:
 		with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
 
 			cur.execute(
-				"select * from gamerows where gameid = %s and team = %s order by points",
-				[gameid, team]
+				"select * from gamestats where gameid = %s",
+				[gameid]
 			)
 
-			records = cur.fetchall()
+			record = cur.fetchone()
 
-			for r in records:
-				game.add_player_stats(
-					r["name"],
-					r["fgm"],r["fga"],r["tpm"],r["tpa"],r["ftm"],r["fta"],
-					r["oreb"],r["dreb"],r["assists"],r["steals"],r["blocks"],r["turnovers"],r["fouls"],
-					r["points"]
-				)
+			stat_dict = {"fgm":0,"fga":0,"tpm":0,"tpa":0,"ftm":0,"fta":0,"oreb":0,"dreb":0,"assists":0,"steals":0,"blocks":0,"turnovers":0,"fouls":0,"points":0}
+
+			for k in stat_dict:
+				stat_dict[k] = record[f"away_{k}"]
+				
+			away_stats = domain.GameStats(stat_dict)
+
+			for k in stat_dict:
+				stat_dict[k] = record[f"home_{k}"]
+				
+			home_stats = domain.GameStats(stat_dict)
+
+			game = domain.Game(record["date"], record["gameid"], record["away"], record["home"], away_stats, home_stats)
 
 	return game
 
@@ -45,7 +49,7 @@ def get_games(date:datetime.date) -> List[domain.Game]:
 			records = cur.fetchall()
 
 			for r in records:
-				games.append(domain.Game(date, r["id"], r["away"], r["home"]))
+				games.append(get_game_stats(r["id"]))
 
 	return games
 

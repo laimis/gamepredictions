@@ -14,9 +14,8 @@ class TestDatabase(unittest.TestCase):
 		date = datetime.date(2018,11,9)
 		cls.games = database.get_games(date)
 
-		cls.away_stats = database.get_game_stats("167", "det")
-		cls.home_stats = database.get_game_stats("167", "atl")
-
+		cls.game = database.get_game_stats("167")
+		
 		# entry_one = scraper.BoxScoreEntry("mil","brogdon", [])
 		# entry_one.minutes = 1
 		# entry_one.field_goals_made = 2
@@ -77,44 +76,51 @@ class TestDatabase(unittest.TestCase):
 		self.assertEqual("bos", self.games[-1].away, "first game's away team match")
 		self.assertEqual("uta", self.games[-1].home, "first game's home team match")
 
+	def test_game_teams_correct(self):
+
+		self.assertEqual("det", self.game.away, "away team matches")
+		self.assertEqual("atl", self.game.home, "home team matches")
+
 	def test_away_game_stats(self):
 
-		self.assertEqual(46, self.away_stats.fields_goals_made)
-		self.assertEqual(97, self.away_stats.fields_goals_attempted)
+		away_stats = self.game.away_stats
+		self.assertEqual(46, away_stats.fields_goals_made)
+		self.assertEqual(97, away_stats.fields_goals_attempted)
 
-		self.assertEqual(20, self.away_stats.threes_made)
-		self.assertEqual(47, self.away_stats.threes_attempted)
+		self.assertEqual(20, away_stats.threes_made)
+		self.assertEqual(47, away_stats.threes_attempted)
 
-		self.assertEqual(12, self.away_stats.free_throws_made)
-		self.assertEqual(19, self.away_stats.free_throws_attemped)
+		self.assertEqual(12, away_stats.free_throws_made)
+		self.assertEqual(19, away_stats.free_throws_attemped)
 
-		self.assertEqual(10, self.away_stats.offensive_rebounds)
-		self.assertEqual(34, self.away_stats.defense_rebounds)
+		self.assertEqual(10, away_stats.offensive_rebounds)
+		self.assertEqual(34, away_stats.defense_rebounds)
 
-		self.assertEqual(30, self.away_stats.assists)
-		self.assertEqual(10, self.away_stats.steals)
-		self.assertEqual(6, self.away_stats.blocks)
-		self.assertEqual(10, self.away_stats.turnovers)
-		self.assertEqual(31, self.away_stats.fouls)
-		self.assertEqual(124, self.away_stats.points)
+		self.assertEqual(30, away_stats.assists)
+		self.assertEqual(10, away_stats.steals)
+		self.assertEqual(6, away_stats.blocks)
+		self.assertEqual(10, away_stats.turnovers)
+		self.assertEqual(31, away_stats.fouls)
+		self.assertEqual(124, away_stats.points)
 
 	def test_home_game_stats(self):
 
-		self.assertEqual(36, self.home_stats.fields_goals_made)
-		self.assertEqual(79, self.home_stats.fields_goals_attempted)
+		home_stats = self.game.home_stats
+		self.assertEqual(36, home_stats.fields_goals_made)
+		self.assertEqual(79, home_stats.fields_goals_attempted)
 
-		self.assertEqual(7, self.home_stats.threes_made)
-		self.assertEqual(28, self.home_stats.threes_attempted)
+		self.assertEqual(7, home_stats.threes_made)
+		self.assertEqual(28, home_stats.threes_attempted)
 
-		self.assertEqual(30, self.home_stats.free_throws_made)
-		self.assertEqual(40, self.home_stats.free_throws_attemped)
+		self.assertEqual(30, home_stats.free_throws_made)
+		self.assertEqual(40, home_stats.free_throws_attemped)
 
-		self.assertEqual(9, self.home_stats.offensive_rebounds)
-		self.assertEqual(44, self.home_stats.defense_rebounds)
+		self.assertEqual(9, home_stats.offensive_rebounds)
+		self.assertEqual(44, home_stats.defense_rebounds)
 
-		self.assertEqual(17, self.home_stats.assists)
-		self.assertEqual(6, self.home_stats.steals)
-		self.assertEqual(2, self.home_stats.blocks)
-		self.assertEqual(16, self.home_stats.turnovers)
-		self.assertEqual(21, self.home_stats.fouls)
-		self.assertEqual(109, self.home_stats.points)
+		self.assertEqual(17, home_stats.assists)
+		self.assertEqual(6, home_stats.steals)
+		self.assertEqual(2, home_stats.blocks)
+		self.assertEqual(16, home_stats.turnovers)
+		self.assertEqual(21, home_stats.fouls)
+		self.assertEqual(109, home_stats.points)
