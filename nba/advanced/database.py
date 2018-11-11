@@ -9,6 +9,21 @@ from typing import List
 
 __connection_string__ = "host='localhost' dbname='bets' user='bet' password='bet'"
 
+def __map_record_to_game__(record):
+	stat_dict = {"fgm":0,"fga":0,"tpm":0,"tpa":0,"ftm":0,"fta":0,"oreb":0,"dreb":0,"assists":0,"steals":0,"blocks":0,"turnovers":0,"fouls":0,"points":0}
+
+	for k in stat_dict:
+		stat_dict[k] = record[f"away_{k}"]
+		
+	away_stats = domain.GameStats(stat_dict)
+
+	for k in stat_dict:
+		stat_dict[k] = record[f"home_{k}"]
+		
+	home_stats = domain.GameStats(stat_dict)
+
+	return domain.Game(record["date"], record["gameid"], record["away"], record["home"], away_stats, home_stats)
+		
 def get_game_stats(gameid:str) -> domain.Game:
 
 	with psycopg2.connect(__connection_string__) as conn:
@@ -21,19 +36,7 @@ def get_game_stats(gameid:str) -> domain.Game:
 
 			record = cur.fetchone()
 
-			stat_dict = {"fgm":0,"fga":0,"tpm":0,"tpa":0,"ftm":0,"fta":0,"oreb":0,"dreb":0,"assists":0,"steals":0,"blocks":0,"turnovers":0,"fouls":0,"points":0}
-
-			for k in stat_dict:
-				stat_dict[k] = record[f"away_{k}"]
-				
-			away_stats = domain.GameStats(stat_dict)
-
-			for k in stat_dict:
-				stat_dict[k] = record[f"home_{k}"]
-				
-			home_stats = domain.GameStats(stat_dict)
-
-			game = domain.Game(record["date"], record["gameid"], record["away"], record["home"], away_stats, home_stats)
+			game = __map_record_to_game__(record)
 
 	return game
 
@@ -50,6 +53,23 @@ def get_games(date:datetime.date) -> List[domain.Game]:
 
 			for r in records:
 				games.append(get_game_stats(r["id"]))
+
+	return games
+
+def get_games_with_daterange(start:datetime.date, end:datetime.date) -> List[domain.Game]:
+
+	games:List[domain.Game] = []
+
+	with psycopg2.connect(__connection_string__) as conn:
+		with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+
+			cur.execute("select * from gamestats where date between %s and %s order by date", [start, end])
+
+			records = cur.fetchall()
+
+			for r in records:
+				game_stat = __map_record_to_game__(r)
+				games.append(game_stat)
 
 	return games
 

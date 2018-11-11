@@ -22,6 +22,16 @@ class GameStats:
 		self.fouls = stat_dict["fouls"]
 		self.points = stat_dict["points"]
 
+	def to_array(self):
+		return [
+			self.fields_goals_made, self.fields_goals_attempted,
+			self.threes_made, self.threes_attempted,
+			self.free_throws_made, self.free_throws_attemped,
+			self.offensive_rebounds, self.defense_rebounds,
+			self.assists, self.steals, self.blocks,
+			self.fouls, self.points
+		]
+
 class Game:
 	def __init__(self, date:datetime.date, id:str, away:str, home:str, away_stats:GameStats, home_stats:GameStats):
 		self.id = id
@@ -30,3 +40,6 @@ class Game:
 		self.away_stats = away_stats
 		self.home = home
 		self.home_stats = home_stats
+
+	def to_output(self):
+		return [self.date,self.away] + self.away_stats.to_array() + [self.home] + self.home_stats.to_array()
