@@ -7,12 +7,9 @@ from typing import List
 
 import domain
 
-if __name__ == "__main__":
-	
-	year = 2015
-
-	start = datetime.date(2015,10,1)
-	end = datetime.date(2016,4,10)
+def generate_stats(year):
+	start = datetime.date(year,10,1)
+	end = datetime.date(year+1,4,10)
 	games:List[domain.Game] = database.get_games_with_daterange(start, end)
 
 	with open(f"{year}.csv", "w", newline='') as output_f:
@@ -22,3 +19,8 @@ if __name__ == "__main__":
 		for g in games:
 
 			writer.writerow(g.to_output())
+
+if __name__ == "__main__":
+	
+	for y in [2015,2016,2017,2018]:
+		generate_stats(y)

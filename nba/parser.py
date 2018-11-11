@@ -5,14 +5,12 @@ class NBAGame:
 
 	def __init__(self, row, counter):
 		self.counter = counter
-		
-		dt = parse(row[0])
 
-		self.date = dt # dt.strftime("%Y-%m-%d")
-		self.away = row[2]
-		self.away_pts = self.__safe_int__(row[3])
-		self.home = row[4]
-		self.home_pts = self.__safe_int__(row[5])
+		self.date = parse(row[0])
+		self.away = row[1]
+		self.away_pts = self.__safe_int__(row[14])
+		self.home = row[15]
+		self.home_pts = self.__safe_int__(row[28])
 		
 		if self.home_pts > self.away_pts:
 			self.home_win = 1
