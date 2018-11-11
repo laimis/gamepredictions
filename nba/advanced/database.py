@@ -9,15 +9,6 @@ from typing import List
 
 __connection_string__ = "host='localhost' dbname='bets' user='bet' password='bet'"
 
-def __insert_box_score_row__(cur: psycopg2.extensions.cursor, box_score_id:str, bse: scraper.BoxScoreEntry):
-	
-	cur.execute(
-		"INSERT INTO gamerows \
-		(gameid,team,name,minutes,fgm,fga,tpm,tpa,ftm,fta,oreb,dreb,assists,steals,blocks,turnovers,fouls,points) VALUES \
-		(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-		(box_score_id, bse.team, bse.name, bse.minutes, bse.field_goals_made, bse.field_goals_attemped, bse.threes_made, bse.threes_attempted, bse.free_throws_made, bse.free_throws_attempted, bse.offensive_rebounds, bse.defensive_rebounds, bse.assists, bse.steals, bse.blocks, bse.turnovers, bse.personal_fouls, bse.points)
-	)
-
 def get_game_stats(gameid:str, team:str) -> domain.GameStats:
 
 	game = domain.GameStats()
@@ -57,6 +48,15 @@ def get_games(date:datetime.date) -> List[domain.Game]:
 				games.append(domain.Game(date, r["id"], r["away"], r["home"]))
 
 	return games
+
+def __insert_box_score_row__(cur: psycopg2.extensions.cursor, box_score_id:str, bse: scraper.BoxScoreEntry):
+	
+	cur.execute(
+		"INSERT INTO gamerows \
+		(gameid,team,name,minutes,fgm,fga,tpm,tpa,ftm,fta,oreb,dreb,assists,steals,blocks,turnovers,fouls,points) VALUES \
+		(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+		(box_score_id, bse.team, bse.name, bse.minutes, bse.field_goals_made, bse.field_goals_attemped, bse.threes_made, bse.threes_attempted, bse.free_throws_made, bse.free_throws_attempted, bse.offensive_rebounds, bse.defensive_rebounds, bse.assists, bse.steals, bse.blocks, bse.turnovers, bse.personal_fouls, bse.points)
+	)
 
 def insert_box_score(box_score: scraper.BoxScore):
 
