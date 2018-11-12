@@ -3,8 +3,8 @@ import nba.database as database
 import datetime
 
 def get_season_box_scores():
-	dt = datetime.date(2016,11,13)
-	end = datetime.date(2017,4,10)
+	dt = datetime.date(2018,10,17)
+	end = datetime.date(2018,11,12)
 
 	while dt < end:
 		

@@ -2,7 +2,6 @@ from dateutil.parser import parse
 
 # this represents csv row from basketball reference
 class NBAGame:
-
 	def __init__(self, counter, row=None, date = None):
 		self.counter = counter
 
@@ -14,7 +13,7 @@ class NBAGame:
 
 		self.date = parse(row[0])
 		self.away = row[1]
-		self.away_pts = self.__safe_int__(row[14])
+		self.away_pts = self.__safe_int__(row[15])
 		self.away_fgm = self.__safe_int__(row[2])
 		self.away_fga = self.__safe_int__(row[3])
 		self.away_tpm = self.__safe_int__(row[4])
@@ -26,18 +25,18 @@ class NBAGame:
 		self.away_assists = self.__safe_int__(row[10])
 		self.away_turnovers = self.__safe_int__(row[13])
 		
-		self.home = row[15]
-		self.home_pts = self.__safe_int__(row[28])
-		self.home_fgm = self.__safe_int__(row[16])
-		self.home_fga = self.__safe_int__(row[17])
-		self.home_tpm = self.__safe_int__(row[18])
-		self.home_tpa = self.__safe_int__(row[19])
-		self.home_ftm = self.__safe_int__(row[20])
-		self.home_fta = self.__safe_int__(row[21])
-		self.home_oreb = self.__safe_int__(row[22])
-		self.home_dreb = self.__safe_int__(row[23])
-		self.home_assists = self.__safe_int__(row[24])
-		self.home_turnovers = self.__safe_int__(row[27])
+		self.home = row[16]
+		self.home_pts = self.__safe_int__(row[30])
+		self.home_fgm = self.__safe_int__(row[17])
+		self.home_fga = self.__safe_int__(row[18])
+		self.home_tpm = self.__safe_int__(row[19])
+		self.home_tpa = self.__safe_int__(row[20])
+		self.home_ftm = self.__safe_int__(row[21])
+		self.home_fta = self.__safe_int__(row[22])
+		self.home_oreb = self.__safe_int__(row[23])
+		self.home_dreb = self.__safe_int__(row[24])
+		self.home_assists = self.__safe_int__(row[25])
+		self.home_turnovers = self.__safe_int__(row[26])
 		
 		if self.home_pts > self.away_pts:
 			self.home_win = 1
