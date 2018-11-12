@@ -6,3 +6,6 @@
 - use date calcs in deciding the strength (theory is that this should increase the accuracy of confidences)
 - analyze wrong predictions, anything that stands out? injury? rest? back to back
 - head to head team comparison for each
+
+- evaluate should output game info into table
+- percentage thought, won, loss, and output that so that can do analysis what the games it thinks it lost

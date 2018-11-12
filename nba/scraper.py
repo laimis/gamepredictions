@@ -111,7 +111,7 @@ def __get_boxscore_links_soup__(year, month, day, attempt = 0):
 		with urllib.request.urlopen(req) as response:
 			html = response.read()
 			return BeautifulSoup(html, 'html.parser')
-	except requests.exceptions.RequestException as e:
+	except urllib.error.HTTPError as e:
 		
 		if attempt < 2:
 			return __get_boxscore_links_soup__(year, month, day, attempt+1)
