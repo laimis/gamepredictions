@@ -55,7 +55,7 @@ class BoxScoreEntry:
 			return
 		
 		# player did not play
-		if len(columns) == 1:
+		if len(columns) == 1 or len(columns[0].contents) == 0:
 			self.minutes = ""
 			self.field_goals_made = 0
 			self.field_goals_attemped = 0
@@ -104,12 +104,21 @@ def __get_boxscore_soup__(box_score_url):
 		html = response.read()
 		return BeautifulSoup(html, 'html.parser')
 
-def __get_boxscore_links_soup__(year, month, day):
-	req = urllib.request.Request(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}", headers=headers)
-	with urllib.request.urlopen(req) as response:
-		html = response.read()
-		return BeautifulSoup(html, 'html.parser')
+def __get_boxscore_links_soup__(year, month, day, attempt = 0):
 
+	try:
+		req = urllib.request.Request(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}", headers=headers)
+		with urllib.request.urlopen(req) as response:
+			html = response.read()
+			return BeautifulSoup(html, 'html.parser')
+	except requests.exceptions.RequestException as e:
+		
+		if attempt < 2:
+			return __get_boxscore_links_soup__(year, month, day, attempt+1)
+		else:
+			print("exception!", e)
+			exit(-1)
+		
 def get_boxscore_links(year, month, day) -> List[str]:
 
 	links:List[str] = []

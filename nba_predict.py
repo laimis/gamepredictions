@@ -2,21 +2,24 @@ import csv
 import os
 
 import json
+import datetime
 
 import common
 import nba.importer as importer
 import nba.parser as parser
 import nba.features as features
+import nba.scraper as scraper
 
-def predict_games(input_f, model, stats):
+def predict_games(date, games, model, stats):
 
-	csv_reader = csv.reader(input_f)
-	
 	predictions = []
 	counter = 1
-	for row in csv_reader:
+	for g in games:
 		
-		game_info = parser.NBAGame(row, counter)
+		game_info = parser.NBAGame(counter, date = date)
+		game_info.away = g[0]
+		game_info.home = g[1]
+
 		counter += 1
 
 		away_confidence = 0
@@ -48,15 +51,16 @@ def predict_games(input_f, model, stats):
 	
 	return predictions
 
-models = []
-
 model = common.load_model(f"models\\nba\\model.pkl")
 _, stats = importer.generate_output_and_stats(2018, f"input\\nba\\2018.csv")
 
-with open(f"input\\nba\\predict.csv", "r") as input_f:
-	predictions = predict_games(input_f, model, stats)
+dt = datetime.datetime.now()
 
-	dict = {"data": predictions}
+games = scraper.get_games(dt)
 
-	with open("output\\nba\\html\\predictions.json", 'w') as summary_file:
-		json.dump(dict, summary_file)
+predictions = predict_games(dt, games, model, stats)
+
+dict = {"data": predictions}
+
+with open("output\\nba\\html\\predictions.json", 'w') as summary_file:
+	json.dump(dict, summary_file)

@@ -29,7 +29,7 @@ class GameStats:
 			self.free_throws_made, self.free_throws_attemped,
 			self.offensive_rebounds, self.defense_rebounds,
 			self.assists, self.steals, self.blocks,
-			self.fouls, self.points
+			self.turnovers, self.fouls, self.points
 		]
 
 class Game:

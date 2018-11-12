@@ -14,7 +14,7 @@ def generate_output_and_stats(year, file_path):
 
 		counter = 1
 		for row in csv_reader:
-			game_info = parser.NBAGame(row, counter)
+			game_info = parser.NBAGame(counter, row)
 			counter += 1
 
 			if counter > 100:
