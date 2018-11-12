@@ -1,7 +1,10 @@
 from bs4 import BeautifulSoup
 import urllib.request
+import calendar
 
 from typing import List
+
+
 
 class BoxScoreTeam:
 
@@ -52,7 +55,7 @@ class BoxScoreEntry:
 			return
 		
 		# player did not play
-		if len(columns) == 1:
+		if len(columns) == 1 or len(columns[0].contents) == 0:
 			self.minutes = ""
 			self.field_goals_made = 0
 			self.field_goals_attemped = 0
@@ -101,12 +104,21 @@ def __get_boxscore_soup__(box_score_url):
 		html = response.read()
 		return BeautifulSoup(html, 'html.parser')
 
-def __get_boxscore_links_soup__(year, month, day):
-	req = urllib.request.Request(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}", headers=headers)
-	with urllib.request.urlopen(req) as response:
-		html = response.read()
-		return BeautifulSoup(html, 'html.parser')
+def __get_boxscore_links_soup__(year, month, day, attempt = 0):
 
+	try:
+		req = urllib.request.Request(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}", headers=headers)
+		with urllib.request.urlopen(req) as response:
+			html = response.read()
+			return BeautifulSoup(html, 'html.parser')
+	except urllib.error.HTTPError as e:
+		
+		if attempt < 2:
+			return __get_boxscore_links_soup__(year, month, day, attempt+1)
+		else:
+			print("exception!", e)
+			exit(-1)
+		
 def get_boxscore_links(year, month, day) -> List[str]:
 
 	links:List[str] = []
@@ -164,6 +176,47 @@ def get_boxscore_details(year:int, month:int, day:int, box_score_url:str) -> Box
 			entries.append(entry)
 
 	return BoxScore(year, month, day, entries)
+
+def get_games(dt):
+
+	month = calendar.month_name[dt.month].lower()
+	match = f"month={dt.month}&day={dt.day}&year={dt.year}"
+	url = f"{ref_url}/leagues/NBA_{dt.year+1}_games-{month}.html"
+
+	games = []
+
+	with urllib.request.urlopen(url) as response:
+		html = response.read()
+		soup = BeautifulSoup(html, 'html.parser')
+		
+		for table in soup.find_all("table"):
+			if "id" not in table.attrs:
+				continue
+			
+			if table["id"] != "schedule":
+				continue
+				
+			skipped = False
+			for tr in table.find_all("tr"):
+				if not skipped:
+					skipped = True
+					continue
+				
+				href = tr.find_all("th")[0].find_all("a")[0]["href"]
+				
+				if match not in href:
+					continue
+					
+				tds = tr.find_all("td")
+				
+				away = tds[1].find_all("a")[0].get_text()
+				away_short = tds[1].find_all("a")[0]["href"].split('/')[2].lower()
+				home = tds[3].find_all("a")[0].get_text()
+				home_short = tds[3].find_all("a")[0]["href"].split('/')[2].lower()
+				
+				games.append((away_short, home_short))
+				
+	return games
 
 if __name__ == "__main__":
 	pass

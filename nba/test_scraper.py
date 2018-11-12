@@ -1,15 +1,19 @@
 import unittest
 
-import scraper
+import nba.scraper as scraper
 
-class TestImport(unittest.TestCase):
+import datetime
+
+class TestScraper(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(cls):
-		super(TestImport, cls).setUpClass()
+		super(TestScraper, cls).setUpClass()
 
 		cls.links = scraper.get_boxscore_links(2018, 11, 8)
 		cls.box_score = scraper.get_boxscore_details(2018, 11, 8, cls.links[0])
+
+		cls.games = scraper.get_games(datetime.date(2018,11,11))
 
 	def test_total_number_of_links_should_match(self):
 
@@ -27,5 +31,6 @@ class TestImport(unittest.TestCase):
 		self.assertTrue(self.box_score.away.away, "away team should be away")
 		self.assertFalse(self.box_score.home.away, "home team should be home")
 
-		# self.assertEqual(134, matchup.away.points, "away points should match")
-		# self.assertEqual(111, matchup.home.points, "home points should match")
+	def test_games_match(self):
+
+		self.assertEqual(6, len(self.games))
