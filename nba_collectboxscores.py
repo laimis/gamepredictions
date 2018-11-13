@@ -31,7 +31,7 @@ def get_box_scores_for_date(dt:datetime.date):
 
 if __name__ == "__main__":
 
-	# dt = datetime.datetime.now() + datetime.timedelta(days=-1)
+	dt = datetime.datetime.now() + datetime.timedelta(days=-1)
 
-	# get_box_scores_for_date(dt)
-	get_season_box_scores()
+	get_box_scores_for_date(dt)
+	#get_season_box_scores()
