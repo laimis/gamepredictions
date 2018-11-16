@@ -98,5 +98,5 @@ def run_evaluations():
 if __name__ == '__main__':
 
 	run_import()
-	run_training()
+	# run_training()
 	run_evaluations()

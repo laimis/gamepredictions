@@ -14,7 +14,7 @@ def generate_stats(year):
 	with open(f"input\\nba\\{year}.csv", "w", newline='') as output_f:
 
 		writer = csv.writer(output_f)
-		
+
 		for g in games:
 
 			writer.writerow(g.to_output())

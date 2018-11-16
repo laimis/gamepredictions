@@ -26,8 +26,8 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	# model = GaussianNB()
-	# param_grid = {}
+	model = GaussianNB()
+	param_grid = {}
 
 	# model = GradientBoostingClassifier()
 	# param_grid = {
@@ -41,12 +41,12 @@ def get_model_and_grid():
 	# 	"max_depth": [2, 3]
 	# }
 
-	model = RandomForestClassifier()
-	param_grid = {
-		"n_estimators": [10, 50, 100, 150, 200],
-		"criterion": ["gini", "entropy"],
-		"max_depth": [4, 5, 6, 7, 8]
-	}
+	# model = RandomForestClassifier()
+	# param_grid = {
+	# 	"n_estimators": [10, 50, 100, 150, 200],
+	# 	"criterion": ["gini", "entropy"],
+	# 	"max_depth": [4, 5, 6, 7, 8]
+	# }
 
 	# model = SVC(probability=True)
 	# param_grid = {
