@@ -12,6 +12,8 @@ def generate_output_and_stats(year, file_path):
 	with open(file_path, "r") as input_f:
 		csv_reader = csv.reader(input_f)
 
+		# next(csv_reader, None)
+
 		counter = 1
 		for row in csv_reader:
 			game_info = parser.NBAGame(counter, row)
