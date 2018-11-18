@@ -20,23 +20,23 @@ class ConfidenceStat:
 	def __str__(self):
 		return self.label
 
-def read_data_from_file(filepath, y_col, x_cols_to_drop):
+def read_data_from_file(filepath, y_col, x_col):
 
 	data = pd.read_csv(filepath)
 
 	y = data[y_col]
-	X = data.drop(x_cols_to_drop, axis=1, inplace=False)
+	X = data[x_col]
 
 	return X, y
 
-def read_data_groupedby_week(filepath, y_col, x_cols_to_drop, group_by):
+def read_data_groupedby_week(filepath, y_col, x_col, group_by):
 
 	data = pd.read_csv(filepath)
 
 	grouped = {}
 	for name, group in data.groupby(group_by):
 		y = group[y_col]
-		X = group.drop(x_cols_to_drop, axis=1, inplace=False)
+		X = group[x_col]
 
 		grouped[name] = (X, y)
 

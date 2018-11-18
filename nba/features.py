@@ -62,15 +62,6 @@ def calc_features(stats, game_info):
 		home_rebs
 	]
 
-# def get_feature_headers():
-# 	return "year,date,counter,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_tpm,home_tpm,away_assists,home_assists,away_turnovers,home_turnovers\n"
-
-# 
-
-#return "year,date,counter,away,home,home_win,away_pct,home_pct,away_diff,home_diff\n"
-def get_feature_headers():
-	return "year,date,counter,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_tpm,home_tpm,away_todiff,home_todiff,away_rebs,home_rebs\n"
-
 def number_of_games_within_date(dates, date, number_of_days):
 	number_of_games = 0
 	# print(dates)
