@@ -14,20 +14,24 @@ def run_evaluations():
 	data = []
 
 	test_file = f"output\\nba\\test\\train.csv"
+	validation_file = f"output\\nba\\validation\\train.csv"
 	model_file = f"models\\nba\\model.pkl"
 	output_file = "output\\nba\\html\\testdata.json"
 
 	model = common.load_model(model_file)
-	X, y = common.read_data_from_file(test_file, "home_win", get_column_names_for_removal())
 
-	data.append(evaluate.evaluate("model", model, X, y))
+	X, y = common.read_data_from_file(test_file, "home_win", get_column_names_for_removal())
+	data.append(evaluate.evaluate("test", model, X, y))
+
+	X, y = common.read_data_from_file(validation_file, "home_win", get_column_names_for_removal())
+	data.append(evaluate.evaluate("validation", model, X, y))
 
 	dict = {"data": data}
 
 	with open(output_file, 'w') as summary_file:
 		json.dump(dict, summary_file)
 
-	groups = common.read_data_groupedby_week(test_file, "home_win", get_column_names_for_removal(), ['year', 'date'])
+	groups = common.read_data_groupedby_week(validation_file, "home_win", get_column_names_for_removal(), ['year', 'date'])
 
 	evaluate.weekly_breakdown(groups, model)
 
@@ -77,15 +81,17 @@ def run_import():
 				input_file = f"input\\nba\\{year}.csv"
 				importer.transform_csv(input_file, output_f, year)
 
-	years_train = [2015, 2016, 2017]
-	years_test = [2018]
+	years_train = [2014, 2015, 2016]
+	years_test = [2017]
+	years_validate = [2018]
 
 	generate_features(years_train, "train")
 	generate_features(years_test, "test")
+	generate_features(years_validate, "validation")
 
 
 if __name__ == '__main__':
 
 	run_import()
-	run_training()
+	#run_training()
 	run_evaluations()

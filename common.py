@@ -46,6 +46,16 @@ def load_model(filepath):
 
 	return joblib.load(filepath)
 
+__levels__ =  [
+	(0.50, 0.60),
+	(0.60, 0.70),
+	(0.70, 0.75),
+	(0.75, 0.80),
+	(0.80, 0.85),
+	(0.85, 0.90),
+	(0.90, 1.10)
+]
+
 def confidence_stats(model, X, y):
 
 	def calc_confidence_stats(y, predicted, probabilities, level):
@@ -64,7 +74,7 @@ def confidence_stats(model, X, y):
 	probabilities = model.predict_proba(X)
 
 	stats = []
-	for level in [(0.50, 0.60), (0.60, 0.75), (0.75, 0.80), (0.80, 0.85), (0.85, 0.90), (0.90, 1.10)]:
+	for level in __levels__:
 		stat = calc_confidence_stats(y, predictions, probabilities, level)
 		stats.append(stat)
 
