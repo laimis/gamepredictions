@@ -15,7 +15,7 @@ class ConfidenceStat:
 			self.label = f"{self.conf_range[0]}: N/A"
 		else:
 			self.pct = self.correct / self.total
-			self.label = f"{self.conf_range[0]}: {self.correct}/{self.total}, {self.pct:.2f}"
+			self.label = f"{self.pct:.2f} - {self.correct}/{self.total}"
 
 	def __str__(self):
 		return self.label

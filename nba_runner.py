@@ -11,7 +11,6 @@ def get_label_column_names():
 	return ["year", "date", "counter", "away", "home", "home_win"]
 
 def get_feature_column_names():
-	# return ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff", "away_rebs", "home_rebs"]
 	return ["away_pct", "home_pct", "away_diff", "home_diff"]
 
 def get_feature_column_names_for_data_files():
@@ -21,34 +20,37 @@ def get_data_header():
 	combined = get_label_column_names() + get_feature_column_names_for_data_files()
 	return ",".join(combined)
 
-def run_evaluations():
+def add_to_json_summary(summary_file, data):
+	if os.path.isfile(summary_file):
+		with open(summary_file, 'r') as fh:
+			dict = json.load(fh)
+	else:
+		dict = {"data":[]}
+
+	dict["data"].append(data)
+
+	with open(summary_file, 'w') as fh:
+		json.dump(dict, fh)
+
+def run_evaluations(model_name, data_file, summary_file):
 	data = []
 
-	test_file = f"output\\nba\\test\\train.csv"
-	validation_file = f"output\\nba\\validation\\train.csv"
 	model_file = f"models\\nba\\model.pkl"
-	output_file = "output\\nba\\html\\testdata.json"
-
+	
 	model = common.load_model(model_file)
 
-	X, y = common.read_data_from_file(test_file, "home_win", get_feature_column_names())
-	data.append(evaluate.evaluate("test", model, X, y))
+	X, y = common.read_data_from_file(data_file, "home_win", get_feature_column_names())
 
-	X, y = common.read_data_from_file(validation_file, "home_win", get_feature_column_names())
-	data.append(evaluate.evaluate("validation", model, X, y))
+	eval_results = evaluate.evaluate(f"{model_name}-test", model, X, y)
 
-	dict = {"data": data}
+	add_to_json_summary(summary_file, eval_results)
+	
+	# groups = common.read_data_groupedby_week(validation_file, "home_win", get_feature_column_names(), ['year', 'date'])
 
-	with open(output_file, 'w') as summary_file:
-		json.dump(dict, summary_file)
+	# evaluate.weekly_breakdown(groups, model)
 
-	groups = common.read_data_groupedby_week(validation_file, "home_win", get_feature_column_names(), ['year', 'date'])
-
-	evaluate.weekly_breakdown(groups, model)
-
-def run_training(model_name):
-	models = []
-
+def run_training(model_name, summary_file):
+	
 	file_training = f"output\\nba\\train\\train.csv"
 	file_model = f"models\\nba\\model.pkl"
 
@@ -70,12 +72,7 @@ def run_training(model_name):
 	for s in stats:
 		output.append(s.label)
 	
-	models.append(output)
-
-	dict = {"data": models}
-
-	with open("output\\nba\\html\\trainingdata.json", 'w') as summary_file:
-		json.dump(dict, summary_file)
+	add_to_json_summary(summary_file, output)
 
 def run_import(years_train, years_test, years_validate):
 	def generate_features(years, train_or_test):
@@ -99,6 +96,38 @@ def run_import(years_train, years_test, years_validate):
 
 if __name__ == '__main__':
 
+	def delete_if_needed(filepath):
+		if os.path.isfile(filepath):
+			os.remove(filepath)
+
+	train_summary = "output\\nba\\html\\trainingdata.json"
+	test_summary = "output\\nba\\html\\testdata.json"
+	val_summary = "output\\nba\\html\\valdata.json"
+
+	delete_if_needed(train_summary)
+	delete_if_needed(test_summary)
+	delete_if_needed(val_summary)
+
+	train_input = "output\\nba\\train\\train.csv"
+	test_input = "output\\nba\\test\\train.csv"
+	val_input = "output\\nba\\validation\\train.csv"
+
 	run_import([2014, 2015, 2016], [2017], [2018])
-	run_training("model")
-	run_evaluations()
+	run_training("4-5-6", train_summary)
+	run_evaluations("4-5-6", test_input, test_summary)
+	run_evaluations("4-5-6", val_input, val_summary)
+
+	run_import([2015, 2016], [2017], [2018])
+	run_training("5-6", train_summary)
+	run_evaluations("5-6", test_input, test_summary)
+	run_evaluations("5-6", val_input, val_summary)
+
+	run_import([2014, 2015, 2017], [2016], [2018])
+	run_training("4-5-7", train_summary)
+	run_evaluations("4-5-7", test_input, test_summary)
+	run_evaluations("4-5-7", val_input, val_summary)
+
+	run_import([2015, 2016, 2017], [2014], [2018])
+	run_training("5-6-7", train_summary)
+	run_evaluations("5-6-7", test_input, test_summary)
+	run_evaluations("5-6-7", val_input, val_summary)
