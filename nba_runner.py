@@ -112,20 +112,20 @@ if __name__ == '__main__':
 	test_input = "output\\nba\\test\\train.csv"
 	val_input = "output\\nba\\validation\\train.csv"
 
-	run_import([2014, 2015, 2016], [2017], [2018])
-	run_training("4-5-6", train_summary)
-	run_evaluations("4-5-6", test_input, test_summary)
-	run_evaluations("4-5-6", val_input, val_summary)
+	# run_import([2014, 2015, 2016], [2017], [2018])
+	# run_training("4-5-6", train_summary)
+	# run_evaluations("4-5-6", test_input, test_summary)
+	# run_evaluations("4-5-6", val_input, val_summary)
 
-	run_import([2015, 2016], [2017], [2018])
-	run_training("5-6", train_summary)
-	run_evaluations("5-6", test_input, test_summary)
-	run_evaluations("5-6", val_input, val_summary)
+	# run_import([2015, 2016], [2017], [2018])
+	# run_training("5-6", train_summary)
+	# run_evaluations("5-6", test_input, test_summary)
+	# run_evaluations("5-6", val_input, val_summary)
 
-	run_import([2014, 2015, 2017], [2016], [2018])
-	run_training("4-5-7", train_summary)
-	run_evaluations("4-5-7", test_input, test_summary)
-	run_evaluations("4-5-7", val_input, val_summary)
+	# run_import([2014, 2015, 2017], [2016], [2018])
+	# run_training("4-5-7", train_summary)
+	# run_evaluations("4-5-7", test_input, test_summary)
+	# run_evaluations("4-5-7", val_input, val_summary)
 
 	run_import([2015, 2016, 2017], [2014], [2018])
 	run_training("5-6-7", train_summary)

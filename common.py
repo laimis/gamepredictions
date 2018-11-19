@@ -10,12 +10,15 @@ class ConfidenceStat:
 		self.correct = correct
 		self.total = total
 
+		losses = self.total - self.correct
+		self.moneys = 3 * self.correct - 10 * losses
+
 		if self.total == 0:
 			self.pct = 0
 			self.label = f"{self.conf_range[0]}: N/A"
 		else:
 			self.pct = self.correct / self.total
-			self.label = f"{self.pct:.2f} - {self.correct}/{self.total}"
+			self.label = f"{self.pct:.2f} - {self.correct}/{self.total - self.correct} ${self.moneys}"
 
 	def __str__(self):
 		return self.label
@@ -47,13 +50,11 @@ def load_model(filepath):
 	return joblib.load(filepath)
 
 __levels__ =  [
-	(0.50, 0.60),
-	(0.60, 0.70),
-	(0.70, 0.75),
-	(0.75, 0.80),
-	(0.80, 0.85),
-	(0.85, 0.90),
-	(0.90, 1.10)
+	(0.70, 0.80),
+	(0.80, 0.90),
+	(0.90, 1.10),
+	(0.75, 1.10),
+	(0.80, 1.10)
 ]
 
 def confidence_stats(model, X, y):
