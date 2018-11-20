@@ -3,6 +3,7 @@ import os
 
 import json
 import datetime
+import pandas as pd
 
 import common
 import nba.importer as importer
@@ -10,7 +11,7 @@ import nba.parser as parser
 import nba.features as features
 import nba.scraper as scraper
 
-def generate_summary(games, predictions, confidences):
+def generate_summary(df:pd.DataFrame, games, predictions, confidences):
 
 	summary = []
 	for idx,val in enumerate(games):
@@ -33,6 +34,10 @@ def generate_summary(games, predictions, confidences):
 		confidence = max(away_confidence, home_confidence)
 
 		output.append(f"{confidence:.2f}")
+		output.append(f"{df.iloc[idx]['away_pct']}")
+		output.append(f"{df.iloc[idx]['home_pct']}")
+		output.append(f"{df.iloc[idx]['away_diff']}")
+		output.append(f"{df.iloc[idx]['home_diff']}")
 		
 		summary.append(output)
 	
@@ -56,8 +61,6 @@ for g in scraper.get_games(dt):
 	games.append(game_info)
 	data.append(importer.generate_output_row(2018, stats, game_info))
 
-import pandas as pd
-
 df = pd.DataFrame(data, columns=features.get_data_header().split(","))
 
 X = df[features.get_feature_column_names()]
@@ -65,7 +68,7 @@ X = df[features.get_feature_column_names()]
 predictions = model.predict(X)
 confidences = model.predict_proba(X)
 
-summary = generate_summary(games, predictions, confidences)
+summary = generate_summary(df, games, predictions, confidences)
 
 dict = {"data": summary}
 
