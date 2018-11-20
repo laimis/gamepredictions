@@ -7,7 +7,9 @@ class NBAGame:
 
 		if date is not None:
 			self.date = date
-			
+
+		self.home_win = -1
+
 		if row is None:
 			return
 

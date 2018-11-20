@@ -10,57 +10,64 @@ import nba.parser as parser
 import nba.features as features
 import nba.scraper as scraper
 
-def predict_games(date, games, model, stats):
+def generate_summary(games, predictions, confidences):
 
-	predictions = []
-	counter = 1
-	for g in games:
+	summary = []
+	for idx,val in enumerate(games):
 		
-		game_info = parser.NBAGame(counter, date = date)
-		game_info.away = g[0]
-		game_info.home = g[1]
-
-		counter += 1
-
 		away_confidence = 0
 		home_confidence = 0
-		winner = game_info.home
+		winner = val.home
 
-		calculated_features = [features.calc_features(stats, game_info)]
-
-		predict = model.predict(calculated_features)
-		confidence = max(model.predict_proba(calculated_features)[0])
+		confidence = max(confidences[idx])
 		
-		if predict[0] == 0:
+		if predictions[idx] == 0:
 			away_confidence = max(away_confidence, confidence)
-			winner = game_info.away
+			winner = val.away
 		else:
 			home_confidence = max(home_confidence, confidence)
-			winner = game_info.home
+			winner = val.home
 		
-		output = [f"{game_info.away} @ {game_info.home}", winner]
+		output = [f"{val.away} @ {val.home}", winner]
 
 		confidence = max(away_confidence, home_confidence)
 
 		output.append(f"{confidence:.2f}")
 		
-		for f in calculated_features[0]:
-			output.append(f"{f:.2f}")
-		
-		predictions.append(output)
+		summary.append(output)
 	
-	return predictions
+	return summary
+
+stats = importer.generate_stats(f"input\\nba\\2018.csv")
 
 model = common.load_model(f"models\\nba\\model.pkl")
-_, stats = importer.generate_output_and_stats(2018, f"input\\nba\\2018.csv")
+
+data = []
+games = []
 
 dt = datetime.datetime.now()
 
-games = scraper.get_games(dt)
+for g in scraper.get_games(dt):
 
-predictions = predict_games(dt, games, model, stats)
+	game_info = parser.NBAGame(1, date = dt)
+	game_info.away = g[0]
+	game_info.home = g[1]
 
-dict = {"data": predictions}
+	games.append(game_info)
+	data.append(importer.generate_output_row(2018, stats, game_info))
+
+import pandas as pd
+
+df = pd.DataFrame(data, columns=features.get_data_header().split(","))
+
+X = df[features.get_feature_column_names()]
+
+predictions = model.predict(X)
+confidences = model.predict_proba(X)
+
+summary = generate_summary(games, predictions, confidences)
+
+dict = {"data": summary}
 
 with open("output\\nba\\html\\predictions.json", 'w') as summary_file:
 	json.dump(dict, summary_file)

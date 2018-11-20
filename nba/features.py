@@ -3,6 +3,19 @@ import nba.parser as parser
 tracked_stats = ["wins", "scored", "allowed", "date", "fg%", "tp%", "ft%", "rebs", "assists", "turnovers"]
 games_to_roll = 20
 
+def get_label_column_names():
+	return ["year", "date", "counter", "away", "home", "home_win"]
+
+def get_feature_column_names():
+	return ["away_pct", "home_pct", "away_diff", "home_diff"]
+
+def get_feature_column_names_for_data_files():
+	return ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff", "away_rebs", "home_rebs"]
+
+def get_data_header():
+	combined = get_label_column_names() + get_feature_column_names_for_data_files()
+	return ",".join(combined)
+
 def to_stats_home(rd:parser.NBAGame):
 	return [
 		rd.home_win, 
