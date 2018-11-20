@@ -1,7 +1,7 @@
 import csv
 import os
 
-import nba.parser as parser
+import nba.domain as domain
 import nba.features as features
 
 def generate_stats(file_path):
@@ -14,13 +14,13 @@ def generate_stats(file_path):
 
 		counter = 1
 		for row in csv_reader:
-			game_info = parser.NBAGame(counter, row)
+			game_info = domain.NBAGame(counter, row)
 			counter += 1
 			features.add_to_stats(stats, game_info)
 
 	return stats
 
-def generate_output_row(year, stats, game_info:parser.NBAGame):
+def generate_output_row(year, stats, game_info:domain.NBAGame):
 	calculated_features = features.calc_features(stats, game_info)
 	return [year,game_info.date.strftime("%Y-%m-%d"),game_info.counter,game_info.away,game_info.home,game_info.home_win] + calculated_features
 
@@ -36,7 +36,7 @@ def generate_output_and_stats(year, file_path):
 
 		counter = 1
 		for row in csv_reader:
-			game_info = parser.NBAGame(counter, row)
+			game_info = domain.NBAGame(counter, row)
 			counter += 1
 
 			if counter > 100:

@@ -7,33 +7,21 @@ import pandas as pd
 
 import common
 import nba.importer as importer
-import nba.parser as parser
 import nba.features as features
 import nba.scraper as scraper
+import nba.domain as domain
 
 def generate_summary(df:pd.DataFrame, games, predictions, confidences):
 
 	summary = []
 	for idx,val in enumerate(games):
 		
-		away_confidence = 0
-		home_confidence = 0
-		winner = val.home
+		game_prediction = domain.GamePrediction(val, predictions[idx], confidences[idx])
 
-		confidence = max(confidences[idx])
-		
-		if predictions[idx] == 0:
-			away_confidence = max(away_confidence, confidence)
-			winner = val.away
-		else:
-			home_confidence = max(home_confidence, confidence)
-			winner = val.home
-		
-		output = [f"{val.away} @ {val.home}", winner]
+		output = [f"{val.away} @ {val.home}", game_prediction.winner]
 
-		confidence = max(away_confidence, home_confidence)
+		output.append(f"{game_prediction.confidence:.2f}")
 
-		output.append(f"{confidence:.2f}")
 		output.append(f"{df.iloc[idx]['away_pct']:.2f}")
 		output.append(f"{df.iloc[idx]['home_pct']:.2f}")
 		output.append(f"{df.iloc[idx]['away_diff']:.2f}")
@@ -54,7 +42,7 @@ dt = datetime.datetime.now()
 
 for g in scraper.get_games(dt):
 
-	game_info = parser.NBAGame(1, date = dt)
+	game_info = domain.NBAGame(1, date = dt)
 	game_info.away = g[0]
 	game_info.home = g[1]
 

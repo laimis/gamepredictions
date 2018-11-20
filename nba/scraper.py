@@ -4,8 +4,6 @@ import calendar
 
 from typing import List
 
-
-
 class BoxScoreTeam:
 
 	def __init__(self, team_name, away):

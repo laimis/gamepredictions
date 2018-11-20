@@ -1,4 +1,4 @@
-import nba.parser as parser
+import nba.domain as domain
 
 tracked_stats = ["wins", "scored", "allowed", "date", "fg%", "tp%", "ft%", "rebs", "assists", "turnovers"]
 games_to_roll = 20
@@ -16,7 +16,7 @@ def get_data_header():
 	combined = get_label_column_names() + get_feature_column_names_for_data_files()
 	return ",".join(combined)
 
-def to_stats_home(rd:parser.NBAGame):
+def to_stats_home(rd:domain.NBAGame):
 	return [
 		rd.home_win, 
 		rd.home_pts, 
@@ -30,7 +30,7 @@ def to_stats_home(rd:parser.NBAGame):
 		rd.home_turnovers
 	]
 
-def to_stats_away(rd:parser.NBAGame):
+def to_stats_away(rd:domain.NBAGame):
 	return [
 		1 - rd.home_win,
 		rd.away_pts,
