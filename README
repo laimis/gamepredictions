@@ -1,17 +1,10 @@
-- generate 2017 evaluation sheet
-	- away, home, projected, actual --- does anybody stand out? -- biggest upsets --- when
+- generate evaluation summary that is readable in a nice format
 
 - losing stream feature
 - road trip streak feature
 - analyze wrong predictions, anything that stands out? injury? rest? back to back
 - head to head team comparison for each
-
-- evaluate should output game info into table
 - percentage thought, won, loss, and output that so that can do analysis what the games it thinks it lost
-
-- adjust to 10 day rolling average
 - experiment with graphical point graphing
-- try trainng without winning pct and only diff and 3pt
-- get xgboost working for testing and predicting
-- reverify the stats
+
 - try 10 different models vote on answer, and see how many times it is right if they all agree
