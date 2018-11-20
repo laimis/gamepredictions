@@ -44,10 +44,15 @@ def run_evaluations(model_name, data_file, summary_file):
 	eval_results = evaluate.evaluate(f"{model_name}-test", model, X, y)
 
 	add_to_json_summary(summary_file, eval_results)
-	
-	# groups = common.read_data_groupedby_week(validation_file, "home_win", get_feature_column_names(), ['year', 'date'])
 
-	# evaluate.weekly_breakdown(groups, model)
+def daily_performance(data_file):
+	model_file = f"models\\nba\\model.pkl"
+
+	model = common.load_model(model_file)
+
+	groups = common.read_data_groupedby_week(data_file, "home_win", get_feature_column_names(), ['year', 'date'])
+
+	evaluate.weekly_breakdown(groups, model)
 
 def run_training(model_name, summary_file):
 	
@@ -128,6 +133,7 @@ if __name__ == '__main__':
 	# run_evaluations("4-5-7", val_input, val_summary)
 
 	run_import([2015, 2016, 2017], [2014], [2018])
-	run_training("5-6-7", train_summary)
-	run_evaluations("5-6-7", test_input, test_summary)
+	# run_training("5-6-7", train_summary)
+	# run_evaluations("5-6-7", test_input, test_summary)
 	run_evaluations("5-6-7", val_input, val_summary)
+	daily_performance(val_input)

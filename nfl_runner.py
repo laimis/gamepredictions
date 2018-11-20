@@ -8,10 +8,10 @@ import evaluate
 import json
 
 def get_feature_headers():
-	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards_diff,home_yards_diff\n"
+	return ["away_pct","home_pct","away_diff","home_diff","away_yards_diff","home_yards_diff"]
 
-def get_column_names_for_removal():
-	return ["year", "week", "home_win", "home", "away"]
+def get_output_headers():
+	return "year,week,away,home,home_win,away_pct,home_pct,away_diff,home_diff,away_yards_diff,home_yards_diff\n"
 
 def weeks_to_try():
 	return [6]
@@ -30,7 +30,7 @@ def run_import():
 			os.remove(output_file)
 
 		with open(output_file, "a", newline='') as output_f:
-			output_f.write(get_feature_headers())
+			output_f.write(get_output_headers())
 			for year in years:
 				input_file = f"input\\nfl\\{year}.csv"
 				importer.transform_csv(rolling_window, input_file, output_f, year)
@@ -81,7 +81,7 @@ def run_evaluations():
 	output_file = "output\\nfl\\html\\testdata.json"
 
 	model = common.load_model(model_file)
-	X, y = common.read_data_from_file(test_file, "home_win", get_column_names_for_removal())
+	X, y = common.read_data_from_file(test_file, "home_win", get_feature_headers())
 
 	data.append(evaluate.evaluate("6", model, X, y))
 
@@ -90,7 +90,7 @@ def run_evaluations():
 	with open(output_file, 'w') as summary_file:
 		json.dump(dict, summary_file)
 
-	groups = common.read_data_groupedby_week(test_file, "home_win", get_column_names_for_removal(), ['year', 'week'])
+	groups = common.read_data_groupedby_week(test_file, "home_win", get_feature_headers(), ['year', 'week'])
 
 	evaluate.weekly_breakdown(groups, model)
 
