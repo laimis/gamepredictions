@@ -34,10 +34,10 @@ def generate_summary(df:pd.DataFrame, games, predictions, confidences):
 		confidence = max(away_confidence, home_confidence)
 
 		output.append(f"{confidence:.2f}")
-		output.append(f"{df.iloc[idx]['away_pct']}")
-		output.append(f"{df.iloc[idx]['home_pct']}")
-		output.append(f"{df.iloc[idx]['away_diff']}")
-		output.append(f"{df.iloc[idx]['home_diff']}")
+		output.append(f"{df.iloc[idx]['away_pct']:.2f}")
+		output.append(f"{df.iloc[idx]['home_pct']:.2f}")
+		output.append(f"{df.iloc[idx]['away_diff']:.2f}")
+		output.append(f"{df.iloc[idx]['home_diff']:.2f}")
 		
 		summary.append(output)
 	
