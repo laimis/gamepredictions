@@ -46,17 +46,25 @@ def run_detail_evaluation(data_file, summary_file):
 	for idx,val in enumerate(predictions):
 		true_outcome = y[idx]
 		predicted_outcome = predictions[idx]
-		confidence = max(probabilities[idx])
+		confidence = float(max(probabilities[idx]))
+
 		away = data.iloc[idx]["away"]
 		home = data.iloc[idx]["home"]
 		date = data.iloc[idx]["date"]
+
+		if true_outcome == 1:
+			winner = home
+		else:
+			winner = away
+
+		if predicted_outcome == 1:
+			predicted_winner = home
+		else:
+			predicted_winner = away
+
 		correct = "yes"
 
-		if predicted_outcome != true_outcome:
-			correct = "oops"
-
-		if correct == "oops":
-			add_to_json_summary(summary_file, [date,away,home,confidence,correct])
+		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
 
 def daily_performance(data_file):
 	model_file = f"models\\nba\\model.pkl"
@@ -127,8 +135,8 @@ if __name__ == '__main__':
 	val_summary = "output\\nba\\html\\valdata.json"
 	detail_summary = "output\\nba\\html\\detaildata.json"
 
-	# delete_if_needed(train_summary)
-	# delete_if_needed(test_summary)
+	delete_if_needed(train_summary)
+	delete_if_needed(test_summary)
 	delete_if_needed(val_summary)
 	delete_if_needed(detail_summary)
 
@@ -148,8 +156,8 @@ if __name__ == '__main__':
 	# run_evaluations("4-5-7", val_input, val_summary)
 
 	run_import([2015, 2016, 2017], [2014], [2018])
-	# run_training("5-6-7", train_summary)
-	# run_evaluations("5-6-7", test_input, test_summary)
+	run_training("5-6-7", train_summary)
+	run_evaluations("5-6-7", test_input, test_summary)
 	run_evaluations("5-6-7", val_input, val_summary)
 
 	daily_performance(val_input)

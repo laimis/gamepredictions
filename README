@@ -1,10 +1,1 @@
-- generate evaluation summary that is readable in a nice format
-
-- losing stream feature
-- road trip streak feature
-- analyze wrong predictions, anything that stands out? injury? rest? back to back
-- head to head team comparison for each
-- percentage thought, won, loss, and output that so that can do analysis what the games it thinks it lost
-- experiment with graphical point graphing
-
-- try 10 different models vote on answer, and see how many times it is right if they all agree
+- streak feature

@@ -12,6 +12,12 @@
 
 	<title>Detail Results</title>
 
+	<style type="text/css">
+		.red {
+			background-color: pink !important;
+		}
+	</style>
+
   </head>
   <body>
 	
@@ -22,8 +28,9 @@
 					<th>Date</th>
 					<th>Away</th>
 					<th>Home</th>
+					<th>Winner</th>
+					<th>PWinner</th>
 					<th>Confidence</th>
-					<th>Correct</th>
 				</tr>
 			</thead>
 		</table>
@@ -42,7 +49,12 @@
 				ajax: 'detaildata.json',
 				searching: false,
 				paging: false,
-				info: false
+				info: false,
+				"createdRow": function( row, data, dataIndex){
+					if( data[3] !== data[4]){
+						$(row).addClass('red');
+					}
+				}
 			} );
 		} );
 	</script>
