@@ -26,11 +26,37 @@ def run_evaluations(model_name, data_file, summary_file):
 	
 	model = common.load_model(model_file)
 
-	X, y = common.read_data_from_file(data_file, "home_win", features.get_feature_column_names())
+	_, X, y = common.read_data_from_file(data_file, "home_win", features.get_feature_column_names())
 
 	eval_results = evaluate.evaluate(f"{model_name}-test", model, X, y)
 
 	add_to_json_summary(summary_file, eval_results)
+
+def run_detail_evaluation(data_file, summary_file):
+
+	model_file = f"models\\nba\\model.pkl"
+	
+	model = common.load_model(model_file)
+
+	data, X, y = common.read_data_from_file(data_file, "home_win", features.get_feature_column_names())
+
+	predictions = model.predict(X)
+	probabilities = model.predict_proba(X)
+
+	for idx,val in enumerate(predictions):
+		true_outcome = y[idx]
+		predicted_outcome = predictions[idx]
+		confidence = max(probabilities[idx])
+		away = data.iloc[idx]["away"]
+		home = data.iloc[idx]["home"]
+		date = data.iloc[idx]["date"]
+		correct = "yes"
+
+		if predicted_outcome != true_outcome:
+			correct = "oops"
+
+		if correct == "oops":
+			add_to_json_summary(summary_file, [date,away,home,confidence,correct])
 
 def daily_performance(data_file):
 	model_file = f"models\\nba\\model.pkl"
@@ -49,7 +75,7 @@ def run_training(model_name, summary_file):
 	if os.path.isfile(file_model):
 		os.remove(file_model)
 
-	X, y = common.read_data_from_file(file_training, "home_win", features.get_feature_column_names())
+	_, X, y = common.read_data_from_file(file_training, "home_win", features.get_feature_column_names())
 	
 	grid = train.train_model(X, y, 10)
 
@@ -99,29 +125,33 @@ if __name__ == '__main__':
 	train_summary = "output\\nba\\html\\trainingdata.json"
 	test_summary = "output\\nba\\html\\testdata.json"
 	val_summary = "output\\nba\\html\\valdata.json"
+	detail_summary = "output\\nba\\html\\detaildata.json"
 
-	delete_if_needed(train_summary)
-	delete_if_needed(test_summary)
-	delete_if_needed(val_summary)
+	# delete_if_needed(train_summary)
+	# delete_if_needed(test_summary)
+	# delete_if_needed(val_summary)
+	delete_if_needed(detail_summary)
 
-	run_import([2014, 2015, 2016], [2017], [2018])
-	run_training("4-5-6", train_summary)
-	run_evaluations("4-5-6", test_input, test_summary)
-	run_evaluations("4-5-6", val_input, val_summary)
+	# run_import([2014, 2015, 2016], [2017], [2018])
+	# run_training("4-5-6", train_summary)
+	# run_evaluations("4-5-6", test_input, test_summary)
+	# run_evaluations("4-5-6", val_input, val_summary)
 
-	run_import([2015, 2016], [2017], [2018])
-	run_training("5-6", train_summary)
-	run_evaluations("5-6", test_input, test_summary)
-	run_evaluations("5-6", val_input, val_summary)
+	# run_import([2015, 2016], [2017], [2018])
+	# run_training("5-6", train_summary)
+	# run_evaluations("5-6", test_input, test_summary)
+	# run_evaluations("5-6", val_input, val_summary)
 
-	run_import([2014, 2015, 2017], [2016], [2018])
-	run_training("4-5-7", train_summary)
-	run_evaluations("4-5-7", test_input, test_summary)
-	run_evaluations("4-5-7", val_input, val_summary)
+	# run_import([2014, 2015, 2017], [2016], [2018])
+	# run_training("4-5-7", train_summary)
+	# run_evaluations("4-5-7", test_input, test_summary)
+	# run_evaluations("4-5-7", val_input, val_summary)
 
-	run_import([2015, 2016, 2017], [2014], [2018])
-	run_training("5-6-7", train_summary)
-	run_evaluations("5-6-7", test_input, test_summary)
-	run_evaluations("5-6-7", val_input, val_summary)
+	# run_import([2015, 2016, 2017], [2014], [2018])
+	# run_training("5-6-7", train_summary)
+	# run_evaluations("5-6-7", test_input, test_summary)
+	# run_evaluations("5-6-7", val_input, val_summary)
 
-	daily_performance(val_input)
+	# daily_performance(val_input)
+
+	run_detail_evaluation(val_input, detail_summary)

@@ -50,7 +50,7 @@ def run_training():
 		if os.path.isfile(file_model):
 			os.remove(file_model)
 
-		X, y = common.read_data_from_file(file_training, "home_win", get_column_names_for_removal())
+		_, X, y = common.read_data_from_file(file_training, "home_win", get_column_names_for_removal())
 		
 		grid = train.train_model(X, y, 10)
 
@@ -81,7 +81,7 @@ def run_evaluations():
 	output_file = "output\\nfl\\html\\testdata.json"
 
 	model = common.load_model(model_file)
-	X, y = common.read_data_from_file(test_file, "home_win", get_feature_headers())
+	_, X, y = common.read_data_from_file(test_file, "home_win", get_feature_headers())
 
 	data.append(evaluate.evaluate("6", model, X, y))
 

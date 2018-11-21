@@ -30,7 +30,7 @@ def read_data_from_file(filepath, y_col, x_col):
 	y = data[y_col]
 	X = data[x_col]
 
-	return X, y
+	return data, X, y
 
 def read_data_groupedby_week(filepath, y_col, x_col, group_by):
 
