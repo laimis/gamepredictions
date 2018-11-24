@@ -135,9 +135,9 @@ if __name__ == '__main__':
 	val_summary = "output\\nba\\html\\valdata.json"
 	detail_summary = "output\\nba\\html\\detaildata.json"
 
-	delete_if_needed(train_summary)
-	delete_if_needed(test_summary)
-	delete_if_needed(val_summary)
+	# delete_if_needed(train_summary)
+	# delete_if_needed(test_summary)
+	# delete_if_needed(val_summary)
 	delete_if_needed(detail_summary)
 
 	# run_import([2014, 2015, 2016], [2017], [2018])
@@ -156,9 +156,9 @@ if __name__ == '__main__':
 	# run_evaluations("4-5-7", val_input, val_summary)
 
 	run_import([2015, 2016, 2017], [2014], [2018])
-	run_training("5-6-7", train_summary)
-	run_evaluations("5-6-7", test_input, test_summary)
-	run_evaluations("5-6-7", val_input, val_summary)
+	# run_training("5-6-7", train_summary)
+	# run_evaluations("5-6-7", test_input, test_summary)
+	# run_evaluations("5-6-7", val_input, val_summary)
 
 	daily_performance(val_input)
 
