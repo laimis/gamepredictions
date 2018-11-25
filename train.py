@@ -26,8 +26,8 @@ def get_model_and_grid():
 	# 	"n_estimators": [1, 10, 50, 100]
 	# }
 
-	model = GaussianNB()
-	param_grid = {}
+	# model = GaussianNB()
+	# param_grid = {}
 
 	# model = GradientBoostingClassifier()
 	# param_grid = {
@@ -37,7 +37,7 @@ def get_model_and_grid():
 
 	model = XGBClassifier()
 	param_grid = {
-		"learning_rate": [0.01, 0.1, 0.5, 1],
+		"learning_rate": [0.001, 0.01, 0.1, 1],
 		"max_depth": [2, 3, 4],
 		"n_estimators": [50, 100, 150],
 		"booster": ["gbtree", "gblinear", "dart"]

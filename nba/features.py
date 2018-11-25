@@ -59,8 +59,8 @@ def add_to_stats(stats, rd):
 
 def calc_features(stats, game_info):
 
-	home_pct, home_pts, home_allowed, home_games, home_fg, home_tp, home_ft, home_rebs, home_assists, home_turnovers = calc_stats(stats, game_info.home, game_info.date)
-	away_pct, away_pts, away_allowed, away_games, away_fg, away_tp, away_ft, away_rebs, away_assists, away_turnovers = calc_stats(stats, game_info.away, game_info.date)
+	home_pct, home_pts, home_allowed, home_games, home_fg, home_tp, home_ft, home_rebs, home_assists, home_turnovers = __calc_features__(stats, game_info.home, game_info.date)
+	away_pct, away_pts, away_allowed, away_games, away_fg, away_tp, away_ft, away_rebs, away_assists, away_turnovers = __calc_features__(stats, game_info.away, game_info.date)
 
 	return [
 		away_pct,
@@ -83,7 +83,7 @@ def number_of_games_within_date(dates, date, number_of_days):
 			number_of_games += 1
 	return number_of_games
 
-def calc_stats(stats, team, date):
+def __calc_features__(stats, team, date):
  
 	def do_calculation(team_stats, stat):
 		if stat == "date":
