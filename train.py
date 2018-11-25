@@ -20,39 +20,15 @@ import json
 
 def get_model_and_grid():
 
-	# model = AdaBoostClassifier()
+	model = GaussianNB()
+	param_grid = {}
+
+	# model = XGBClassifier()
 	# param_grid = {
-	# 	"learning_rate": [0.01, 0.1, 0.5, 1, 10],
-	# 	"n_estimators": [1, 10, 50, 100]
-	# }
-
-	# model = GaussianNB()
-	# param_grid = {}
-
-	# model = GradientBoostingClassifier()
-	# param_grid = {
-	# 	"learning_rate": [0.01, 0.1, 0.5, 1, 10],
-	# 	"max_depth": [2, 3]
-	# }
-
-	model = XGBClassifier()
-	param_grid = {
-		"learning_rate": [0.001, 0.01, 0.1, 1],
-		"max_depth": [2, 3, 4],
-		"n_estimators": [50, 100, 150],
-		"booster": ["gbtree", "gblinear", "dart"]
-	}
-
-	# model = RandomForestClassifier()
-	# param_grid = {
-	# 	"n_estimators": [10, 50, 100, 150, 200],
-	# 	"criterion": ["gini", "entropy"],
-	# 	"max_depth": [4, 5, 6, 7, 8]
-	# }
-
-	# model = SVC(probability=True)
-	# param_grid = {
-	# 	"C": [0.001, 0.01, 0.1, 1, 10]
+	# 	"learning_rate": [0.001, 0.01, 0.1, 1],
+	# 	"max_depth": [2, 3, 4],
+	# 	"n_estimators": [50, 100, 150],
+	# 	"booster": ["gbtree", "gblinear", "dart"]
 	# }
 
 	# model = MLPClassifier(max_iter=500)

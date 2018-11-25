@@ -7,6 +7,8 @@ import train
 import evaluate
 import nba.features as features
 
+from typing import List
+
 def add_to_json_summary(summary_file, data):
 	if os.path.isfile(summary_file):
 		with open(summary_file, 'r') as fh:
@@ -19,16 +21,13 @@ def add_to_json_summary(summary_file, data):
 	with open(summary_file, 'w') as fh:
 		json.dump(dict, fh)
 
-def run_evaluations(model_name, data_file, summary_file):
-	data = []
-
-	model_file = f"models\\nba\\model.pkl"
+def run_evaluations(model_file:str, model_name:str, data_file:str, feature_columns:List[str], summary_file:str):
 	
 	model = common.load_model(model_file)
 
-	_, X, y = common.read_data_from_file(data_file, "home_win", features.get_feature_column_names())
+	_, X, y = common.read_data_from_file(data_file, "home_win", feature_columns)
 
-	eval_results = evaluate.evaluate(f"{model_name}-test", model, X, y)
+	eval_results = evaluate.evaluate(f"{model_name}", model, X, y)
 
 	add_to_json_summary(summary_file, eval_results)
 
@@ -75,15 +74,9 @@ def daily_performance(data_file):
 
 	evaluate.weekly_breakdown(groups, model)
 
-def run_training(model_name, summary_file):
+def run_training(training_csv_path:str, model_name:str, feature_columns:List[str], model_output_path:str, summary_file:str):
 	
-	file_training = f"output\\nba\\train\\train.csv"
-	file_model = f"models\\nba\\model.pkl"
-
-	if os.path.isfile(file_model):
-		os.remove(file_model)
-
-	_, X, y = common.read_data_from_file(file_training, "home_win", features.get_feature_column_names())
+	_, X, y = common.read_data_from_file(training_csv_path, "home_win", feature_columns)
 	
 	grid = train.train_model(X, y, 10)
 
@@ -91,7 +84,7 @@ def run_training(model_name, summary_file):
 
 	stats = common.confidence_stats(model, X, y)
 		
-	train.save_model(model, file_model)
+	train.save_model(model, model_output_path)
 
 	output = [model_name, f"{grid.best_score_:.4f}", str(grid.best_params_)]
 	
@@ -127,23 +120,28 @@ if __name__ == '__main__':
 			os.remove(filepath)
 
 	train_input = "output\\nba\\train\\train.csv"
-	test_input = "output\\nba\\test\\train.csv"
-	val_input = "output\\nba\\validation\\train.csv"
+	test_input 	= "output\\nba\\test\\train.csv"
+	val_input 	= "output\\nba\\validation\\train.csv"
 
-	train_summary = "output\\nba\\html\\trainingdata.json"
-	test_summary = "output\\nba\\html\\testdata.json"
-	val_summary = "output\\nba\\html\\valdata.json"
-	detail_summary = "output\\nba\\html\\detaildata.json"
+	model_output_path = f"models\\nba\\model.pkl"
+
+	train_summary 	= "output\\nba\\html\\trainingdata.json"
+	test_summary 	= "output\\nba\\html\\testdata.json"
+	val_summary 	= "output\\nba\\html\\valdata.json"
+	detail_summary 	= "output\\nba\\html\\detaildata.json"
 
 	delete_if_needed(train_summary)
 	delete_if_needed(test_summary)
 	delete_if_needed(val_summary)
 	delete_if_needed(detail_summary)
+	delete_if_needed(model_output_path)
 
-	run_import([2014, 2015, 2016], [2017], [2018])
-	run_training("4-5-6", train_summary)
-	run_evaluations("4-5-6", test_input, test_summary)
-	run_evaluations("4-5-6", val_input, val_summary)
+	feature_columns = features.get_feature_column_names()
+
+	run_import([2015, 2016, 2017], [2014], [2018])
+	run_training(train_input, "5-6-7", feature_columns, model_output_path, train_summary)
+	run_evaluations(model_output_path, "5-6-7-test", test_input, feature_columns, test_summary)
+	run_evaluations(model_output_path, "5-6-7-val", val_input, feature_columns, val_summary)
 
 	daily_performance(val_input)
 
