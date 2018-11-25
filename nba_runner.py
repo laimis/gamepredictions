@@ -74,11 +74,18 @@ def daily_performance(data_file):
 
 	evaluate.weekly_breakdown(groups, model)
 
-def run_training(training_csv_path:str, model_name:str, feature_columns:List[str], model_output_path:str, summary_file:str):
+def run_training(
+	training_csv_path:str,
+	model_name:str,
+	feature_columns:List[str],
+	model_output_path:str,
+	summary_file:str,
+	model,
+	param_grid):
 	
 	_, X, y = common.read_data_from_file(training_csv_path, "home_win", feature_columns)
 	
-	grid = train.train_model(X, y, 10)
+	grid = train.train_model(X, y, 10, model, param_grid)
 
 	model = grid.best_estimator_
 
@@ -139,9 +146,18 @@ if __name__ == '__main__':
 	feature_columns = features.get_feature_column_names()
 
 	run_import([2015, 2016, 2017], [2014], [2018])
-	run_training(train_input, "5-6-7", feature_columns, model_output_path, train_summary)
-	run_evaluations(model_output_path, "5-6-7-test", test_input, feature_columns, test_summary)
-	run_evaluations(model_output_path, "5-6-7-val", val_input, feature_columns, val_summary)
+
+	models_grids = train.get_model_and_grid()
+	for k in models_grids:
+		print("training",k)
+		
+		model = models_grids[k]["model"]
+		param_grid = models_grids[k]["param_grid"]
+		name = f"5-6-7-{k}"
+
+		run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
+		run_evaluations(model_output_path, f"{name}-test", test_input, feature_columns, test_summary)
+		run_evaluations(model_output_path, f"{name}-val", val_input, feature_columns, val_summary)
 
 	daily_performance(val_input)
 

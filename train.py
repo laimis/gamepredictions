@@ -20,28 +20,30 @@ import json
 
 def get_model_and_grid():
 
-	model = GaussianNB()
-	param_grid = {}
+	return {
+		"gausian": {
+			"model": GaussianNB(),
+			"param_grid": {}
+		},
+		"xgb": {
+			"model": XGBClassifier(),
+			"param_grid": {
+				"learning_rate": [0.001, 0.01, 0.1],
+				"max_depth": [2, 3, 4],
+				"n_estimators": [50, 100, 150],
+				"booster": ["gbtree", "gblinear"]
+			}
+		},
+		"mlp": {
+			"model": MLPClassifier(max_iter=500),
+			"param_grid": {
+				"alpha": [0.0001, 0.001, 0.01],
+				"hidden_layer_sizes": [(10), (50), (10, 10), (10, 100), (10, 10, 10), (100, 100, 10)],
+			}
+		}
+	}
 
-	# model = XGBClassifier()
-	# param_grid = {
-	# 	"learning_rate": [0.001, 0.01, 0.1, 1],
-	# 	"max_depth": [2, 3, 4],
-	# 	"n_estimators": [50, 100, 150],
-	# 	"booster": ["gbtree", "gblinear", "dart"]
-	# }
-
-	# model = MLPClassifier(max_iter=500)
-	# param_grid = {
-	# 	"alpha": [0.0001, 0.001, 0.01],
-	# 	"hidden_layer_sizes": [(10), (50), (10, 10), (10, 100), (10, 10, 10), (100, 100, 10)],
-	# }
-	
-	return model, param_grid
-
-def train_model(X, y, cv):
-
-	model, param_grid = get_model_and_grid()
+def train_model(X, y, cv, model, param_grid):
 
 	grid = GridSearchCV(model, param_grid, cv=cv, return_train_score=True, verbose=0)
 
