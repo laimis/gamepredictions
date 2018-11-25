@@ -33,6 +33,22 @@ def get_model_and_grid():
 				"n_estimators": [50, 100, 150],
 				"booster": ["gbtree", "gblinear"]
 			}
+		}
+	}
+
+	return {
+		"gausian": {
+			"model": GaussianNB(),
+			"param_grid": {}
+		},
+		"xgb": {
+			"model": XGBClassifier(),
+			"param_grid": {
+				"learning_rate": [0.001, 0.01, 0.1],
+				"max_depth": [2, 3, 4],
+				"n_estimators": [50, 100, 150],
+				"booster": ["gbtree", "gblinear"]
+			}
 		},
 		"mlp": {
 			"model": MLPClassifier(max_iter=500),

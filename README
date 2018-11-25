@@ -1,4 +1,7 @@
 - streaks as a feature
+- how to use custom logic in validation, such as:
+	- if streak is 5, stay away game, don't count it
+	- if conf > threshold, stay away game
 - could we get over/unders for each game from somewhere?
 
 

@@ -2,8 +2,9 @@ import nba.domain as domain
 
 from typing import List
 
-tracked_stats = ["wins", "scored", "allowed", "date", "fg%", "tp%", "ft%", "rebs", "assists", "turnovers"]
-games_to_roll = 20
+tracked_stats = ["wins", "scored", "allowed", "date", "fg%", "tp%", "ft%", "rebs", "assists", "turnovers", "streak"]
+GAMES_TO_ROLL = 10
+STREAK_NUMBER = 3
 
 def get_label_column_names():
 	return ["year", "date", "counter", "away", "home", "home_win"]
@@ -29,7 +30,8 @@ def to_stats_home(rd:domain.NBAGame):
 		rd.home_ftm/rd.home_fta,
 		rd.home_oreb + rd.home_dreb,
 		rd.home_assists,
-		rd.home_turnovers
+		rd.home_turnovers,
+		rd.home_win,
 	]
 
 def to_stats_away(rd:domain.NBAGame):
@@ -43,7 +45,8 @@ def to_stats_away(rd:domain.NBAGame):
 		rd.away_ftm/rd.away_ftm,
 		rd.away_oreb + rd.away_dreb,
 		rd.away_assists,
-		rd.away_turnovers
+		rd.away_turnovers,
+		1 - rd.home_win,
 	]
 
 def add_to_stats(stats, rd):
@@ -61,8 +64,8 @@ def add_to_stats(stats, rd):
 
 def calc_features(stats, game_info):
 
-	home_pct, home_pts, home_allowed, home_games, home_fg, home_tp, home_ft, home_rebs, home_assists, home_turnovers = __calc_features__(stats, game_info.home, game_info.date)
-	away_pct, away_pts, away_allowed, away_games, away_fg, away_tp, away_ft, away_rebs, away_assists, away_turnovers = __calc_features__(stats, game_info.away, game_info.date)
+	home_pct, home_pts, home_allowed, home_games, home_fg, home_tp, home_ft, home_rebs, home_assists, home_turnovers, home_streak = __calc_features__(stats, game_info.home, game_info.date)
+	away_pct, away_pts, away_allowed, away_games, away_fg, away_tp, away_ft, away_rebs, away_assists, away_turnovers, away_streak = __calc_features__(stats, game_info.away, game_info.date)
 
 	return [
 		away_pct,
@@ -74,7 +77,9 @@ def calc_features(stats, game_info):
 		away_assists - away_turnovers,
 		home_assists - home_turnovers,
 		away_rebs,
-		home_rebs
+		home_rebs,
+		away_streak,
+		home_streak
 	]
 
 def number_of_games_within_date(dates, date, number_of_days):
@@ -91,7 +96,17 @@ def __calc_features__(stats, team, date):
 		if stat == "date":
 			return number_of_games_within_date(team_stats[stat], date, 1)
 
-		return sum(team_stats[stat][-games_to_roll:]) / len(team_stats[stat][-games_to_roll:])
+		if stat == "streak":
+			streak_sum = sum(team_stats[stat][-STREAK_NUMBER:])
+
+			if streak_sum == STREAK_NUMBER:
+				return 1
+			elif streak_sum == 0:
+				return -1
+			else:
+				return 0
+
+		return sum(team_stats[stat][-GAMES_TO_ROLL:]) / len(team_stats[stat][-GAMES_TO_ROLL:])
 
 	team_stats = stats[team]
 

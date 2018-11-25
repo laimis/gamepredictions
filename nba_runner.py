@@ -147,7 +147,11 @@ if __name__ == '__main__':
 
 	feature_set = {
 		"pct": ["away_pct", "home_pct"],
+		"pct-streak": ["away_pct", "home_pct", "away_streak", "home_streak"],
 		"pct-pts": ["away_pct", "home_pct", "away_diff", "home_diff"],
+		"pct-3pt": ["away_pct", "home_pct", "away_tpm", "home_tpm"],
+		"pct-pts-streak": ["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_streak"],
+		"pct-3pt-streak": ["away_pct", "home_pct", "away_tpm", "home_tpm", "away_streak", "home_streak"],
 		"pct-pts-3pt": ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm"],
 		"pct-pts-to": ["away_pct", "home_pct", "away_diff", "home_diff", "away_todiff", "home_todiff"],
 		"pct-pts-rebs": ["away_pct", "home_pct", "away_diff", "home_diff", "away_rebs", "home_rebs"],
@@ -170,8 +174,8 @@ if __name__ == '__main__':
 			name = f"5-6-7-{k}-{s}"
 
 			run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
-			run_evaluations(model_output_path, f"{name}-test", test_input, feature_columns, test_summary)
-			run_evaluations(model_output_path, f"{name}-val", val_input, feature_columns, val_summary)
+			run_evaluations(model_output_path, f"{name}", test_input, feature_columns, test_summary)
+			run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
 
 	daily_performance(val_input)
 
