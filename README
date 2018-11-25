@@ -10,3 +10,4 @@
 - generate top players for the upcoming games
 - rebounds allowed, or 3ps allowed?
 - find a way to move the model to embargo that is used to do fake bets and see how well it is doing, then promote to prod and do real tests
+- use small allocations for new strategies, increase as they perform better, decrease with time
