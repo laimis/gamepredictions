@@ -143,21 +143,35 @@ if __name__ == '__main__':
 	delete_if_needed(detail_summary)
 	delete_if_needed(model_output_path)
 
-	feature_columns = features.get_feature_column_names()
+	# feature_columns = features.get_feature_column_names()
+
+	feature_set = {
+		"pct": ["away_pct", "home_pct"],
+		"pct-pts": ["away_pct", "home_pct", "away_diff", "home_diff"],
+		"pct-pts-3pt": ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm"],
+		"pct-pts-to": ["away_pct", "home_pct", "away_diff", "home_diff", "away_todiff", "home_todiff"],
+		"pct-pts-rebs": ["away_pct", "home_pct", "away_diff", "home_diff", "away_rebs", "home_rebs"],
+		"pct-pts-3pt-to": ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff"],
+		"pct-pts-3pt-to-rebs": ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff", "away_rebs", "home_rebs"]
+	}
 
 	run_import([2015, 2016, 2017], [2014], [2018])
 
-	models_grids = train.get_model_and_grid()
-	for k in models_grids:
-		print("training",k)
-		
-		model = models_grids[k]["model"]
-		param_grid = models_grids[k]["param_grid"]
-		name = f"5-6-7-{k}"
+	for s in feature_set:
 
-		run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
-		run_evaluations(model_output_path, f"{name}-test", test_input, feature_columns, test_summary)
-		run_evaluations(model_output_path, f"{name}-val", val_input, feature_columns, val_summary)
+		feature_columns = feature_set[s]
+
+		models_grids = train.get_model_and_grid()
+		for k in models_grids:
+			print("training",k,feature_columns)
+
+			model = models_grids[k]["model"]
+			param_grid = models_grids[k]["param_grid"]
+			name = f"5-6-7-{k}-{s}"
+
+			run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
+			run_evaluations(model_output_path, f"{name}-test", test_input, feature_columns, test_summary)
+			run_evaluations(model_output_path, f"{name}-val", val_input, feature_columns, val_summary)
 
 	daily_performance(val_input)
 

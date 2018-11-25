@@ -12,7 +12,7 @@ def get_feature_column_names() -> List[str]:
 	return ["away_pct", "home_pct", "away_diff", "home_diff"]
 
 def get_feature_column_names_for_data_files():
-	return ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff", "away_rebs", "home_rebs"]
+	return ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff", "away_rebs", "home_rebs", "away_streak", "home_streak"]
 
 def get_data_header():
 	combined = get_label_column_names() + get_feature_column_names_for_data_files()
@@ -20,9 +20,9 @@ def get_data_header():
 
 def to_stats_home(rd:domain.NBAGame):
 	return [
-		rd.home_win, 
-		rd.home_pts, 
-		rd.away_pts, 
+		rd.home_win,
+		rd.home_pts,
+		rd.away_pts,
 		rd.date, 
 		rd.home_fgm/rd.home_fga,
 		rd.home_tpm/rd.home_tpa,
