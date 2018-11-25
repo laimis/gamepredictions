@@ -15,10 +15,10 @@ class ConfidenceStat:
 
 		if self.total == 0:
 			self.pct = 0
-			self.label = f"{self.conf_range[0]}: N/A"
+			self.label = f"[{self.conf_range[0]}: N/A]"
 		else:
 			self.pct = self.correct / self.total
-			self.label = f"{self.pct:.2f} - {self.correct}/{self.total - self.correct} ${self.moneys}"
+			self.label = f"[{self.conf_range[0]}: {self.pct:.2f} - {self.correct}/{self.total - self.correct} ${self.moneys}]"
 
 	def __str__(self):
 		return self.label
