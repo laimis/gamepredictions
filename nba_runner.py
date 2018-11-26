@@ -30,14 +30,16 @@ def run_evaluations(model_file:str, model_name:str, data_file:str, feature_colum
 	eval_results = evaluate.evaluate(f"{model_name}", model, X, y)
 
 	add_to_json_summary(summary_file, eval_results)
-
-def run_detail_evaluation(data_file, summary_file):
-
-	model_file = f"models\\nba\\model.pkl"
 	
+	accuracy = evaluate.calculate_accuracy(model, X, y)
+
+	return accuracy
+
+def run_detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], summary_file:str):
+
 	model = common.load_model(model_file)
 
-	data, X, y = common.read_data_from_file(data_file, "home_win", features.get_feature_column_names())
+	data, X, y = common.read_data_from_file(data_file, "home_win", feature_columns)
 
 	predictions = model.predict(X)
 	probabilities = model.predict_proba(X)
@@ -65,12 +67,10 @@ def run_detail_evaluation(data_file, summary_file):
 
 		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
 
-def daily_performance(data_file):
-	model_file = f"models\\nba\\model.pkl"
-
+def daily_performance(data_file, model_file, feature_columns):
 	model = common.load_model(model_file)
 
-	groups = common.read_data_groupedby_week(data_file, "home_win", features.get_feature_column_names(), ['year', 'date'])
+	groups = common.read_data_groupedby_week(data_file, "home_win", feature_columns, ['year', 'date'])
 
 	evaluate.weekly_breakdown(groups, model)
 
@@ -130,8 +130,6 @@ if __name__ == '__main__':
 	test_input 	= "output\\nba\\test\\train.csv"
 	val_input 	= "output\\nba\\validation\\train.csv"
 
-	model_output_path = f"models\\nba\\model.pkl"
-
 	train_summary 	= "output\\nba\\html\\trainingdata.json"
 	test_summary 	= "output\\nba\\html\\testdata.json"
 	val_summary 	= "output\\nba\\html\\valdata.json"
@@ -141,7 +139,6 @@ if __name__ == '__main__':
 	delete_if_needed(test_summary)
 	delete_if_needed(val_summary)
 	delete_if_needed(detail_summary)
-	delete_if_needed(model_output_path)
 
 	# feature_columns = features.get_feature_column_names()
 
@@ -161,6 +158,10 @@ if __name__ == '__main__':
 
 	run_import([2015, 2016, 2017], [2014], [2018])
 
+	max_val_accuracy = 0
+	max_val_model = ""
+	max_val_columns:List[str] = []
+
 	for s in feature_set:
 
 		feature_columns = feature_set[s]
@@ -172,11 +173,16 @@ if __name__ == '__main__':
 			model = models_grids[k]["model"]
 			param_grid = models_grids[k]["param_grid"]
 			name = f"5-6-7-{k}-{s}"
+			model_output_path = f"models\\nba\\{name}.pkl"
+			delete_if_needed(model_output_path)
 
 			run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
 			run_evaluations(model_output_path, f"{name}", test_input, feature_columns, test_summary)
-			run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
+			acc, _ = run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
+			if acc > max_val_accuracy:
+				max_val_model = model_output_path
+				max_val_columns = feature_columns
 
-	daily_performance(val_input)
+	daily_performance(val_input, max_val_model, max_val_columns)
 
-	run_detail_evaluation(val_input, detail_summary)
+	run_detail_evaluation(val_input, max_val_model, max_val_columns, detail_summary)
