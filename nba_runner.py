@@ -140,8 +140,6 @@ if __name__ == '__main__':
 	delete_if_needed(val_summary)
 	delete_if_needed(detail_summary)
 
-	# feature_columns = features.get_feature_column_names()
-
 	feature_set = {
 		"pct": ["away_pct", "home_pct"],
 		"pct-streak": ["away_pct", "home_pct", "away_streak", "home_streak"],
@@ -159,9 +157,9 @@ if __name__ == '__main__':
 	run_import([2015, 2016, 2017], [2014], [2018])
 
 	max_val_accuracy = 0
-	max_val_model = ""
-	max_val_columns:List[str] = []
-
+	max_val_model = "models\\nba\\5-6-7-xgb-pct.pkl"
+	max_val_columns:List[str] = ["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_streak"]
+	
 	for s in feature_set:
 
 		feature_columns = feature_set[s]

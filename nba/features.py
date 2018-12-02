@@ -3,7 +3,7 @@ import nba.domain as domain
 from typing import List
 
 tracked_stats = ["wins", "scored", "allowed", "date", "fg%", "tp%", "ft%", "rebs", "assists", "turnovers", "streak"]
-GAMES_TO_ROLL = 10
+GAMES_TO_ROLL = 20
 STREAK_NUMBER = 3
 
 def get_label_column_names():

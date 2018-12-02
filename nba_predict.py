@@ -33,7 +33,7 @@ def generate_summary(df:pd.DataFrame, games, predictions, confidences):
 
 stats = importer.generate_stats(f"input\\nba\\2018.csv")
 
-model = common.load_model(f"models\\nba\\model.pkl")
+model = common.load_model(f"models\\nba\\5-6-7-xgb-pct-pts-streak.pkl")
 
 data = []
 games = []
@@ -51,7 +51,8 @@ for g in scraper.get_games(dt):
 
 df = pd.DataFrame(data, columns=features.get_data_header().split(","))
 
-X = df[features.get_feature_column_names()]
+#X = df[features.get_feature_column_names()]
+X = df[["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_streak"]]
 
 predictions = model.predict(X)
 confidences = model.predict_proba(X)
@@ -62,3 +63,7 @@ dict = {"data": summary}
 
 with open("output\\nba\\html\\predictions.json", 'w') as summary_file:
 	json.dump(dict, summary_file)
+
+for g in games:
+	print(f"'{g.home}',")
+	print(f"'{g.away}',")
