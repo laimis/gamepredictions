@@ -158,8 +158,8 @@ if __name__ == '__main__':
 	run_import([2015, 2016, 2017], [2014], [2018])
 
 	max_val_accuracy = 0
-	max_val_model = "models\\nba\\5-6-7-xgb-pct-pts-streak.pkl"
-	max_val_columns:List[str] = ["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_streak"]
+	max_val_model = "models\\nba\\5-6-7-xgb-pct-pts-3pt-to.pkl"
+	max_val_columns:List[str] = ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff"]
 	
 	# for s in feature_set:
 
