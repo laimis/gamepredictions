@@ -35,6 +35,9 @@ def to_stats_home(rd:domain.NBAGame):
 	]
 
 def to_stats_away(rd:domain.NBAGame):
+	if rd.away_fga == 0:
+		print("zero fga",rd.date,rd.away_pts,rd.home_pts)
+		
 	return [
 		1 - rd.home_win,
 		rd.away_pts,

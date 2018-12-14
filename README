@@ -1,18 +1,6 @@
-- streaks as a feature
+- visualize daily performance
+- visualize daily performance of the previous year
 - how to use custom logic in validation, such as:
 	- if streak is 5, stay away game, don't count it
 	- if conf > threshold, stay away game
-- could we get over/unders for each game from somewhere?
-
-
-- missing top players as a feature
-- more "allowed" statistics
-- generate report of each training
-	# of wins / # losses
-	money amounts for 0.6, 0.7, 0.75, 0.8, 0.85, 0.9 confidence bets
-	highlight winners
-	record which features were being trained, name for it
-- find a way to move the model to embargo that is used to do fake bets and see how well it is doing, then promote to prod and do real tests
-- use small allocations for new strategies, increase as they perform better, decrease with time
-
-- generate top players for the upcoming games
+- scrape over/unders from ESPN
