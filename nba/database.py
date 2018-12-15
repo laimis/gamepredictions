@@ -106,10 +106,22 @@ def insert_box_score(box_score: scraper.BoxScore):
 
 			conn.commit()
 
+def insert_line(dt:datetime.date, team:str, val:float):
+
+	with psycopg2.connect(__connection_string__) as conn:
+
+		with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+
+			cur.execute(
+				"INSERT INTO gamelines (date,team,value) VALUES (%s, %s, %s)",
+				(f"{dt.year}-{dt.month:02}-{dt.day:02}", team, val)
+			)
+			
+			conn.commit()
+
 def update_aggregate_stats():
 	with psycopg2.connect(__connection_string__) as conn:
 
-		box_score_id = None
 		with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
 
 			script = ""

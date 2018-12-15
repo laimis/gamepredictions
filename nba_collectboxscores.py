@@ -15,6 +15,18 @@ def get_season_box_scores():
 
 		dt = dt + datetime.timedelta(days=1)
 
+def get_season_lines():
+	dt = datetime.date(2018,11,9)
+	end = datetime.date(2018,12,13)
+
+	while dt < end:
+		
+		print(datetime.datetime.now(),"processing",dt)
+
+		get_lines(dt)
+
+		dt = dt + datetime.timedelta(days=1)
+
 def get_box_scores_for_date(dt:datetime.date):
 
 	links = scraper.get_boxscore_links(dt.year, dt.month, dt.day)
@@ -29,6 +41,13 @@ def get_box_scores_for_date(dt:datetime.date):
 		print("    ",datetime.datetime.now(),"saving ",game)
 
 		database.insert_box_score(game)
+
+def get_lines(dt:datetime.date):
+
+	lines = scraper.get_lines(dt)
+
+	for l in lines:
+		database.insert_line(dt, l[0], l[1])
 
 def update_aggregate_stats():
 
@@ -60,9 +79,13 @@ if __name__ == "__main__":
 
 	dt = datetime.datetime.now() + datetime.timedelta(days=-1)
 
-	get_box_scores_for_date(dt)
+	#get_box_scores_for_date(dt)
 	
-	update_aggregate_stats()
+	#update_aggregate_stats()
 
-	generate_stats()
+	#generate_stats()
+
+	# get_lines(dt)
+
+	get_season_lines()
 

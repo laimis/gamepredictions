@@ -26,6 +26,8 @@ def generate_summary(df:pd.DataFrame, games, predictions, confidences):
 		output.append(f"{df.iloc[idx]['home_pct']:.2f}")
 		output.append(f"{df.iloc[idx]['away_diff']:.2f}")
 		output.append(f"{df.iloc[idx]['home_diff']:.2f}")
+		output.append(f"{df.iloc[idx]['away_streak']:.2f}")
+		output.append(f"{df.iloc[idx]['home_streak']:.2f}")
 		
 		summary.append(output)
 	

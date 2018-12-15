@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
 import urllib.request
 import calendar
+import json
 
 from typing import List
 
-class BoxScoreTeam:
 
+class BoxScoreTeam:
 	def __init__(self, team_name, away):
 		self.entries = []
 		self.team_name = team_name
@@ -16,6 +17,7 @@ class BoxScoreTeam:
 
 	def __str__(self):
 		return self.team_name
+
 
 class BoxScore:
 	def __init__(self, year, month, day, entries):
@@ -28,12 +30,12 @@ class BoxScore:
 		self.home = None
 
 		current = None
-		
+
 		for e in entries:
 			if self.away == None:
 				self.away = BoxScoreTeam(e.team, True)
 				current = self.away
-			
+
 			if self.away.team_name != e.team and self.home == None:
 				self.home = BoxScoreTeam(e.team, False)
 				current = self.home
@@ -43,6 +45,7 @@ class BoxScore:
 	def __str__(self):
 		return f"{self.year}-{self.month}-{self.day}, {self.away} @ {self.home}"
 
+
 class BoxScoreEntry:
 	def __init__(self, team, name, columns):
 
@@ -51,8 +54,8 @@ class BoxScoreEntry:
 
 		if len(columns) == 0:
 			return
-		
-		# player did not play
+
+			# player did not play
 		if len(columns) == 1 or len(columns[0].contents) == 0:
 			self.minutes = ""
 			self.field_goals_made = 0
@@ -91,76 +94,88 @@ class BoxScoreEntry:
 			self.personal_fouls = columns[17].contents[0]
 			self.points = columns[18].contents[0]
 
-ref_url = "https://www.basketball-reference.com"
-headers = headers={
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
-}
 
-def __get_boxscore_soup__(box_score_url):
-	req = urllib.request.Request(f"{ref_url}/{box_score_url}", headers=headers)
+ref_url = "https://www.basketball-reference.com"
+
+def __get_soup__(url):
+
+	headers = headers = {
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
+	}
+
+	req = urllib.request.Request(f"{url}", headers=headers)
 	with urllib.request.urlopen(req) as response:
 		html = response.read()
-		return BeautifulSoup(html, 'html.parser')
+		return BeautifulSoup(html, "html.parser")
 
-def __get_boxscore_links_soup__(year, month, day, attempt = 0):
+def __get_boxscore_soup__(box_score_url):
+	return __get_soup__(f"{ref_url}/{box_score_url}")
+
+def __get_boxscore_links_soup__(year, month, day, attempt=0):
 
 	try:
-		req = urllib.request.Request(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}", headers=headers)
-		with urllib.request.urlopen(req) as response:
-			html = response.read()
-			return BeautifulSoup(html, 'html.parser')
+		return __get_soup__(f"{ref_url}/boxscores/?month={month}&day={day}&year={year}")
 	except urllib.error.HTTPError as e:
-		
+
 		if attempt < 2:
-			return __get_boxscore_links_soup__(year, month, day, attempt+1)
+			return __get_boxscore_links_soup__(year, month, day, attempt + 1)
 		else:
 			print("exception!", e)
 			exit(-1)
-		
+
+
 def get_boxscore_links(year, month, day) -> List[str]:
 
-	links:List[str] = []
+	links: List[str] = []
 
 	soup = __get_boxscore_links_soup__(year, month, day)
-		
-	for href in [x.get("href") for x in soup.find_all('a') if x.get('href').startswith(f"/boxscores/{year}") ]:
-		
+
+	for href in [
+		x.get("href")
+		for x in soup.find_all("a")
+		if x.get("href").startswith(f"/boxscores/{year}")
+	]:
+
 		if href not in links:
 			links.append(href)
 
 	return links
 
-def get_boxscore_details(year:int, month:int, day:int, box_score_url:str) -> BoxScore:
 
+def get_boxscore_details(
+	year: int, month: int, day: int, box_score_url: str
+) -> BoxScore:
 	def skip_box_score_row(r):
 		row_text = r.get_text()
-		return "Basic Box" in row_text \
-				or "Advanced Box" in row_text \
-				or "Starters" in row_text \
-				or "Reserves" in row_text \
-				or "Team Totals" in row_text
+		return (
+			"Basic Box" in row_text
+			or "Advanced Box" in row_text
+			or "Starters" in row_text
+			or "Reserves" in row_text
+			or "Team Totals" in row_text
+		)
 
 	soup = __get_boxscore_soup__(box_score_url)
 
 	entries = []
 
-	for table in soup.find_all('table'):
+	for table in soup.find_all("table"):
 
 		# box score tables start with ids like box_mil_basic, box_mil_advanced, etc
 		if "id" not in table.attrs:
 			continue
 
 		table_id = table["id"]
-		
+
 		if not table_id.startswith("box_"):
 			continue
-			
+
 		if table_id.endswith("_advanced"):
 			continue
-			
+
 		team_name = table_id.replace("box_", "").replace("_basic", "")
-		
-		for r in table.find_all('tr'):
+
+		for r in table.find_all("tr"):
 
 			# skip rows that are separators
 			if skip_box_score_row(r):
@@ -170,10 +185,11 @@ def get_boxscore_details(year:int, month:int, day:int, box_score_url:str) -> Box
 			columns = r.find_all("td")
 
 			entry = BoxScoreEntry(team_name, name, columns)
-			
+
 			entries.append(entry)
 
 	return BoxScore(year, month, day, entries)
+
 
 def get_games(dt):
 
@@ -185,36 +201,111 @@ def get_games(dt):
 
 	with urllib.request.urlopen(url) as response:
 		html = response.read()
-		soup = BeautifulSoup(html, 'html.parser')
-		
+		soup = BeautifulSoup(html, "html.parser")
+
 		for table in soup.find_all("table"):
 			if "id" not in table.attrs:
 				continue
-			
+
 			if table["id"] != "schedule":
 				continue
-				
+
 			skipped = False
 			for tr in table.find_all("tr"):
 				if not skipped:
 					skipped = True
 					continue
-				
+
 				href = tr.find_all("th")[0].find_all("a")[0]["href"]
-				
+
 				if match not in href:
 					continue
-					
+
 				tds = tr.find_all("td")
-				
+
 				away = tds[1].find_all("a")[0].get_text()
-				away_short = tds[1].find_all("a")[0]["href"].split('/')[2].lower()
+				away_short = tds[1].find_all("a")[0]["href"].split("/")[2].lower()
 				home = tds[3].find_all("a")[0].get_text()
-				home_short = tds[3].find_all("a")[0]["href"].split('/')[2].lower()
-				
+				home_short = tds[3].find_all("a")[0]["href"].split("/")[2].lower()
+
 				games.append((away_short, home_short))
-				
+
 	return games
+
+def __get_gamecast_urls__(dt):
+	scoreboard_url = f"http://www.espn.com/nba/scoreboard/_/date/{dt.year}{dt.month:02}{dt.day:02}"
+
+	soup = __get_soup__(scoreboard_url)
+
+	js = ""
+	for s in soup.find_all("script"):
+		txt = s.get_text()
+
+		if "window.espn.scoreboardData" not in txt:
+			continue
+
+		end = txt.index(";window.espn.scoreboardSettings")
+		start = txt.index("= {")
+
+		js = txt[start + 2 : end]
+
+		break
+
+	loaded = json.loads(js)
+
+	links = []
+	for e in loaded["events"]:
+		name = e["shortName"]
+		url = ""
+		for l in e["links"]:
+			if l["shortText"] == "Gamecast":
+				url = l["href"]
+				break
+		links.append((name,url))
+
+	return links
+
+
+def __get_line_info__(gamecast_url):
+	soup = __get_soup__(gamecast_url)
+
+	mydivs = soup.findAll("div", {"class": "odds-details"})
+
+	arr = mydivs[0].findAll("li")[0].get_text().replace("Line: ", "").split(" ")
+
+	try:
+		team = arr[0].lower()
+
+		if "even" in team:
+			spread = 0
+		else:
+			spread = float(arr[1])
+
+		return (team, spread)
+	except IndexError as err:
+		print("failed to parse", mydivs[0].get_text(), "for url", gamecast_url,"team",team)
+		exit(-1)
+
+def get_lines(date):
+
+	lines = []
+
+	for pair in __get_gamecast_urls__(date):
+
+		name = pair[0].lower()
+		url = pair[1]
+
+		print(name,url)
+
+		line = __get_line_info__(url)
+
+		if line[0] == "even":
+			line = (name.split(" @ ")[0],line[1])
+
+		lines.append(line)
+	
+	return lines
 
 if __name__ == "__main__":
 	pass
+
