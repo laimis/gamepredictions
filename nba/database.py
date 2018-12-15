@@ -105,3 +105,17 @@ def insert_box_score(box_score: scraper.BoxScore):
 				__insert_box_score_row__(cur, box_score_id, e)
 
 			conn.commit()
+
+def update_aggregate_stats():
+	with psycopg2.connect(__connection_string__) as conn:
+
+		box_score_id = None
+		with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+
+			script = ""
+			with open('nba\\dailyrun.sql', 'r') as script_file:
+				script=script_file.read()
+
+			cur.execute(script)
+
+			conn.commit()
