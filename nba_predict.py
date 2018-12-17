@@ -41,6 +41,7 @@ data = []
 games = []
 
 dt = datetime.datetime.now()
+# dt = datetime.datetime.now() + datetime.timedelta(days=-1)
 
 for g in scraper.get_games(dt):
 

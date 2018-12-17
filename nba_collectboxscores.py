@@ -1,6 +1,7 @@
 import nba.scraper as scraper
 import nba.database as database
 import datetime
+import time
 import csv
 
 def get_season_box_scores():
@@ -16,8 +17,8 @@ def get_season_box_scores():
 		dt = dt + datetime.timedelta(days=1)
 
 def get_season_lines():
-	dt = datetime.date(2018,11,9)
-	end = datetime.date(2018,12,13)
+	dt = datetime.date(2016,11,21)
+	end = datetime.date(2017,4,10)
 
 	while dt < end:
 		
@@ -26,6 +27,8 @@ def get_season_lines():
 		get_lines(dt)
 
 		dt = dt + datetime.timedelta(days=1)
+
+		time.sleep(1)
 
 def get_box_scores_for_date(dt:datetime.date):
 
@@ -79,13 +82,13 @@ if __name__ == "__main__":
 
 	dt = datetime.datetime.now() + datetime.timedelta(days=-1)
 
-	#get_box_scores_for_date(dt)
+	get_box_scores_for_date(dt)
 	
-	#update_aggregate_stats()
+	update_aggregate_stats()
 
-	#generate_stats()
+	generate_stats()
 
-	# get_lines(dt)
+	get_lines(dt)
 
-	get_season_lines()
+	# get_season_lines()
 

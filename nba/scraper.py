@@ -271,6 +271,9 @@ def __get_line_info__(gamecast_url):
 
 	mydivs = soup.findAll("div", {"class": "odds-details"})
 
+	if len(mydivs) == 0:
+		return ("notfound", 0)
+
 	arr = mydivs[0].findAll("li")[0].get_text().replace("Line: ", "").split(" ")
 
 	try:

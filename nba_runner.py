@@ -65,8 +65,8 @@ def run_detail_evaluation(data_file:str, model_file:str, feature_columns:List[st
 
 		correct = "yes"
 
-		if confidence > 0.6:
-			add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
+		# if confidence > 0.6:
+		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
 
 def daily_performance(data_file, model_file, feature_columns):
 	model = common.load_model(model_file)
