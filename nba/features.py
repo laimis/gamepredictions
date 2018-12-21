@@ -4,7 +4,7 @@ from typing import List
 
 tracked_stats = ["wins", "scored", "allowed", "date", "fg%", "tp%", "ft%", "rebs", "assists", "turnovers", "streak"]
 GAMES_TO_ROLL = 20
-STREAK_NUMBER = 3
+STREAK_NUMBER = 10
 
 def get_label_column_names():
 	return ["year", "date", "counter", "away", "home", "home_win"]
@@ -100,14 +100,20 @@ def __calc_features__(stats, team, date):
 			return number_of_games_within_date(team_stats[stat], date, 1)
 
 		if stat == "streak":
-			streak_sum = sum(team_stats[stat][-STREAK_NUMBER:])
+			streak = 0
 
-			if streak_sum == STREAK_NUMBER:
-				return 1
-			elif streak_sum == 0:
-				return -1
-			else:
-				return 0
+			recent_outcomes = team_stats[stat][-STREAK_NUMBER:]
+			recent_outcomes.reverse()
+
+			current = team_stats[stat][-1]
+
+			for w in recent_outcomes:
+				if w == current:
+					current = streak + current
+				else:
+					break
+
+			return streak
 
 		return sum(team_stats[stat][-GAMES_TO_ROLL:]) / len(team_stats[stat][-GAMES_TO_ROLL:])
 
