@@ -35,7 +35,8 @@ def generate_summary(df:pd.DataFrame, games, predictions, confidences):
 
 stats = importer.generate_stats(f"input\\nba\\2018.csv")
 
-model = common.load_model(f"models\\nba\\5-6-7-xgb-pct-pts-3pt-to.pkl")
+# model = common.load_model(f"models\\nba\\5-6-7-xgb-pct-pts-3pt-to.pkl")
+model = common.load_model("models\\nba\\5-6-7-gausian-pct-streak.pkl")
 
 data = []
 games = []
@@ -55,7 +56,8 @@ for g in scraper.get_games(dt):
 df = pd.DataFrame(data, columns=features.get_data_header().split(","))
 
 #X = df[features.get_feature_column_names()]
-X = df[["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff"]]
+#X = df[["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff"]]
+X  = df[["away_pct", "home_pct", "away_streak", "home_streak"]]
 
 predictions = model.predict(X)
 confidences = model.predict_proba(X)

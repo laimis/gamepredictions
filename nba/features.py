@@ -20,6 +20,10 @@ def get_data_header():
 	return ",".join(combined)
 
 def to_stats_home(rd:domain.NBAGame):
+	for_streak = rd.home_win
+	if for_streak == 0:
+		for_streak = -1
+
 	return [
 		rd.home_win,
 		rd.home_pts,
@@ -31,13 +35,17 @@ def to_stats_home(rd:domain.NBAGame):
 		rd.home_oreb + rd.home_dreb,
 		rd.home_assists,
 		rd.home_turnovers,
-		rd.home_win,
+		for_streak,
 	]
 
 def to_stats_away(rd:domain.NBAGame):
 	if rd.away_fga == 0:
 		print("zero fga",rd.date,rd.away_pts,rd.home_pts)
 		
+	for_streak = 1 - rd.home_win
+	if for_streak == 0:
+		for_streak = -1
+
 	return [
 		1 - rd.home_win,
 		rd.away_pts,
@@ -49,7 +57,7 @@ def to_stats_away(rd:domain.NBAGame):
 		rd.away_oreb + rd.away_dreb,
 		rd.away_assists,
 		rd.away_turnovers,
-		1 - rd.home_win,
+		for_streak,
 	]
 
 def add_to_stats(stats, rd):
@@ -105,11 +113,11 @@ def __calc_features__(stats, team, date):
 			recent_outcomes = team_stats[stat][-STREAK_NUMBER:]
 			recent_outcomes.reverse()
 
-			current = team_stats[stat][-1]
+			current = recent_outcomes[0]
 
 			for w in recent_outcomes:
 				if w == current:
-					current = streak + current
+					streak = streak + current
 				else:
 					break
 

@@ -136,9 +136,9 @@ if __name__ == '__main__':
 	val_summary 	= "output\\nba\\html\\valdata.json"
 	detail_summary 	= "output\\nba\\html\\detaildata.json"
 
-	delete_if_needed(train_summary)
-	delete_if_needed(test_summary)
-	delete_if_needed(val_summary)
+	# delete_if_needed(train_summary)
+	# delete_if_needed(test_summary)
+	# delete_if_needed(val_summary)
 	delete_if_needed(detail_summary)
 
 	feature_set = {
@@ -158,29 +158,29 @@ if __name__ == '__main__':
 	run_import([2014, 2015, 2016], [2017], [2018])
 
 	max_val_accuracy = 0
-	max_val_model ="" # "models\\nba\\5-6-7-xgb-pct-pts-3pt-to.pkl"
-	max_val_columns:List[str] = [] #["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff"]
+	max_val_model = "models\\nba\\5-6-7-xgb-pct-pts-streak.pkl"
+	max_val_columns:List[str] =  ["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_streak"]
 	
-	for s in feature_set:
+	# for s in feature_set:
 
-		feature_columns = feature_set[s]
+	# 	feature_columns = feature_set[s]
 
-		models_grids = train.get_model_and_grid()
-		for k in models_grids:
-			print("training",k,feature_columns)
+	# 	models_grids = train.get_model_and_grid()
+	# 	for k in models_grids:
+	# 		print("training",k,feature_columns)
 
-			model = models_grids[k]["model"]
-			param_grid = models_grids[k]["param_grid"]
-			name = f"5-6-7-{k}-{s}"
-			model_output_path = f"models\\nba\\{name}.pkl"
-			delete_if_needed(model_output_path)
+	# 		model = models_grids[k]["model"]
+	# 		param_grid = models_grids[k]["param_grid"]
+	# 		name = f"5-6-7-{k}-{s}"
+	# 		model_output_path = f"models\\nba\\{name}.pkl"
+	# 		delete_if_needed(model_output_path)
 
-			run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
-			run_evaluations(model_output_path, f"{name}", test_input, feature_columns, test_summary)
-			acc, _ = run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
-			if acc > max_val_accuracy:
-				max_val_model = model_output_path
-				max_val_columns = feature_columns
+	# 		run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
+	# 		run_evaluations(model_output_path, f"{name}", test_input, feature_columns, test_summary)
+	# 		acc, _ = run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
+	# 		if acc > max_val_accuracy:
+	# 			max_val_model = model_output_path
+	# 			max_val_columns = feature_columns
 
 	daily_performance(val_input, max_val_model, max_val_columns)
 
