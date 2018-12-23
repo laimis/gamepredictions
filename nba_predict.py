@@ -11,23 +11,27 @@ import nba.features as features
 import nba.scraper as scraper
 import nba.domain as domain
 
-def generate_summary(df:pd.DataFrame, games, predictions, confidences):
+def generate_summary(df:pd.DataFrame, games, predictions, confidences, line_index:domain.GameLineIndex):
 
 	summary = []
 	for idx,val in enumerate(games):
 		
 		game_prediction = domain.GamePrediction(val, predictions[idx], confidences[idx])
+		line = line_index.get(datetime.datetime.now().date(), val.away, val.home)
+		
 
-		output = [f"{val.away} @ {val.home}", game_prediction.winner]
+		output = []
 
+		output.append(f"{val.away} @ {val.home}")
+		output.append(f"{line.team} {line.spread}")
+		output.append(game_prediction.winner)
 		output.append(f"{game_prediction.confidence:.2f}")
-
+		output.append(f"{df.iloc[idx]['away_streak']:.2f}")
+		output.append(f"{df.iloc[idx]['home_streak']:.2f}")
 		output.append(f"{df.iloc[idx]['away_pct']:.2f}")
 		output.append(f"{df.iloc[idx]['home_pct']:.2f}")
 		output.append(f"{df.iloc[idx]['away_diff']:.2f}")
 		output.append(f"{df.iloc[idx]['home_diff']:.2f}")
-		output.append(f"{df.iloc[idx]['away_streak']:.2f}")
-		output.append(f"{df.iloc[idx]['home_streak']:.2f}")
 		
 		summary.append(output)
 	
@@ -41,7 +45,9 @@ data = []
 games = []
 
 dt = datetime.datetime.now()
-# dt = datetime.datetime.now() + datetime.timedelta(days=-1)
+
+lines = scraper.get_gameday_lines()
+index = domain.GameLineIndex(lines)
 
 for g in scraper.get_games(dt):
 
@@ -60,7 +66,7 @@ X  = df[["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_
 predictions = model.predict(X)
 confidences = model.predict_proba(X)
 
-summary = generate_summary(df, games, predictions, confidences)
+summary = generate_summary(df, games, predictions, confidences, index)
 
 dict = {"data": summary}
 

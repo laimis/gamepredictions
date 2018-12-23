@@ -297,6 +297,34 @@ def __get_gamecast_urls__(dt):
 
 	return links
 
+def __get_gameday_lines__():
+	scoreboard_url = f"http://www.espn.com/nba/scoreboard"
+
+	soup = __get_soup__(scoreboard_url)
+
+	js = ""
+	for s in soup.find_all("script"):
+		txt = s.get_text()
+
+		if "window.espn.scoreboardData" not in txt:
+			continue
+
+		end = txt.index(";window.espn.scoreboardSettings")
+		start = txt.index("= {")
+
+		js = txt[start + 2 : end]
+
+		break
+
+	loaded = json.loads(js)
+
+	lines = []
+	for e in loaded["events"]:
+		for c in e["competitions"]:
+			for o in c["odds"]:
+				lines.append(o["details"])
+
+	return lines
 
 def __get_line_info__(date:datetime.date, gamecast_url:str) -> ESPNGameLine:
 	soup = __get_soup__(gamecast_url)
@@ -338,6 +366,21 @@ def get_lines(date) -> List[ESPNGameLine]:
 			line = ESPNGameLine(date, name.split(" @ ")[0],line.spread)
 
 		lines.append(line)
+	
+	return lines
+	
+def get_gameday_lines() -> List[ESPNGameLine]:
+
+	lines:List[ESPNGameLine] = []
+
+	for line in __get_gameday_lines__():
+
+		name = line.split(' ')[0].lower()
+		spread = float(line.split(' ')[1])
+
+		game_line = ESPNGameLine(datetime.datetime.now().date(), name, spread)
+
+		lines.append(game_line)
 	
 	return lines
 
