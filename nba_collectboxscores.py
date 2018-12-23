@@ -1,5 +1,6 @@
 import nba.scraper as scraper
 import nba.database as database
+import nba.domain as domain
 import datetime
 import time
 import csv
@@ -61,13 +62,14 @@ def update_aggregate_stats():
 def generate_stats():
 
 	def generate_stats_for_year(year):
-		header = "date,away,away_fgm,away_fga,away_tpm,away_tpa,away_ftm,away_fta,away_oreb,away_dreb,away_assists,away_steals,away_blocks,away_turnovers,away_fouls,away_points,home,home_fgm,home_fga,home_tpm,home_tpa,home_ftm,home_fta,home_oreb,home_dreb,home_assists,home_steals,home_blocks,home_turnovers,home_fouls,home_points".split(",")
+		header = "date,away,away_fgm,away_fga,away_tpm,away_tpa,away_ftm,away_fta,away_oreb,away_dreb,away_assists,away_steals,away_blocks,away_turnovers,away_fouls,away_points,home,home_fgm,home_fga,home_tpm,home_tpa,home_ftm,home_fta,home_oreb,home_dreb,home_assists,home_steals,home_blocks,home_turnovers,home_fouls,home_points,line_team,line_spread".split(",")
 
 		start = datetime.date(year,10,1)
 		end = datetime.date(year+1,4,10)
 		games:List[domain.Game] = database.get_games_with_daterange(start, end)
 		lines:List[scraper.ESPNGameLine] = database.get_lines_with_daterange(start, end)
-		
+		index:domain.GameLineIndex = domain.GameLineIndex(lines)
+
 		with open(f"input\\nba\\{year}.csv", "w", newline='') as output_f:
 
 			writer = csv.writer(output_f)
@@ -76,19 +78,24 @@ def generate_stats():
 			
 			for g in games:
 
-				writer.writerow(g.to_output())
+				line = index.get(g.date, g.home, g.away)
+				line_parts = [None,None]
+				if line != None:
+					line_parts = [line.team, line.spread]
+
+				writer.writerow(g.to_output() + line_parts)
 
 	for y in [2014,2015,2016,2017,2018]:
 		generate_stats_for_year(y)
 
 if __name__ == "__main__":
 
-	dt = datetime.datetime.now() + datetime.timedelta(days=-1)
+	# dt = datetime.datetime.now() + datetime.timedelta(days=-1)
 
-	get_box_scores_for_date(dt)
+	# get_box_scores_for_date(dt)
 
-	get_lines(dt)
+	# get_lines(dt)
 	
-	update_aggregate_stats()
+	# update_aggregate_stats()
 
 	generate_stats()
