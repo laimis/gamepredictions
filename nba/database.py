@@ -9,7 +9,7 @@ from typing import List
 
 __connection_string__ = "host='localhost' dbname='bets' user='bet' password='bet'"
 
-def __map_record_to_game__(record):
+def __map_record_to_game__(record) -> domain.Game:
 	stat_dict = {"fgm":0,"fga":0,"tpm":0,"tpa":0,"ftm":0,"fta":0,"oreb":0,"dreb":0,"assists":0,"steals":0,"blocks":0,"turnovers":0,"fouls":0,"points":0}
 
 	for k in stat_dict:
@@ -23,6 +23,11 @@ def __map_record_to_game__(record):
 	home_stats = domain.GameStats(stat_dict)
 
 	return domain.Game(record["date"], record["gameid"], record["away"], record["home"], away_stats, home_stats)
+
+def __map_record_to_line__(record) -> scraper.ESPNGameLine:
+	
+	return scraper.ESPNGameLine(record["team"], record["value"])
+
 		
 def get_game_stats(gameid:str) -> domain.Game:
 
@@ -72,6 +77,23 @@ def get_games_with_daterange(start:datetime.date, end:datetime.date) -> List[dom
 				games.append(game_stat)
 
 	return games
+
+def get_lines_with_daterange(start:datetime.date, end:datetime.date) -> List[scraper.ESPNGameLine]:
+
+	lines:List[scraper.ESPNGameLine] = []
+
+	with psycopg2.connect(__connection_string__) as conn:
+		with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+
+			cur.execute("select * from gamelines where date between %s and %s order by date", [start, end])
+
+			records = cur.fetchall()
+
+			for r in records:
+				game_stat = __map_record_to_line__(r)
+				lines.append(game_stat)
+
+	return lines
 
 def __insert_box_score_row__(cur: psycopg2.extensions.cursor, box_score_id:str, bse: scraper.BoxScoreEntry):
 	

@@ -85,12 +85,9 @@ if __name__ == "__main__":
 	dt = datetime.datetime.now() + datetime.timedelta(days=-1)
 
 	get_box_scores_for_date(dt)
+
+	get_lines(dt)
 	
 	update_aggregate_stats()
 
 	generate_stats()
-
-	get_lines(dt)
-
-	# get_season_lines()
-

@@ -12,9 +12,12 @@ class TestDatabase(unittest.TestCase):
 		super(TestDatabase, cls).setUpClass()
 
 		date = datetime.date(2018,11,9)
+
 		cls.games = database.get_games(date)
 
 		cls.game = database.get_game_stats("4144")
+
+		cls.lines = database.get_lines_with_daterange(date, date)
 
 	def test_get_games_returns_correct_games(self):
 		
@@ -80,3 +83,7 @@ class TestDatabase(unittest.TestCase):
 		self.assertEqual(11, home_stats.turnovers)
 		self.assertEqual(32, home_stats.fouls)
 		self.assertEqual(90, home_stats.points)
+
+	def test_lines_correct(self):
+
+		self.assertEqual(7, len(self.lines), "line number should match")
