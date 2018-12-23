@@ -4,6 +4,7 @@ import nba.scraper as scraper
 
 import datetime
 
+@unittest.skip("integration tests")
 class TestScraper(unittest.TestCase):
 
 	@classmethod

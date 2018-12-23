@@ -84,16 +84,36 @@ class NBAGame:
 		self.home_dreb = self.__safe_int__(row[24])
 		self.home_assists = self.__safe_int__(row[25])
 		self.home_turnovers = self.__safe_int__(row[26])
-		
+
+		winner = self.away
+		covered = self.home_pts - self.away_pts
+
 		if self.home_pts > self.away_pts:
 			self.home_win = 1
+			winner = self.home
+			covered = self.away_pts - self.home_pts
 		else:
 			self.home_win = 0
 
+		self.line_team = row[31]
+		self.line_spread = self.__safe_float__(row[32])
+		
+		if self.line_team == winner:
+			self.spread_correct = True
+		else:
+			self.spread_correct = False
+
+		self.spread_covered = covered < self.line_spread
+		
 	def __safe_int__(self, val):
 		if not val: return 0
 
 		return int(val)
+
+	def __safe_float__(self, val):
+		if not val: return 0
+
+		return float(val)
 
 class GamePrediction:
 	def __init__(self, game:NBAGame, prediction:int, confidence):
