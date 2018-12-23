@@ -4,6 +4,8 @@ import datetime
 import time
 import csv
 
+from typing import List
+
 def get_season_box_scores():
 	dt = datetime.date(2018,10,17)
 	end = datetime.date(2018,11,12)
@@ -47,10 +49,10 @@ def get_box_scores_for_date(dt:datetime.date):
 
 def get_lines(dt:datetime.date):
 
-	lines = scraper.get_lines(dt)
+	lines:List[scraper.ESPNGameLine] = scraper.get_lines(dt)
 
 	for l in lines:
-		database.insert_line(dt, l[0], l[1])
+		database.insert_line(dt, l.team, l.spread)
 
 def update_aggregate_stats():
 

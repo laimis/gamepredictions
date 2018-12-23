@@ -34,3 +34,17 @@ class TestScraper(unittest.TestCase):
 	def test_games_match(self):
 
 		self.assertEqual(6, len(self.games))
+
+	def test_game_lines_with_correction(self):
+
+		line = scraper.ESPNGameLine("cha", -4)
+
+		self.assertEqual("cho", line.team, "team should be corrected")
+		self.assertEqual(-4, line.spread, "spread should match")
+
+	def test_game_lines_without_correction(self):
+
+		line = scraper.ESPNGameLine("bos", -6)
+
+		self.assertEqual("bos", line.team, "team should be corrected")
+		self.assertEqual(-6, line.spread, "spread should match")

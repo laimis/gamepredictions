@@ -5,6 +5,35 @@ import json
 
 from typing import List
 
+class ESPNGameLine:
+	def __init__(self, team:str, spread:float):
+
+		corrected = self.__get_correct_name__(team)
+
+		self.team = corrected
+		self.spread = spread
+	
+	def __get_correct_name__(self, name:str) -> str:
+		if name == "gs":
+			return "gsw"
+		if name == "wsh":
+			return "was"
+		if name == "ny":
+			return "nyk"
+		if name == "no":
+			return "nop"
+		if name == "utah":
+			return "uta"
+		if name == "bkn":
+			return "brk"
+		if name == "cha":
+			return "cho"
+		if name == "phx":
+			return "pho"
+		if name == "sa":
+			return "sas"
+		
+		return name
 
 class BoxScoreTeam:
 	def __init__(self, team_name, away):
@@ -266,13 +295,13 @@ def __get_gamecast_urls__(dt):
 	return links
 
 
-def __get_line_info__(gamecast_url):
+def __get_line_info__(gamecast_url) -> ESPNGameLine:
 	soup = __get_soup__(gamecast_url)
 
 	mydivs = soup.findAll("div", {"class": "odds-details"})
 
 	if len(mydivs) == 0:
-		return ("notfound", 0)
+		return ESPNGameLine("notfound", 0)
 
 	arr = mydivs[0].findAll("li")[0].get_text().replace("Line: ", "").split(" ")
 
@@ -280,18 +309,18 @@ def __get_line_info__(gamecast_url):
 		team = arr[0].lower()
 
 		if "even" in team:
-			spread = 0
+			spread = 0.0
 		else:
 			spread = float(arr[1])
 
-		return (team, spread)
+		return ESPNGameLine(team, spread)
 	except IndexError as err:
 		print("failed to parse", mydivs[0].get_text(), "for url", gamecast_url,"team",team)
 		exit(-1)
 
-def get_lines(date):
+def get_lines(date) -> List[ESPNGameLine]:
 
-	lines = []
+	lines:List[ESPNGameLine] = []
 
 	for pair in __get_gamecast_urls__(date):
 
@@ -302,8 +331,8 @@ def get_lines(date):
 
 		line = __get_line_info__(url)
 
-		if line[0] == "even":
-			line = (name.split(" @ ")[0],line[1])
+		if line.team == "even":
+			line = ESPNGameLine(name.split(" @ ")[0],line.spread)
 
 		lines.append(line)
 	
