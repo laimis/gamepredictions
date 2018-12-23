@@ -25,7 +25,7 @@ def generate_output_row(year, stats, game_info:domain.NBAGame):
 
 	game_features = [year,game_info.date.strftime("%Y-%m-%d"),game_info.counter,game_info.away,game_info.home,game_info.home_win]
 	
-	spread_features = [game_info.line_team,game_info.line_spread,game_info.spread_correct,game_info.spread_covered]
+	# spread_features = [game_info.line_team,game_info.line_spread,game_info.spread_correct,game_info.spread_covered]
 
 	return game_features + calculated_features# + spread_features
 
