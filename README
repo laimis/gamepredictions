@@ -1,8 +1,4 @@
 - visualize running performance, how does the overall accuracy look day to day as the season progresses
 - visualize daily performance
 - visualize daily performance of the previous year
-- how to use custom logic in validation, such as:
-	- if streak is 5, stay away game, don't count it
-	- if conf > threshold, stay away game
 - real lines taken into account for evals
-- real lines shown for predict with suggestions
