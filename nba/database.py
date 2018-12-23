@@ -26,9 +26,8 @@ def __map_record_to_game__(record) -> domain.Game:
 
 def __map_record_to_line__(record) -> scraper.ESPNGameLine:
 	
-	return scraper.ESPNGameLine(record["team"], record["value"])
+	return scraper.ESPNGameLine(record["date"], record["team"], record["value"])
 
-		
 def get_game_stats(gameid:str) -> domain.Game:
 
 	with psycopg2.connect(__connection_string__) as conn:

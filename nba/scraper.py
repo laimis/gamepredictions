@@ -2,14 +2,17 @@ from bs4 import BeautifulSoup
 import urllib.request
 import calendar
 import json
+import datetime
 
 from typing import List
 
+
 class ESPNGameLine:
-	def __init__(self, team:str, spread:float):
+	def __init__(self, date:datetime.date, team:str, spread:float):
 
 		corrected = self.__get_correct_name__(team)
 
+		self.date = date
 		self.team = corrected
 		self.spread = spread
 	
@@ -295,13 +298,13 @@ def __get_gamecast_urls__(dt):
 	return links
 
 
-def __get_line_info__(gamecast_url) -> ESPNGameLine:
+def __get_line_info__(date:datetime.date, gamecast_url:str) -> ESPNGameLine:
 	soup = __get_soup__(gamecast_url)
 
 	mydivs = soup.findAll("div", {"class": "odds-details"})
 
 	if len(mydivs) == 0:
-		return ESPNGameLine("notfound", 0)
+		return ESPNGameLine(date, "notfound", 0)
 
 	arr = mydivs[0].findAll("li")[0].get_text().replace("Line: ", "").split(" ")
 
@@ -313,7 +316,7 @@ def __get_line_info__(gamecast_url) -> ESPNGameLine:
 		else:
 			spread = float(arr[1])
 
-		return ESPNGameLine(team, spread)
+		return ESPNGameLine(date, team, spread)
 	except IndexError as err:
 		print("failed to parse", mydivs[0].get_text(), "for url", gamecast_url,"team",team)
 		exit(-1)
@@ -329,10 +332,10 @@ def get_lines(date) -> List[ESPNGameLine]:
 
 		print(name,url)
 
-		line = __get_line_info__(url)
+		line = __get_line_info__(date, url)
 
 		if line.team == "even":
-			line = ESPNGameLine(name.split(" @ ")[0],line.spread)
+			line = ESPNGameLine(date, name.split(" @ ")[0],line.spread)
 
 		lines.append(line)
 	

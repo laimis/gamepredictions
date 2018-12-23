@@ -66,7 +66,8 @@ def generate_stats():
 		start = datetime.date(year,10,1)
 		end = datetime.date(year+1,4,10)
 		games:List[domain.Game] = database.get_games_with_daterange(start, end)
-
+		lines:List[scraper.ESPNGameLine] = database.get_lines_with_daterange(start, end)
+		
 		with open(f"input\\nba\\{year}.csv", "w", newline='') as output_f:
 
 			writer = csv.writer(output_f)

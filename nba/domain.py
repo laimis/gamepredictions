@@ -103,3 +103,29 @@ class GamePrediction:
 			self.winner = game.away
 		else:
 			self.winner = game.home
+
+class GameLineIndex:
+	def __init__(self, lines):
+
+		self.__map__ = {}
+
+		for l in lines:
+			key = self.__get_key__(l.date, l.team)
+			value = l
+
+			self.__map__[key] = value
+
+	def __get_key__(self, date:datetime.date, team:str):
+		return str(date) + str(team)
+
+	def get(self, date:datetime.date, team1:str, team2:str):
+
+		for t in [team1, team2]:
+			key = self.__get_key__(date, t)
+
+			if key in self.__map__:
+				return self.__map__[key]
+
+		return None
+
+		
