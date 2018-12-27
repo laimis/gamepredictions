@@ -321,6 +321,9 @@ def __get_gameday_lines__():
 	lines = []
 	for e in loaded["events"]:
 		for c in e["competitions"]:
+			if "odds" not in c:
+				continue
+
 			for o in c["odds"]:
 				lines.append(o["details"])
 
