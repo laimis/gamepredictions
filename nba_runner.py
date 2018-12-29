@@ -65,7 +65,6 @@ def run_detail_evaluation(data_file:str, model_file:str, feature_columns:List[st
 
 		correct = "yes"
 
-		# if confidence > 0.6:
 		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
 
 def daily_performance(data_file, model_file, feature_columns):
@@ -101,10 +100,8 @@ def run_training(
 	
 	add_to_json_summary(summary_file, output)
 
-def run_import(years_train, years_test, years_validate):
-	def generate_features(years, train_or_test):
-
-		output_file = f"output\\nba\\{train_or_test}\\train.csv"
+def run_import(train_years, train_file, test_years, test_file, validate_years, validate_file):
+	def generate_features(years, output_file):
 
 		if os.path.isfile(output_file):
 			os.remove(output_file)
@@ -116,30 +113,15 @@ def run_import(years_train, years_test, years_validate):
 				input_file = f"input\\nba\\{year}.csv"
 				importer.transform_csv(input_file, output_f, year)
 
-	generate_features(years_train, "train")
-	generate_features(years_test, "test")
-	generate_features(years_validate, "validation")
-
+	generate_features(train_years, train_file)
+	generate_features(test_years, test_file)
+	generate_features(validate_years, validate_file)
 
 if __name__ == '__main__':
 
 	def delete_if_needed(filepath):
 		if os.path.isfile(filepath):
 			os.remove(filepath)
-
-	train_input = "output\\nba\\train\\train.csv"
-	test_input 	= "output\\nba\\test\\train.csv"
-	val_input 	= "output\\nba\\validation\\train.csv"
-
-	train_summary 	= "output\\nba\\html\\trainingdata.json"
-	test_summary 	= "output\\nba\\html\\testdata.json"
-	val_summary 	= "output\\nba\\html\\valdata.json"
-	detail_summary 	= "output\\nba\\html\\detaildata.json"
-
-	# delete_if_needed(train_summary)
-	# delete_if_needed(test_summary)
-	# delete_if_needed(val_summary)
-	delete_if_needed(detail_summary)
 
 	feature_set = {
 		"pct": ["away_pct", "home_pct"],
@@ -155,11 +137,29 @@ if __name__ == '__main__':
 		"pct-pts-3pt-to-rebs": ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff", "away_rebs", "home_rebs"]
 	}
 
-	run_import([2014, 2015, 2016], [2017], [2018])
+	train_input = "output\\nba\\train\\train.csv"
+	test_input 	= "output\\nba\\test\\train.csv"
+	val_input 	= "output\\nba\\validation\\train.csv"
+
+	run_import(
+		[2014, 2015, 2016], train_input,
+		[2017], test_input,
+		[2018], val_input
+	)
 
 	max_val_accuracy = 0
 	max_val_model = "models\\nba\\5-6-7-xgb-pct-pts-streak.pkl"
 	max_val_columns:List[str] =  ["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_streak"]
+
+	train_summary 	= "output\\nba\\html\\trainingdata.json"
+	test_summary 	= "output\\nba\\html\\testdata.json"
+	val_summary 	= "output\\nba\\html\\valdata.json"
+	detail_summary 	= "output\\nba\\html\\detaildata.json"
+
+	# delete_if_needed(train_summary)
+	# delete_if_needed(test_summary)
+	# delete_if_needed(val_summary)
+	delete_if_needed(detail_summary)
 	
 	# for s in feature_set:
 
