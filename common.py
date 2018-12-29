@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+import csv
+
 from sklearn.externals import joblib
 
 class ConfidenceStat:
@@ -32,7 +34,7 @@ def read_data_from_file(filepath, y_col, x_col):
 
 	return data, X, y
 
-def read_data_groupedby_week(filepath, y_col, x_col, group_by):
+def read_data_grouped(filepath, y_col, x_col, group_by):
 
 	data = pd.read_csv(filepath)
 
@@ -44,6 +46,19 @@ def read_data_groupedby_week(filepath, y_col, x_col, group_by):
 		grouped[name] = (X, y)
 
 	return grouped
+
+def read_model_definition(definition_file):
+	model_file = ""
+	feature_columns = []
+
+	with open(definition_file, "r") as i:
+		reader = csv.reader(i)
+
+		for r in reader:
+			model_file = r[1]
+			feature_columns = r[2].split(",")
+
+	return model_file, feature_columns
 
 def load_model(filepath):
 

@@ -68,12 +68,26 @@ def run_detail_evaluation(data_file:str, model_file:str, feature_columns:List[st
 
 		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
 
-def daily_performance(data_file, model_file, feature_columns):
+def daily_performance(data_file, model_file, feature_columns, summary_file):
 	model = common.load_model(model_file)
 
-	groups = common.read_data_groupedby_week(data_file, "home_win", feature_columns, ['year', 'date'])
+	groups = common.read_data_grouped(data_file, "home_win", feature_columns, ['year', 'date'])
 
-	evaluate.weekly_breakdown(groups, model)
+	for key in groups:
+		X, y = groups[key]
+
+		accuracy, manual_accuracy = evaluate.calculate_accuracy(model, X, y)
+
+		stats = common.confidence_stats(model, X, y.values)
+
+		print(f"{key}:{accuracy:.2f} {' '.join([str(x) for x in stats])}")
+
+		data = [str(key),accuracy]
+		
+		for s in stats:
+			data.append(str(s))
+
+		add_to_json_summary(summary_file, data)
 
 def run_training(
 	training_csv_path:str,
@@ -190,24 +204,18 @@ def run_train_test_validate():
 
 def run_daily_analysis():
 
-	model_file = ""
-	feature_columns = []
+	model_file, feature_columns = common.read_model_definition("nba_model.csv")
 
-	with open("nba_model.csv", "r") as i:
-		reader = csv.reader(i)
-
-		for r in reader:
-			model_file = r[1]
-			feature_columns = r[2].split(",")
-		
 	print("running daily analysis with model", model_file, "and features", feature_columns)
 
-	val_input 	= "output\\nba\\validation\\validate.csv"
+	val_input = "output\\nba\\validation\\validate.csv"
 
-	daily_performance(val_input, model_file, feature_columns)
+	daily_summary = "output\\nba\\html\\dailydata.json"
+	delete_if_needed(daily_summary)
 
-	detail_summary 	= "output\\nba\\html\\detaildata.json"
-	
+	daily_performance(val_input, model_file, feature_columns, daily_summary)
+
+	detail_summary = "output\\nba\\html\\detaildata.json"
 	delete_if_needed(detail_summary)
 
 	run_detail_evaluation(val_input, model_file, feature_columns, detail_summary)
