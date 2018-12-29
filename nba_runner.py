@@ -1,5 +1,6 @@
 import os
 import json
+import csv
 
 import nba.importer as importer
 import common
@@ -103,8 +104,7 @@ def run_training(
 def run_import(train_years, train_file, test_years, test_file, validate_years, validate_file):
 	def generate_features(years, output_file):
 
-		if os.path.isfile(output_file):
-			os.remove(output_file)
+		delete_if_needed(output_file)
 		
 		with open(output_file, "a", newline='') as output_f:
 			output_f.write(features.get_data_header() + "\n")
@@ -117,12 +117,11 @@ def run_import(train_years, train_file, test_years, test_file, validate_years, v
 	generate_features(test_years, test_file)
 	generate_features(validate_years, validate_file)
 
-if __name__ == '__main__':
+def delete_if_needed(filepath):
+	if os.path.isfile(filepath):
+		os.remove(filepath)
 
-	def delete_if_needed(filepath):
-		if os.path.isfile(filepath):
-			os.remove(filepath)
-
+def run_train_test_validate():
 	feature_set = {
 		"pct": ["away_pct", "home_pct"],
 		"pct-streak": ["away_pct", "home_pct", "away_streak", "home_streak"],
@@ -147,41 +146,72 @@ if __name__ == '__main__':
 		[2018], val_input
 	)
 
-	max_val_accuracy = 0
-	max_val_model = "models\\nba\\5-6-7-xgb-pct-pts-streak.pkl"
-	max_val_columns:List[str] =  ["away_pct", "home_pct", "away_diff", "home_diff", "away_streak", "home_streak"]
-
 	train_summary 	= "output\\nba\\html\\trainingdata.json"
 	test_summary 	= "output\\nba\\html\\testdata.json"
 	val_summary 	= "output\\nba\\html\\valdata.json"
-	detail_summary 	= "output\\nba\\html\\detaildata.json"
 
-	# delete_if_needed(train_summary)
-	# delete_if_needed(test_summary)
-	# delete_if_needed(val_summary)
-	delete_if_needed(detail_summary)
+	max_val_accuracy = 0
+	max_val_model = ""
+	max_val_columns:List[str] =  []
+
+	delete_if_needed(train_summary)
+	delete_if_needed(test_summary)
+	delete_if_needed(val_summary)
 	
-	# for s in feature_set:
+	for s in feature_set:
 
-	# 	feature_columns = feature_set[s]
+		feature_columns = feature_set[s]
 
-	# 	models_grids = train.get_model_and_grid()
-	# 	for k in models_grids:
-	# 		print("training",k,feature_columns)
+		models_grids = train.get_model_and_grid()
+		for k in models_grids:
+			print("training",k,feature_columns)
 
-	# 		model = models_grids[k]["model"]
-	# 		param_grid = models_grids[k]["param_grid"]
-	# 		name = f"5-6-7-{k}-{s}"
-	# 		model_output_path = f"models\\nba\\{name}.pkl"
-	# 		delete_if_needed(model_output_path)
+			model = models_grids[k]["model"]
+			param_grid = models_grids[k]["param_grid"]
+			name = f"5-6-7-{k}-{s}"
+			model_output_path = f"models\\nba\\{name}.pkl"
+			delete_if_needed(model_output_path)
 
-	# 		run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
-	# 		run_evaluations(model_output_path, f"{name}", test_input, feature_columns, test_summary)
-	# 		acc, _ = run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
-	# 		if acc > max_val_accuracy:
-	# 			max_val_model = model_output_path
-	# 			max_val_columns = feature_columns
+			run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
+			run_evaluations(model_output_path, f"{name}", test_input, feature_columns, test_summary)
+			acc, _ = run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
+			if acc > max_val_accuracy:
+				max_val_model = model_output_path
+				max_val_columns = feature_columns
 
-	daily_performance(val_input, max_val_model, max_val_columns)
+	print("Train-Test-Eval Summary")
+	print("Selected Model: ", max_val_model)
+	print("Accuracy: ", max_val_accuracy)
+	print("Features: ", max_val_columns)
 
-	run_detail_evaluation(val_input, max_val_model, max_val_columns, detail_summary)
+	with open("nba_model.csv", "w", newline='') as o:
+		writer = csv.writer(o)
+		writer.writerow([max_val_accuracy, max_val_model, ",".join(max_val_columns)])
+
+def run_daily_analysis():
+
+	model_file = ""
+	feature_columns = []
+
+	with open("nba_model.csv", "r") as i:
+		reader = csv.reader(i)
+
+		for r in reader:
+			model_file = r[1]
+			feature_columns = r[2].split(",")
+		
+	print("running daily analysis with model", model_file, "and features", feature_columns)
+
+	val_input 	= "output\\nba\\validation\\validate.csv"
+
+	daily_performance(val_input, model_file, feature_columns)
+
+	detail_summary 	= "output\\nba\\html\\detaildata.json"
+	
+	delete_if_needed(detail_summary)
+
+	run_detail_evaluation(val_input, model_file, feature_columns, detail_summary)
+
+if __name__ == '__main__':
+
+	run_daily_analysis()
