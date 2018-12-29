@@ -138,8 +138,8 @@ if __name__ == '__main__':
 	}
 
 	train_input = "output\\nba\\train\\train.csv"
-	test_input 	= "output\\nba\\test\\train.csv"
-	val_input 	= "output\\nba\\validation\\train.csv"
+	test_input 	= "output\\nba\\test\\test.csv"
+	val_input 	= "output\\nba\\validation\\validate.csv"
 
 	run_import(
 		[2014, 2015, 2016], train_input,
