@@ -51,7 +51,7 @@ games = []
 
 dt = datetime.datetime.now()
 
-lines = scraper.get_gameday_lines()
+lines = scraper.get_gameday_lines(dt)
 index = domain.GameLineIndex(lines)
 
 for g in scraper.get_games(dt):

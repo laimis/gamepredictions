@@ -297,8 +297,8 @@ def __get_gamecast_urls__(dt):
 
 	return links
 
-def __get_gameday_lines__():
-	scoreboard_url = f"http://www.espn.com/nba/scoreboard"
+def __get_gameday_lines__(dt:datetime.datetime):
+	scoreboard_url = f"http://www.espn.com/nba/scoreboard/_/date/{dt.year}{dt.month:02}{dt.day:02}"
 
 	soup = __get_soup__(scoreboard_url)
 
@@ -372,11 +372,11 @@ def get_lines(date) -> List[ESPNGameLine]:
 	
 	return lines
 	
-def get_gameday_lines() -> List[ESPNGameLine]:
+def get_gameday_lines(dt:datetime.datetime) -> List[ESPNGameLine]:
 
 	lines:List[ESPNGameLine] = []
 
-	for line in __get_gameday_lines__():
+	for line in __get_gameday_lines__(dt):
 
 		name = line.split(' ')[0].lower()
 		spread = float(line.split(' ')[1])
