@@ -115,21 +115,15 @@ def run_training(
 	
 	add_to_json_summary(summary_file, output)
 
-def run_import(train_years, train_file, test_years, test_file, validate_years, validate_file):
-	def generate_features(years, output_file):
+def run_import(years, output_file):
+	delete_if_needed(output_file)
 
-		delete_if_needed(output_file)
-		
-		with open(output_file, "a", newline='') as output_f:
-			output_f.write(features.get_data_header() + "\n")
+	with open(output_file, "a", newline='') as output_f:
+		output_f.write(features.get_data_header() + "\n")
 
-			for year in years:
-				input_file = f"input\\nba\\{year}.csv"
-				importer.transform_csv(input_file, output_f, year)
-
-	generate_features(train_years, train_file)
-	generate_features(test_years, test_file)
-	generate_features(validate_years, validate_file)
+		for year in years:
+			input_file = f"input\\nba\\{year}.csv"
+			importer.transform_csv(input_file, output_f, year)
 
 def delete_if_needed(filepath):
 	if os.path.isfile(filepath):
@@ -151,14 +145,13 @@ def run_train_test_validate():
 	}
 
 	train_input = "output\\nba\\train\\train.csv"
-	test_input 	= "output\\nba\\test\\test.csv"
-	val_input 	= "output\\nba\\validation\\validate.csv"
+	run_import([2014, 2015, 2016], train_input)
 
-	run_import(
-		[2014, 2015, 2016], train_input,
-		[2017], test_input,
-		[2018], val_input
-	)
+	test_input 	= "output\\nba\\test\\test.csv"
+	run_import([2017], test_input)
+
+	val_input 	= "output\\nba\\validation\\validate.csv"
+	run_import([2018], val_input)
 
 	train_summary 	= "output\\nba\\html\\trainingdata.json"
 	test_summary 	= "output\\nba\\html\\testdata.json"
@@ -208,16 +201,15 @@ def run_daily_analysis():
 
 	print("running daily analysis with model", model_file, "and features", feature_columns)
 
-	val_input = "output\\nba\\validation\\validate.csv"
+	val_input 	= "output\\nba\\validation\\validate.csv"
+	run_import([2018], val_input)
 
 	daily_summary = "output\\nba\\html\\dailydata.json"
 	delete_if_needed(daily_summary)
-
 	daily_performance(val_input, model_file, feature_columns, daily_summary)
 
 	detail_summary = "output\\nba\\html\\detaildata.json"
 	delete_if_needed(detail_summary)
-
 	run_detail_evaluation(val_input, model_file, feature_columns, detail_summary)
 
 if __name__ == '__main__':

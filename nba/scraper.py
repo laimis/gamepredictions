@@ -379,7 +379,10 @@ def get_gameday_lines(dt:datetime.datetime) -> List[ESPNGameLine]:
 	for line in __get_gameday_lines__(dt):
 
 		name = line.split(' ')[0].lower()
-		spread = float(line.split(' ')[1])
+		if name != "even":
+			spread = float(line.split(' ')[1])
+		else:
+			spread = 0
 
 		game_line = ESPNGameLine(datetime.datetime.now().date(), name, spread)
 

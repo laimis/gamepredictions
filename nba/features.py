@@ -9,14 +9,14 @@ STREAK_NUMBER = 10
 def get_label_column_names():
 	return ["year", "date", "counter", "away", "home", "home_win"]
 
-def get_feature_column_names() -> List[str]:
-	return ["away_pct", "home_pct", "away_diff", "home_diff"]
-
-def get_feature_column_names_for_data_files():
+def get_feature_column_names():
 	return ["away_pct", "home_pct", "away_diff", "home_diff", "away_tpm", "home_tpm", "away_todiff", "home_todiff", "away_rebs", "home_rebs", "away_streak", "home_streak"]
 
+def get_line_column_names():
+	return ["line_team", "line_spread", "spread_correct", "spread_covered"]
+
 def get_data_header():
-	combined = get_label_column_names() + get_feature_column_names_for_data_files()
+	combined = get_label_column_names() + get_feature_column_names() + get_line_column_names()
 	return ",".join(combined)
 
 def to_stats_home(rd:domain.NBAGame):
