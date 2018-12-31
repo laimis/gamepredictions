@@ -36,7 +36,7 @@ def run_evaluations(model_file:str, model_name:str, data_file:str, feature_colum
 
 	return accuracy
 
-def run_detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], summary_file:str):
+def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], summary_file:str):
 
 	model = common.load_model(model_file)
 
@@ -71,21 +71,24 @@ def run_detail_evaluation(data_file:str, model_file:str, feature_columns:List[st
 def daily_performance(data_file, model_file, feature_columns, summary_file):
 	model = common.load_model(model_file)
 
-	groups = common.read_data_grouped(data_file, "home_win", feature_columns, ['year', 'date'])
+	groups = common.read_data_grouped(data_file, ['year', 'date'])
 
 	for key in groups:
-		X, y = groups[key]
+		X = groups[key][feature_columns]
+		y = groups[key]["home_win"]
+		line = groups[key][features.get_line_column_names()]
 
 		accuracy, manual_accuracy = evaluate.calculate_accuracy(model, X, y)
 
-		stats = common.confidence_stats(model, X, y.values)
+		stats = common.confidence_stats(model, X, y.values, line["line_spread"].values)
 
 		print(f"{key}:{accuracy:.2f} {' '.join([str(x) for x in stats])}")
 
-		data = [str(key),accuracy]
+		data = [key[1],accuracy]
 		
 		for s in stats:
 			data.append(str(s))
+			data.append(s.money)
 
 		add_to_json_summary(summary_file, data)
 
@@ -201,16 +204,16 @@ def run_daily_analysis():
 
 	print("running daily analysis with model", model_file, "and features", feature_columns)
 
-	val_input 	= "output\\nba\\validation\\validate.csv"
-	run_import([2018], val_input)
+	input_file 	= "output\\nba\\daily.csv"
+	run_import([2017], input_file)
 
 	daily_summary = "output\\nba\\html\\dailydata.json"
 	delete_if_needed(daily_summary)
-	daily_performance(val_input, model_file, feature_columns, daily_summary)
+	daily_performance(input_file, model_file, feature_columns, daily_summary)
 
 	detail_summary = "output\\nba\\html\\detaildata.json"
 	delete_if_needed(detail_summary)
-	run_detail_evaluation(val_input, model_file, feature_columns, detail_summary)
+	detail_evaluation(input_file, model_file, feature_columns, detail_summary)
 
 if __name__ == '__main__':
 

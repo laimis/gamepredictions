@@ -1,4 +1,11 @@
-- visualize running performance, how does the overall accuracy look day to day as the season progresses
-- visualize daily performance
-- visualize daily performance of the previous year
-- real lines taken into account for evals
+Create strategies file
+
+- ability to evaluate a strategy on a given data set
+input is y, X, data
+report back money earned
+
+- current strategy
+	- choose games that are above certain threshold of confidence
+	- bet on those, compare outcomes, accumulate money
+	- describe strategy by name
+	- return strategry wins/losses?
