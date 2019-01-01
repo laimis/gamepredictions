@@ -22,7 +22,7 @@ def run_import():
 	years_train = [2013,2014,2015,2016]
 	years_test = [2017,2018]
 
-	def call_transform(train_or_test, years, rolling_window):
+	def call_transform(train_or_test, years, rolling_window, last_week):
 		
 		output_file = f"output\\nfl\\{train_or_test}\\{rolling_window}.csv"
 
@@ -33,11 +33,11 @@ def run_import():
 			output_f.write(get_output_headers())
 			for year in years:
 				input_file = f"input\\nfl\\{year}.csv"
-				importer.transform_csv(rolling_window, input_file, output_f, year)
+				importer.transform_csv(rolling_window, input_file, output_f, year, last_week)
 
 	for rolling_window in rolling_windows:
-		call_transform("train", years_train, rolling_window)
-		call_transform("test", years_test, rolling_window)
+		call_transform("train", years_train, rolling_window, 16)
+		call_transform("test", years_test, rolling_window, 17)
 
 def run_training():
 	models = []
@@ -56,14 +56,9 @@ def run_training():
 
 		model = grid.best_estimator_
 
-		stats = common.confidence_stats(model, X, y)
-			
 		train.save_model(model, file_model)
 
 		output = [f, grid.best_score_, str(grid.best_params_)]
-		
-		for s in stats:
-			output.append(s.label)
 		
 		models.append(output)
 
@@ -90,9 +85,16 @@ def run_evaluations():
 	with open(output_file, 'w') as summary_file:
 		json.dump(dict, summary_file)
 
-	groups = common.read_data_grouped(test_file, "home_win", get_feature_headers(), ['year', 'week'])
+	groups = common.read_data_grouped(test_file, ['year', 'week'])
 
-	evaluate.weekly_breakdown(groups, model)
+	for key in groups:
+
+		X = groups[key][get_feature_headers()]
+		y = groups[key]["home_win"]
+		
+		accuracy, manual_accuracy = evaluate.calculate_accuracy(model, X, y)
+
+		print(f"{key}:{accuracy:.2f}")
 
 
 if __name__ == '__main__':

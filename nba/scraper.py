@@ -227,9 +227,11 @@ def get_games(dt):
 
 	month = calendar.month_name[dt.month].lower()
 	match = f"month={dt.month}&day={dt.day}&year={dt.year}"
-	url = f"{ref_url}/leagues/NBA_{dt.year+1}_games-{month}.html"
+	url = f"{ref_url}/leagues/NBA_{dt.year}_games-{month}.html"
 
 	games = []
+
+	print(url)
 
 	with urllib.request.urlopen(url) as response:
 		html = response.read()

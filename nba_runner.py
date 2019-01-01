@@ -80,15 +80,9 @@ def daily_performance(data_file, model_file, feature_columns, summary_file):
 
 		accuracy, manual_accuracy = evaluate.calculate_accuracy(model, X, y)
 
-		stats = common.confidence_stats(model, X, y.values, line["line_spread"].values)
-
-		print(f"{key}:{accuracy:.2f} {' '.join([str(x) for x in stats])}")
+		print(f"{key}:{accuracy:.2f}")
 
 		data = [key[1],accuracy]
-		
-		for s in stats:
-			data.append(str(s))
-			data.append(s.money)
 
 		add_to_json_summary(summary_file, data)
 
@@ -107,14 +101,9 @@ def run_training(
 
 	model = grid.best_estimator_
 
-	stats = common.confidence_stats(model, X, y)
-		
 	train.save_model(model, model_output_path)
 
 	output = [model_name, f"{grid.best_score_:.4f}", str(grid.best_params_)]
-	
-	for s in stats:
-		output.append(s.label)
 	
 	add_to_json_summary(summary_file, output)
 
@@ -205,7 +194,7 @@ def run_daily_analysis():
 	print("running daily analysis with model", model_file, "and features", feature_columns)
 
 	input_file 	= "output\\nba\\daily.csv"
-	run_import([2017], input_file)
+	run_import([2018], input_file)
 
 	daily_summary = "output\\nba\\html\\dailydata.json"
 	delete_if_needed(daily_summary)

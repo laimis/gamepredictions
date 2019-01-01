@@ -41,29 +41,10 @@ def calculate_accuracy(model, X, y):
 
 	return accuracy, manual_accuracy
 
-def weekly_breakdown(groups, model):
-	print("by week")
-
-	for key in groups:
-		
-		X, y = groups[key]
-
-		accuracy, manual_accuracy = calculate_accuracy(model, X, y)
-
-		stats = common.confidence_stats(model, X, y.values)
-
-		print(f"{key}:{accuracy:.2f} {' '.join([str(x) for x in stats])}")
-
-
 def evaluate(result_name, model, X, y):
 
 	accuracy, manual_accuracy = calculate_accuracy(model, X, y)
 
-	stats = common.confidence_stats(model, X, y)
-
 	output = [result_name, f"{accuracy:.4f}", "{}"]
-
-	for s in stats:
-		output.append(s.label)
 
 	return output

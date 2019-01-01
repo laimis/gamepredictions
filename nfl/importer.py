@@ -9,7 +9,7 @@ import nfl.features as features
 def get_tracked_stats():
 	return ["wins", "points", "allowed", "yards", "yards_allowed"]
 
-def generate_output_and_stats(year, file_path, weeks_to_roll):
+def generate_output_and_stats(year, file_path, weeks_to_roll, last_week):
 
 	stats = {}
 	output = []
@@ -24,7 +24,7 @@ def generate_output_and_stats(year, file_path, weeks_to_roll):
 			# if winnerPts == losserPts:
 			# 	continue
 			
-			if game_info.week > weeks_to_roll and game_info.week < 17:
+			if game_info.week > weeks_to_roll and game_info.week <= last_week:
 				calculated_features = features.calc_features(stats, game_info, weeks_to_roll, get_tracked_stats())
 				output.append([year,game_info.week,game_info.away,game_info.home,game_info.homeWin] + calculated_features)
 			
@@ -33,8 +33,8 @@ def generate_output_and_stats(year, file_path, weeks_to_roll):
 	return output, stats
 
 
-def transform_csv(weeks_to_roll, input_file, output_f, year):
+def transform_csv(weeks_to_roll, input_file, output_f, year, last_week):
 
-	output, _ = generate_output_and_stats(year, input_file, weeks_to_roll)
+	output, _ = generate_output_and_stats(year, input_file, weeks_to_roll, last_week)
 	csv_writer = csv.writer(output_f)
 	csv_writer.writerows(output)

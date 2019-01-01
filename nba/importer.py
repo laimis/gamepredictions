@@ -28,7 +28,7 @@ def generate_output_row(year, stats, game_info:domain.NBAGame):
 	if (hasattr(game_info, "line_team")):
 		spread_features = [game_info.line_team,game_info.line_spread,game_info.spread_correct,game_info.spread_covered]
 	else:
-		spread_features = []
+		spread_features = ["",0,False,False]
 
 	return game_features + calculated_features + spread_features
 

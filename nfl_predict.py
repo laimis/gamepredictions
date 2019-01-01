@@ -61,7 +61,7 @@ week = 10
 for x in [6]:
 	
 	model = common.load_model(f"models\\nfl\\{x}_model.pkl")
-	_, stats = importer.generate_output_and_stats(2018, f"input\\nfl\\2018.csv", x)
+	_, stats = importer.generate_output_and_stats(2018, f"input\\nfl\\2018.csv", x, 17)
 
 	desc = {}
 	
