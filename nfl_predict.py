@@ -71,8 +71,6 @@ for x in [6]:
 
 	models.append(desc)
 
-team_record = {}
-
 with open(f"input\\nfl\\predict.csv", "r") as input_f:
 	predictions = predict_games(input_f, models, importer.get_tracked_stats())
 

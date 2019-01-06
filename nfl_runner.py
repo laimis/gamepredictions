@@ -85,7 +85,7 @@ def run_evaluations():
 	with open(output_file, 'w') as summary_file:
 		json.dump(dict, summary_file)
 
-	groups = common.read_data_grouped(test_file, ['year', 'week'])
+	groups = common.read_data_grouped(test_file, ['year'])
 
 	for key in groups:
 
