@@ -61,7 +61,7 @@ def get_model_and_grid():
 
 def train_model(X, y, cv, model, param_grid):
 
-	grid = GridSearchCV(model, param_grid, cv=cv, return_train_score=True, verbose=0)
+	grid = GridSearchCV(model, param_grid, cv=cv, return_train_score=True, verbose=0, scoring='neg_log_loss')
 
 	grid.fit(X, y)
 

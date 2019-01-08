@@ -177,6 +177,7 @@ def run_train_test_validate():
 			if acc > max_val_accuracy:
 				max_val_model = model_output_path
 				max_val_columns = feature_columns
+				max_val_accuracy = acc
 
 	print("Train-Test-Eval Summary")
 	print("Selected Model: ", max_val_model)
@@ -207,3 +208,4 @@ def run_daily_analysis():
 if __name__ == '__main__':
 
 	run_daily_analysis()
+	# run_train_test_validate()
