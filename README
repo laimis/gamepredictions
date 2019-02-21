@@ -1,8 +1,8 @@
 Create strategies file
 
+- calibration, over season, when it says that it is confident by %, is it confident by that percentage?
+
 - ability to evaluate a strategy on a given data set
-input is y, X, data
-report back money earned
 
 - current strategy
 	- choose games that are above certain threshold of confidence

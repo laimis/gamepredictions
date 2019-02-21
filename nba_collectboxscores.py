@@ -95,7 +95,7 @@ if __name__ == "__main__":
 	get_box_scores_for_date(dt)
 
 	get_lines(dt)
-	
+		
 	update_aggregate_stats()
 
 	generate_stats()
