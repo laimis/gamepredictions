@@ -1,4 +1,3 @@
-ALTER TABLE gamerows owner TO bet;
  DROP TABLE gamestats;
  CREATE TABLE gamestats (
 	gameid text, date timestamp, away text, home text, 
