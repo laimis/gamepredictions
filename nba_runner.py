@@ -173,7 +173,7 @@ def run_train_test_validate():
 
 			run_training(train_input, name, feature_columns, model_output_path, train_summary, model, param_grid)
 			run_evaluations(model_output_path, f"{name}", test_input, feature_columns, test_summary)
-			acc, _ = run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
+			acc = run_evaluations(model_output_path, f"{name}", val_input, feature_columns, val_summary)
 			if acc > max_val_accuracy:
 				max_val_model = model_output_path
 				max_val_columns = feature_columns
