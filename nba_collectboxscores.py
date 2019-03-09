@@ -35,6 +35,8 @@ def get_season_lines():
 
 def get_box_scores_for_date(dt:datetime.date):
 
+	print("    processing",dt)
+
 	links = scraper.get_boxscore_links(dt.year, dt.month, dt.day)
 
 	print("    ",datetime.datetime.now(),"received ",len(links))
@@ -90,7 +92,11 @@ def generate_stats():
 
 if __name__ == "__main__":
 
-	dt = datetime.datetime.now() + datetime.timedelta(days=-1)
+	date = database.get_last_date()
+
+	dt = date + datetime.timedelta(days=1)
+
+	#dt = datetime.datetime.now() + datetime.timedelta(days=-1)
 
 	get_box_scores_for_date(dt)
 

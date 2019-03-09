@@ -28,6 +28,14 @@ def __map_record_to_line__(record) -> scraper.ESPNGameLine:
 	
 	return scraper.ESPNGameLine(record["date"], record["team"], record["value"])
 
+def get_last_date() -> datetime.datetime:
+
+	with psycopg2.connect(__connection_string__) as conn:
+		with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+			cur.execute("select max(date) as date from games")
+			record = cur.fetchone()
+			return record["date"]
+
 def get_game_stats(gameid:str) -> domain.Game:
 
 	with psycopg2.connect(__connection_string__) as conn:
