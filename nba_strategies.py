@@ -7,6 +7,7 @@ import common
 import train
 import evaluate
 import nba.features as features
+import nba.strategies as strategies
 
 from typing import List
 from typing import Dict
@@ -34,6 +35,11 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 
 	calibration_map:Dict = {}
 
+	strat = [
+		strategies.LosingStreakStrategy(-3, True),
+		strategies.LosingStreakStrategy(-5, False)
+	]
+
 	for idx,val in enumerate(predictions):
 		true_outcome = y[idx]
 		predicted_outcome = predictions[idx]
@@ -53,6 +59,12 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 		else:
 			predicted_winner = away
 
+		for s in strat:
+			s.evaluate(data.iloc[idx])
+
+		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
+
+		# calibration bits
 		calibration_key = int(confidence * 100)
 		calibration_key = calibration_key - (calibration_key%5)
 
@@ -65,8 +77,7 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 		else:
 			wins_losses = (wins_losses[0], wins_losses[1] + 1)
 		calibration_map[calibration_key] = wins_losses
-
-		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
+		# end calibration
 
 	delete_if_needed("calibration.csv")
 
@@ -82,6 +93,9 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 			# don't bother with small sample size
 			if number_of_games > 20:
 				writer.writerow([pct,pct,true_pct,number_of_games])
+
+	for s in strat:
+		s.summary()
 
 def run_import(years, output_file):
 	delete_if_needed(output_file)
@@ -104,7 +118,7 @@ def run_daily_analysis():
 	print("running detail analysis with model", model_file, "and features", feature_columns)
 
 	input_file = "output\\nba\\daily.csv"
-	run_import([2017], input_file)
+	run_import([2018], input_file)
 
 	detail_summary = "output\\nba\\html\\detaildata.json"
 	delete_if_needed(detail_summary)

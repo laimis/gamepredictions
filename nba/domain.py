@@ -100,10 +100,10 @@ class NBAGame:
 		
 		if self.line_team == winner:
 			self.spread_correct = True
+			self.spread_covered = covered <= self.line_spread
 		else:
 			self.spread_correct = False
-
-		self.spread_covered = covered < self.line_spread
+			self.spread_covered = False
 		
 	def __safe_int__(self, val):
 		if not val: return 0

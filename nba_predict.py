@@ -24,12 +24,11 @@ def generate_summary(df:pd.DataFrame, games, predictions, confidences, line_inde
 
 		output.append(f"{val.away} @ {val.home}")
 
-		# if line != None:
-		# 	output.append(f"{line.team} {line.spread}")
-		# else:
-		# 	output.append("")
-		output.append("")
-
+		if line != None:
+			output.append(f"{line.team} {line.spread}")
+		else:
+			output.append("")
+		
 		output.append(game_prediction.winner)
 		output.append(f"{game_prediction.confidence:.2f}")
 		output.append(f"{df.iloc[idx]['away_streak']:.2f}")
