@@ -104,7 +104,7 @@ def daily_evaluation(data_file:str, model_file:str, feature_columns:List[str], s
 		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
 
 	for s in strat:
-		s.summary()
+		s.get_results()
 
 def strategy_evaluation(data_file:str, model_file:str, feature_columns:List[str]):
 
@@ -126,7 +126,8 @@ def strategy_evaluation(data_file:str, model_file:str, feature_columns:List[str]
 			s.evaluate(row)
 
 	for s in strat:
-		s.summary()
+		r = s.get_results()
+		r.summary()
 
 def run_import(years, output_file):
 	delete_if_needed(output_file)
