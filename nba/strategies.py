@@ -6,9 +6,15 @@ class Strategy:
 		self.matches = 0
 		self.winning_picks = 0
 
-	def evalute(self):
+	def evaluate(self, row):
 
 		self.candidates += 1
+
+		self.__evaluate__(row)
+
+	# override in subclass
+	def __evaluate__(row):
+		None
 
 	def summary(self):
 		bet_size = 10
@@ -45,9 +51,7 @@ class LosingStreakStrategy(Strategy):
 		self.streak = streak
 		self.choose_to_cover = choose_to_cover
 
-	def evaluate(self, data):
-		
-		super().evalute(data)
+	def __evaluate__(self, data):
 		
 		if data.home_streak <= self.streak:
 			self.matches += 1
@@ -63,9 +67,7 @@ class LosingStreakStrategy(Strategy):
 
 class DumbStrategyAlwaysCover(Strategy):
 
-	def evaluate(self, data):
-		
-		super().evalute(data)
+	def __evaluate__(self, data):
 		
 		self.matches += 1
 
