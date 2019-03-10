@@ -35,10 +35,7 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 
 	calibration_map:Dict = {}
 
-	strat = [
-		strategies.LosingStreakStrategy(-3, True),
-		strategies.LosingStreakStrategy(-5, False)
-	]
+	strat = strategies.all_strategies()
 
 	for idx,val in enumerate(predictions):
 		true_outcome = y[idx]

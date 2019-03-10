@@ -6,6 +6,10 @@ class Strategy:
 		self.matches = 0
 		self.winning_picks = 0
 
+	def evalute(self):
+
+		self.candidates += 1
+
 	def summary(self):
 		bet_size = 10
 		bet_position = 114
@@ -28,6 +32,12 @@ class Strategy:
 
 		print("profit with",bet_size,"bet:",profit)
 
+class StrategyResult:
+	def __init__(self, matches, candidates, winning_picks):
+		self.matches = matches
+		self.candidates = candidates
+		self.winning_picks = winning_picks
+
 class LosingStreakStrategy(Strategy):
 
 	def __init__(self, streak, choose_to_cover):
@@ -37,9 +47,9 @@ class LosingStreakStrategy(Strategy):
 
 	def evaluate(self, data):
 		
-		self.candidates += 1
+		super().evalute(data)
 		
-		if data.home_streak <= self.streak or data.away_streak <= self.streak:
+		if data.home_streak <= self.streak:
 			self.matches += 1
 
 			if self.choose_to_cover and data.spread_covered:
@@ -50,3 +60,25 @@ class LosingStreakStrategy(Strategy):
 	def summary(self):
 		print("losing streak ",self.streak,"choose to cover", self.choose_to_cover,"strategy results:")
 		super().summary()
+
+class DumbStrategyAlwaysCover(Strategy):
+
+	def evaluate(self, data):
+		
+		super().evalute(data)
+		
+		self.matches += 1
+
+		if data.spread_covered:
+			self.winning_picks += 1
+
+	def summary(self):
+		print("dumb pick to always cover results:")
+		super().summary()
+
+def all_strategies():
+	return [
+		LosingStreakStrategy(-3, True),
+		LosingStreakStrategy(-5, False),
+		DumbStrategyAlwaysCover()
+	]
