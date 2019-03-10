@@ -9,6 +9,7 @@ import evaluate
 import nba.features as features
 
 from typing import List
+from typing import Dict
 
 def add_to_json_summary(summary_file, data):
 	if os.path.isfile(summary_file):
@@ -45,6 +46,8 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 	predictions = model.predict(X)
 	probabilities = model.predict_proba(X)
 
+	calibration_map:Dict = {}
+
 	for idx,val in enumerate(predictions):
 		true_outcome = y[idx]
 		predicted_outcome = predictions[idx]
@@ -64,27 +67,35 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 		else:
 			predicted_winner = away
 
-		correct = "yes"
+		calibration_key = int(confidence * 100)
+		calibration_key = calibration_key - (calibration_key%5)
+
+		if calibration_key not in calibration_map:
+			calibration_map[calibration_key] = (0, 0)
+		
+		wins_losses = calibration_map[calibration_key]
+		if predicted_outcome == true_outcome:
+			wins_losses = (wins_losses[0] + 1, wins_losses[1])
+		else:
+			wins_losses = (wins_losses[0], wins_losses[1] + 1)
+		calibration_map[calibration_key] = wins_losses
 
 		add_to_json_summary(summary_file, [date,away,home,winner,predicted_winner,confidence])
 
-def daily_performance(data_file, model_file, feature_columns, summary_file):
-	model = common.load_model(model_file)
+	delete_if_needed("calibration.csv")
 
-	groups = common.read_data_grouped(data_file, ['year', 'date'])
+	with open("calibration.csv", "w", newline='') as o:
+		writer = csv.writer(o)
+		writer.writerow(["index","real","model","number_of_games"])
+		for pct in calibration_map:
+			wins_losses = calibration_map[pct]
+			number_of_games = wins_losses[0] + wins_losses[1]
+			true_pct = wins_losses[0] / number_of_games
+			true_pct = int(true_pct * 100)
 
-	for key in groups:
-		X = groups[key][feature_columns]
-		y = groups[key]["home_win"]
-		line = groups[key][features.get_line_column_names()]
-
-		accuracy, manual_accuracy = evaluate.calculate_accuracy(model, X, y)
-
-		print(f"{key}:{accuracy:.2f}")
-
-		data = [key[1],accuracy]
-
-		add_to_json_summary(summary_file, data)
+			# don't bother with small sample size
+			if number_of_games > 20:
+				writer.writerow([pct,pct,true_pct,number_of_games])
 
 def run_training(
 	training_csv_path:str,
@@ -192,14 +203,10 @@ def run_daily_analysis():
 
 	model_file, feature_columns = common.read_model_definition("nba_model.csv")
 
-	print("running daily analysis with model", model_file, "and features", feature_columns)
+	print("running detail analysis with model", model_file, "and features", feature_columns)
 
-	input_file 	= "output\\nba\\daily.csv"
-	run_import([2018], input_file)
-
-	daily_summary = "output\\nba\\html\\dailydata.json"
-	delete_if_needed(daily_summary)
-	daily_performance(input_file, model_file, feature_columns, daily_summary)
+	input_file = "output\\nba\\daily.csv"
+	run_import([2017], input_file)
 
 	detail_summary = "output\\nba\\html\\detaildata.json"
 	delete_if_needed(detail_summary)
