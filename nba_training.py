@@ -33,7 +33,7 @@ def run_evaluations(model_file:str, model_name:str, data_file:str, feature_colum
 
 	add_to_json_summary(summary_file, eval_results)
 	
-	accuracy = evaluate.calculate_accuracy(model, X, y)
+	accuracy, _ = evaluate.calculate_accuracy(model, X, y)
 
 	return accuracy
 

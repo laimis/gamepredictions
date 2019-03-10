@@ -83,27 +83,6 @@ def detail_evaluation(data_file:str, model_file:str, feature_columns:List[str], 
 			if number_of_games > 20:
 				writer.writerow([pct,pct,true_pct,number_of_games])
 
-def run_training(
-	training_csv_path:str,
-	model_name:str,
-	feature_columns:List[str],
-	model_output_path:str,
-	summary_file:str,
-	model,
-	param_grid):
-	
-	_, X, y = common.read_data_from_file(training_csv_path, "home_win", feature_columns)
-	
-	grid = train.train_model(X, y, 10, model, param_grid)
-
-	model = grid.best_estimator_
-
-	train.save_model(model, model_output_path)
-
-	output = [model_name, f"{grid.best_score_:.4f}", str(grid.best_params_)]
-	
-	add_to_json_summary(summary_file, output)
-
 def run_import(years, output_file):
 	delete_if_needed(output_file)
 
