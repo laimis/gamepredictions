@@ -106,7 +106,9 @@ def daily_evaluation(data_file:str, model_file:str, feature_columns:List[str], s
 	for s in strat:
 		s.get_results()
 
-def strategy_evaluation(data_file:str, model_file:str, feature_columns:List[str]):
+def strategy_evaluation(data_file:str, model_file:str, feature_columns:List[str], summary_file:str):
+
+	delete_if_needed(summary_file)
 
 	model = common.load_model(model_file)
 
@@ -117,17 +119,13 @@ def strategy_evaluation(data_file:str, model_file:str, feature_columns:List[str]
 
 	strat = strategies.all_strategies()
 
-	# for idx,val in enumerate(predictions):
-	# 	for s in strat:
-	# 		s.evaluate(data.iloc[idx])
-
 	for index,row in data.iterrows():
 		for s in strat:
 			s.evaluate(row)
 
 	for s in strat:
 		r = s.get_results()
-		r.summary()
+		add_to_json_summary(summary_file, [r.name,r.candidates,r.matches,r.winning_picks,r.winning_pct,r.profits()])
 
 def run_import(years, output_file):
 	delete_if_needed(output_file)
@@ -159,5 +157,10 @@ if __name__ == '__main__':
 	# 	"output\\nba\\html\\detaildata.json"
 	# )
 
-	strategy_evaluation(data_file, model_file, feature_columns)
+	strategy_evaluation(
+		data_file,
+		model_file,
+		feature_columns,
+		"output\\nba\\html\\strategy.json"
+	)
 
