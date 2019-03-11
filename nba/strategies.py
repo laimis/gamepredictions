@@ -1,31 +1,37 @@
 import math
 
 class StrategyResult:
-	def __init__(self, name, candidates, matches, winning_picks):
+	def __init__(self, name, candidates, matches, covered, not_covered):
 		self.name = name
 		self.candidates = candidates
 		self.matches = matches
-		self.winning_picks = winning_picks
+		self.covered = covered
+		self.not_covered = not_covered
 
 		self.match_pct = round(self.matches / self.candidates * 100, 2)
-		self.winning_pct = round(self.winning_picks / self.matches * 100, 2)
+		self.cover_pct = round(self.covered / self.matches * 100, 2)
+		self.not_cover_pct = round(self.not_covered / self.matches * 100, 2)
 
 	def profits(self, bet_size = 10, bet_position = 114):
 		
 		single_win = bet_size * 100 / bet_position
 		money_wagered = self.matches * bet_size
 		
-		money_lost = (self.matches - self.winning_picks) * bet_size
-		money_won = self.winning_picks * single_win
-		profit = round(money_won - money_lost)
+		money_lost = (self.matches - self.covered) * bet_size
+		money_won = self.covered * single_win
+		cover_profit = round(money_won - money_lost)
 
-		return profit
+		money_lost = (self.matches - self.not_covered) * bet_size
+		money_won = self.not_covered * single_win
+		not_cover_profit = round(money_won - money_lost)
+		return (cover_profit, not_cover_profit)
 
 class Strategy:
 	def __init__(self):
 		self.candidates = 0
 		self.matches = 0
-		self.winning_picks = 0
+		self.covered = 0
+		self.not_covered = 0
 		self.name = "undefined"
 
 	def evaluate(self, row):
@@ -34,37 +40,39 @@ class Strategy:
 
 		self.__evaluate__(row)
 
+	def matched(self, data):
+		self.matches += 1
+
+		if data.spread_covered:
+			self.covered += 1
+		
+		if not data.spread_covered:
+			self.not_covered += 1
+
 	# override in subclass
 	def __evaluate__(row):
 		None
 
 	def get_results(self) -> StrategyResult:
-		return StrategyResult(self.name, self.candidates, self.matches, self.winning_picks)
+		return StrategyResult(self.name, self.candidates, self.matches, self.covered, self.not_covered)
 
-class LosingStreakStrategy(Strategy):
+class HomeLosingStreakStrategy(Strategy):
 
-	def __init__(self, streak, choose_to_cover):
-		super(LosingStreakStrategy,self).__init__()
+	def __init__(self, streak):
+		super(HomeLosingStreakStrategy,self).__init__()
 		self.streak = streak
-		self.choose_to_cover = choose_to_cover
-		self.name = "home losing streak {0} choose to cover {1}".format(self.streak, self.choose_to_cover)
+		self.name = f"home losing streak {self.streak}"
 
 	def __evaluate__(self, data):
 		
-		if data.home_streak <= self.streak:
-			self.matches += 1
-
-			if self.choose_to_cover and data.spread_covered:
-				self.winning_picks += 1
-			elif not self.choose_to_cover and not data.spread_covered:
-				self.winning_picks += 1
+		if data.home_streak <= self.streak and data.home == data.line_team:
+			self.matched(data)
 
 class HomeTeamAfterStreak(Strategy):
 
-	def __init__(self, streak, choose_to_cover):
+	def __init__(self, streak):
 		super(HomeTeamAfterStreak,self).__init__()
-		self.name = "good team after one win"
-		self.choose_to_cover = choose_to_cover
+		self.name = f"home team after {streak} win streak"
 		self.streak = streak
 
 	def __evaluate__(self, data):
@@ -73,13 +81,7 @@ class HomeTeamAfterStreak(Strategy):
 			return
 
 		if data.home_pct >= 0.6:
-			self.matches += 1
-
-			if self.choose_to_cover and data.spread_covered:
-				self.winning_picks += 1
-			
-			if not self.choose_to_cover and not data.spread_covered:
-				self.winning_picks += 1
+			self.matched(data)
 
 class DumbStrategyAlwaysCover(Strategy):
 
@@ -89,10 +91,7 @@ class DumbStrategyAlwaysCover(Strategy):
 
 	def __evaluate__(self, data):
 		
-		self.matches += 1
-
-		if data.spread_covered:
-			self.winning_picks += 1
+		self.matched(data)
 
 class SpecificTeam(Strategy):
 
@@ -104,24 +103,17 @@ class SpecificTeam(Strategy):
 	def __evaluate__(self, data):
 		
 		if data.line_team == self.team:
-			self.matches += 1
-
-			if data.spread_covered:
-				self.winning_picks += 1
+			self.matched(data)
 
 def all_strategies():
 	return [
-		LosingStreakStrategy(-3, True),
-		LosingStreakStrategy(-4, True),
-		LosingStreakStrategy(-5, True),
-		LosingStreakStrategy(-6, True),
-		LosingStreakStrategy(-3, False),
-		LosingStreakStrategy(-4, False),
-		LosingStreakStrategy(-5, False),
-		LosingStreakStrategy(-6, False),
 		DumbStrategyAlwaysCover(),
-		HomeTeamAfterStreak(2, True),
-		HomeTeamAfterStreak(3, True),
+		HomeLosingStreakStrategy(-3),
+		HomeLosingStreakStrategy(-4),
+		HomeLosingStreakStrategy(-5),
+		HomeLosingStreakStrategy(-6),
+		HomeTeamAfterStreak(2),
+		HomeTeamAfterStreak(3),
 		SpecificTeam('gsw'),
 		SpecificTeam('hou'),
 		SpecificTeam('nyk'),

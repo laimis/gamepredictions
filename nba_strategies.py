@@ -125,7 +125,9 @@ def strategy_evaluation(data_file:str, model_file:str, feature_columns:List[str]
 
 	for s in strat:
 		r = s.get_results()
-		add_to_json_summary(summary_file, [r.name,r.candidates,r.matches,r.winning_picks,r.winning_pct,r.profits()])
+		profits = r.profits()
+		arr = [r.name,r.candidates,r.matches,r.covered,r.not_covered,profits[0],profits[1]]
+		add_to_json_summary(summary_file, arr)
 
 def run_import(years, output_file):
 	delete_if_needed(output_file)
