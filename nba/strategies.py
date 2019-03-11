@@ -113,9 +113,5 @@ def all_strategies():
 		HomeLosingStreakStrategy(-5),
 		HomeLosingStreakStrategy(-6),
 		HomeTeamAfterStreak(2),
-		HomeTeamAfterStreak(3),
-		SpecificTeam('mil'),
-		SpecificTeam('cho'),
-		SpecificTeam('chi'),
-		SpecificTeam('pho')
+		HomeTeamAfterStreak(3)
 	]
