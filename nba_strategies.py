@@ -108,8 +108,6 @@ def daily_evaluation(data_file:str, model_file:str, feature_columns:List[str], s
 
 def strategy_evaluation(data_file:str, model_file:str, feature_columns:List[str], summary_file:str):
 
-	delete_if_needed(summary_file)
-
 	model = common.load_model(model_file)
 
 	data, X, y = common.read_data_from_file(data_file, "home_win", feature_columns)
@@ -149,9 +147,6 @@ if __name__ == '__main__':
 
 	print("running detail analysis with model", model_file, "and features", feature_columns)
 
-	data_file = "output\\nba\\daily.csv"
-	run_import([2018], data_file)
-
 	# daily_evaluation(
 	# 	input_file,
 	# 	model_file,
@@ -159,10 +154,17 @@ if __name__ == '__main__':
 	# 	"output\\nba\\html\\detaildata.json"
 	# )
 
-	strategy_evaluation(
-		data_file,
-		model_file,
-		feature_columns,
-		"output\\nba\\html\\strategy.json"
-	)
+	summary_file = "output\\nba\\html\\strategy.json"
+	delete_if_needed(summary_file)
 
+	data_file = "output\\nba\\daily.csv"
+
+	for y in [2017,2018]:
+		run_import([y], data_file)
+
+		strategy_evaluation(
+			data_file,
+			model_file,
+			feature_columns,
+			summary_file
+		)
