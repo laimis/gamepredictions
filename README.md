@@ -18,8 +18,6 @@ NBA 2019 ~ 66%
 
 - Need to do more research what other features to use to improve
 - Any way to take into account team make up (# of all stars?)
-- Calibration, over season, when it says that it is confident by %, is it confident by that percentage?
-- Ability to evaluate a strategy on a given data set
 
 - current strategy
 	- choose games that are above certain threshold of confidence
